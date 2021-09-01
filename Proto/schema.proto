@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package communication;
+
+service GameRequests {
+  rpc GetNextQuestion (GameData) returns (Question);
+}
+
+message GameData {
+  int32 student = 1;
+  int32 scenario = 2;
+}
+
+message Question {
+  string message = 1;
+  enum QuestionType {
+    BOOLEAN = 0;
+    ABCD = 1;
+    OPEN = 2;
+  }
+  QuestionType questionType = 2;
+  string hint = 3;
+  repeated Answer answers = 4;
+}
+
+message Answer {
+  string answer = 1;
+  string description = 2;
+  bool ok = 3;
+}
