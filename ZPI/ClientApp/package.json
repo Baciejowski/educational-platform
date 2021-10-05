@@ -11,6 +11,10 @@
     "axios": "^0.20.0-0",
     "bootstrap": "^4.5.3",
     "core-js": "^3.7.0",
+    "jquery": "^1.9.1",
+    "m": "^1.6.0",
+    "materialize-css": "^1.0.0",
+    "popper.js": "^1.16.1",
     "vue": "^3.0.2",
     "vue-loader-v16": "npm:vue-loader@^16.0.0-alpha.3",
     "vue-router": "^4.0.0-rc.5"

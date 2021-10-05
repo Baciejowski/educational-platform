@@ -10,12 +10,14 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
 
+
+
   <ItemGroup>
-    <Protobuf Include="..\Proto\schema.proto" GrpcServices="Server" Link="Protos\schema.proto" />
+    <Protobuf Include="Protos\schema.proto" GrpcServices="Server" Link="Protos\schema.proto" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.39.0" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
@@ -23,9 +25,6 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Properties\launchSettings.json" />
-  </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->

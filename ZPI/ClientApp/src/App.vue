@@ -1,9 +1,9 @@
 <template>
-  <nav-menu></nav-menu>
-  <router-view />
+    <!--<nav-menu></nav-menu>-->
+    <router-view />
 </template>
 
-<script>
+<!--<script>
     import NavMenu from './components/NavMenu.vue'
 
 export default {
@@ -12,15 +12,9 @@ export default {
       NavMenu
   }
 }
-</script>
+</script>-->
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+    @import './css/materialize.css';
+    @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 </style>
