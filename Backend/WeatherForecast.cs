@@ -1,6 +1,6 @@
 using System;
 
-namespace ZPI
+namespace Backend
 {
     public class WeatherForecast
     {

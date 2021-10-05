@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VueCliMiddleware;
 
-namespace ZPI
+namespace Backend
 {
     public class Startup
     {
@@ -25,15 +25,18 @@ namespace ZPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "default",
+                                  builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>()));
+            });
             services.AddGrpc();
             services.AddControllers();
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp";
+                configuration.RootPath = "../ClientApp";
             });
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -41,10 +44,12 @@ namespace ZPI
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseRouting();
             app.UseSpaStaticFiles();
             app.UseAuthorization();
+
+            app.UseCors("default");
 
             app.UseEndpoints(endpoints =>
             {
@@ -55,7 +60,7 @@ namespace ZPI
             app.UseSpa(spa =>
             {
                 if (env.IsDevelopment())
-                    spa.Options.SourcePath = "ClientApp/";
+                    spa.Options.SourcePath = "../ClientApp/";
                 else
                     spa.Options.SourcePath = "dist";
 
