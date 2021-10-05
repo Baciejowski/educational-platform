@@ -2,27 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>ZPI</RootNamespace>
+    <RootNamespace>Backend</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup>
-    <SpaRoot>ClientApp\</SpaRoot>
+    <SpaRoot>..\ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
-
 
 
   <ItemGroup>
     <Protobuf Include="Protos\schema.proto" GrpcServices="Server" Link="Protos\schema.proto" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.39.0" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Content Remove="$(SpaRoot)**" />
-    <None Remove="$(SpaRoot)**" />
-    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
 

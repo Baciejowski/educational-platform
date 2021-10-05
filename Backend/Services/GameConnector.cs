@@ -21,7 +21,7 @@ using Communication;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 
-namespace ZPI
+namespace Backend
 {
     public class GameConnector : GameRequests.GameRequestsBase
     {

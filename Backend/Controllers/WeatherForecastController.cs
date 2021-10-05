@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ZPI.Controllers
+namespace Backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
