@@ -12,9 +12,11 @@
 
 
   <ItemGroup>
-    <Protobuf Include="..\Protos\**" GrpcServices="Server" Link="Protos\%(RecursiveDir)%(Filename)%(Extension)"/>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.39.0" />
-    <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
+    <Protobuf Include="..\Protos\**" GrpcServices="Server" Link="Protos\%(RecursiveDir)%(Filename)%(Extension)" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="VueCliMiddleware" Version="5.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
   </ItemGroup>
 
 
