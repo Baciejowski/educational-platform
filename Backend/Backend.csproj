@@ -12,7 +12,7 @@
 
 
   <ItemGroup>
-    <Protobuf Include="Protos\schema.proto" GrpcServices="Server" Link="Protos\schema.proto" />
+    <Protobuf Include="..\Protos\**" GrpcServices="Server" Link="Protos\%(RecursiveDir)%(Filename)%(Extension)"/>
     <PackageReference Include="Grpc.AspNetCore" Version="2.39.0" />
     <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
   </ItemGroup>
