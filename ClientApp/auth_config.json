@@ -1,5 +1,6 @@
+
 {
-  "domain": "dev-8q3ew7wi.us.auth0.com",
-  "audience": "http://localhost:3001",
-  "clientId": "9tEpzYfkhBMNPQSuoB3k6fLPX0U7SbMF"
+  "domain": "dev-1pa-dl4y.us.auth0.com",
+  "clientId": "YBjJVBQTFbIImQhETqbdlMm8G8YnlyhV",
+  "audience": "http://localhost:3001"
 }
