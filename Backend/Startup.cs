@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VueCliMiddleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Backend
 {
@@ -36,6 +37,16 @@ namespace Backend
             {
                 configuration.RootPath = "../ClientApp";
             });
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = Configuration["Auth0:Authority"];
+                options.Audience = Configuration["Auth0:Audience"];
+                options.RequireHttpsMetadata = false;
+            });
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -48,6 +59,7 @@ namespace Backend
             app.UseRouting();
             app.UseSpaStaticFiles();
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseCors("default");
 
