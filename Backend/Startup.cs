@@ -4,70 +4,118 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using VueCliMiddleware;
 
 namespace Backend
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        static private class Flags
         {
-            Configuration = configuration;
+            static public bool RunVue = false;
+            static public bool RunAI = false;
         }
-
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public Startup(IConfiguration configuration)
         {
-            services.AddCors(options =>
+            void LoadFlags()
             {
-                options.AddPolicy(name: "default",
-                                  builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>()));
-            });
-            services.AddGrpc();
-            services.AddControllers();
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "../ClientApp";
-            });
-
-            var connectionString = Configuration["DbContextSettings:ConnectionString"];
-            services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString));
-        }
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
+                Flags.RunVue = Configuration.GetSection("Flags")["RunVue"].Equals("True");
+                Flags.RunAI = Configuration.GetSection("Flags")["RunAI"].Equals("True");
             }
 
-            app.UseRouting();
-            app.UseSpaStaticFiles();
-            app.UseAuthorization();
+            Configuration = configuration;
+            LoadFlags();
+        }
 
-            app.UseCors("default");
-
-            app.UseEndpoints(endpoints =>
+        public void ConfigureServices(IServiceCollection services)
+        {
+            void AddDatabase()
             {
-                endpoints.MapControllers();
-                endpoints.MapGrpcService<GameConnector>();
-            });
+                var connectionString = Configuration["DbContextSettings:ConnectionString"];
+                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString));
+            }
 
-            app.UseSpa(spa =>
+            void AddHttpServices()
             {
-                if (env.IsDevelopment())
-                    spa.Options.SourcePath = "../ClientApp/";
-                else
-                    spa.Options.SourcePath = "dist";
-
-                if (env.IsDevelopment())
+                services.AddCors(options =>
                 {
-                    spa.UseVueCli(npmScript: "serve");
-                }
+                    options.AddPolicy(name: "default",
+                                      builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>()));
+                });
+                services.AddControllers();
+                if (Flags.RunVue)
+                    services.AddSpaStaticFiles(configuration => configuration.RootPath = "../ClientApp");
+            }
 
-            });
+            AddDatabase();
+            services.AddGrpc();
+            AddHttpServices();
+        }
+
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        {
+            void AddHttpServices()
+            {
+                if (env.IsDevelopment())
+                    app.UseDeveloperExceptionPage();
+
+                app.UseRouting();
+
+                if (Flags.RunVue)
+                    app.UseSpaStaticFiles();
+
+                app.UseCors("default");
+                app.UseAuthorization();
+            }
+
+            void AddEndpoints()
+            {
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                    endpoints.MapGrpcService<GameConnector>();
+                });
+            }
+
+            void RunAI()
+            {
+                Process p = new Process();
+                p.StartInfo = new ProcessStartInfo(Configuration.GetSection("Variables")["AIScriptLocation"])
+                {
+                    RedirectStandardOutput = false,
+                    UseShellExecute = true,
+                    CreateNoWindow = false
+                };
+                p.Start();
+                logger.LogInformation("AI script started");
+            }
+
+            void RunVue()
+            {
+                app.UseSpa(spa =>
+                {
+                    if (env.IsDevelopment())
+                        spa.Options.SourcePath = "../ClientApp/";
+                    else
+                        spa.Options.SourcePath = "dist";
+
+                    if (env.IsDevelopment())
+                    {
+                        logger.LogInformation("Vue building starts");
+                        spa.UseVueCli(npmScript: "serve", forceKill: true);
+                    }
+                });
+            }
+
+            AddHttpServices();
+            AddEndpoints();
+            if (Flags.RunAI) RunAI();
+            if (Flags.RunVue) RunVue();
         }
     }
 }
