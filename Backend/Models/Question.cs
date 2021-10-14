@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Backend.Models
 {
@@ -13,7 +10,7 @@ namespace Backend.Models
             ABCD = 1,
             OPEN = 2
         }
-        public int QuestionID {get;set;}
+        public int QuestionID { get; set; }
         public byte Difficulty { get; set; }
         public string Content { get; set; }
         public string Hint { get; set; }

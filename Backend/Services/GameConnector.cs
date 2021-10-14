@@ -16,10 +16,10 @@
 
 #endregion
 
-using System.Threading.Tasks;
 using Communication;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace Backend
 {
@@ -32,7 +32,7 @@ namespace Backend
             _logger = loggerFactory.CreateLogger<GameConnector>();
         }
 
-        public override Task<Question> GetNextQuestion (GameData request, ServerCallContext context)
+        public override Task<Question> GetNextQuestion(GameData request, ServerCallContext context)
         {
             Answer[] answers = {
                 new Answer { Answer_ = "Bad One 1", Description = "Not the best one", Ok = false },
