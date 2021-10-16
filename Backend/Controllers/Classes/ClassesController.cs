@@ -2,14 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Cors;
 
 namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    // [Authorize]
     public class ClassesController : Controller
     {
-        [HttpGet, Authorize]
+        [EnableCors]
+        [HttpGet]
         public IEnumerable<Class> Get()
         {
             var currentUser = HttpContext.User;

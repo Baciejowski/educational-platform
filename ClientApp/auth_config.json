@@ -2,5 +2,5 @@
 {
   "domain": "dev-1pa-dl4y.us.auth0.com",
   "clientId": "YBjJVBQTFbIImQhETqbdlMm8G8YnlyhV",
-  "audience": "http://localhost:3001"
+  "audience": "http://localhost:5000"
 }

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VueCliMiddleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Logging;
 
 namespace Backend
 {
@@ -26,17 +27,19 @@ namespace Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            IdentityModelEventSource.ShowPII = true; 
             services.AddCors(options =>
             {
                 options.AddPolicy(name: "default",
-                                  builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>()));
+                    builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .AllowAnyMethod());
             });
             services.AddGrpc();
             services.AddControllers();
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "../ClientApp";
-            });
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../ClientApp"; });
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -48,6 +51,7 @@ namespace Backend
                 options.RequireHttpsMetadata = false;
             });
         }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -55,7 +59,7 @@ namespace Backend
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseRouting();
             app.UseSpaStaticFiles();
             app.UseAuthorization();
@@ -80,7 +84,6 @@ namespace Backend
                 {
                     spa.UseVueCli(npmScript: "serve");
                 }
-
             });
         }
     }
