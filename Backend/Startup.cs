@@ -130,7 +130,6 @@ namespace Backend
                 });
             }
 
-            app.UseAuthorization();
             app.UseAuthentication();
             AddHttpServices();
             AddEndpoints();
