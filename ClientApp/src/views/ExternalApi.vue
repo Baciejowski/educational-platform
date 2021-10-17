@@ -2,7 +2,7 @@
     <div>
         <button @click="callApi" class="btn btn-outline-primary btn-block">Call API</button>
         <p>{{ apiMessage }}</p>
-        <pre>{{classesMessage}}</pre>
+        <pre>{{ classesMessage }}</pre>
     </div>
 </template>
 
@@ -14,31 +14,32 @@ export default {
     data() {
         return {
             apiMessage: "",
-            classesMessage: "",
+            classesMessage: ""
         }
     },
     methods: {
         async callApi() {
             // Get the access token from the auth wrapper
-            // const token = await this.$auth.getTokenSilently()
+            const token = await this.$auth.getTokenSilently()
 
-            // Use Axios to make a call to the API
-            // const { data } = await axios.get("/api/external", {
-            //     headers: {
-            //         Authorization: `Bearer ${token}` // send the access token through the 'Authorization' header
-            //     }
-            // })
-
-            // this.apiMessage = data
-
-            const {data} = await axios.get("/api/classes", {
+            const { data } = await axios.get("/api/classes", {
                 // headers: {
                 //     Authorization: `Bearer ${token}`, // send the access token through the 'Authorization' header
                 //     // Access-Control-Allow-Origin: *
                 // }
             })
-            // console.log(token)
             this.classesMessage = data
+
+//na własnym serwerze walidacja działa dobrze
+            axios
+                .get("/api/external", {
+                    headers: {
+                        Authorization: `Bearer ${token}` 
+                    }
+                })
+                .then((res) => res.data)
+                .then((res) => alert(res.msg))
+                .catch(console.log)
         }
     }
 }
