@@ -46,7 +46,7 @@ namespace Backend
                 services.AddCors(options =>
                 {
                     options.AddPolicy(name: "default",
-                                      builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>()))
+                                      builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
                         .AllowAnyHeader()
                         .AllowCredentials()
                         .AllowAnyMethod());
@@ -68,7 +68,6 @@ namespace Backend
                 options.Audience = Configuration["Auth0:Audience"];
                 options.RequireHttpsMetadata = false;
             });
-        }
             AddDatabase();
             services.AddGrpc();
             AddHttpServices();
@@ -126,7 +125,8 @@ namespace Backend
                     if (env.IsDevelopment())
                     {
                         logger.LogInformation("Vue building starts");
-                        spa.UseVueCli(npmScript: "serve", forceKill: true);
+                        // spa.UseVueCli(npmScript: "serve", forceKill: true);
+                        spa.UseVueCli(npmScript: "serve");
                     }
                 });
             }
