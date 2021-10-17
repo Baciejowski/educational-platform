@@ -125,8 +125,7 @@ namespace Backend
                     if (env.IsDevelopment())
                     {
                         logger.LogInformation("Vue building starts");
-                        // spa.UseVueCli(npmScript: "serve", forceKill: true);
-                        spa.UseVueCli(npmScript: "serve");
+                        spa.UseVueCli(npmScript: "serve", forceKill: true);
                     }
                 });
             }
