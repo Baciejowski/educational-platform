@@ -56,8 +56,6 @@ namespace Backend
                     services.AddSpaStaticFiles(configuration => configuration.RootPath = "../ClientApp");
             }
 
-            services.AddControllers();
-            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../ClientApp"; });
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -125,13 +123,11 @@ namespace Backend
                     if (env.IsDevelopment())
                     {
                         logger.LogInformation("Vue building starts");
-                        // spa.UseVueCli(npmScript: "serve", forceKill: true);
-                        spa.UseVueCli(npmScript: "serve");
+                        spa.UseVueCli(npmScript: "serve", forceKill: true);
                     }
                 });
             }
 
-            app.UseAuthorization();
             app.UseAuthentication();
             AddHttpServices();
             AddEndpoints();
