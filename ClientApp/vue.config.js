@@ -13,12 +13,6 @@ module.exports = {
                 changeOrigin: true,
                 logLevel: "debug",
                 pathRewrite: { "^/api": "/api" }
-            },
-            "^/weatherforecast": {
-                target: "http://localhost:5000",
-                changeOrigin: true,
-                logLevel: "debug",
-                pathRewrite: { "^/weatherforecast": "http://localhost:5000/weatherforecast" }
             }
         }
     }

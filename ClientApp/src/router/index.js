@@ -5,7 +5,6 @@ import Profile from "@/views/Profile.vue"
 import { authGuard } from "@/auth/authGuard"
 import ExternalApiView from "@/views/ExternalApi.vue"
 import Counter from "@/views/Counter.vue";
-import FetchData from "@/views/FetchData.vue";
 
 Vue.use(VueRouter)
 
@@ -31,11 +30,6 @@ const routes = [
         path: "/Counter",
         name: "Counter",
         component: Counter,
-    },
-    {
-        path: "/FetchData",
-        name: "FetchData",
-        component: FetchData,
     }
 ]
 
