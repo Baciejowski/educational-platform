@@ -57,7 +57,6 @@ namespace Backend
             }
 
             services.AddControllers();
-            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "../ClientApp"; });
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
