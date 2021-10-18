@@ -13,9 +13,13 @@
 
   <ItemGroup>
     <Protobuf Include="..\Protos\**" GrpcServices="Server" Link="Protos\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Remove="Analysis module\**" />
     <Compile Remove="obj\**" />
+    <Content Remove="Analysis module\**" />
     <Content Remove="obj\**" />
+    <EmbeddedResource Remove="Analysis module\**" />
     <EmbeddedResource Remove="obj\**" />
+    <None Remove="Analysis module\**" />
     <None Remove="obj\**" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.20" />
@@ -30,9 +34,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Analysis module\" />
   </ItemGroup>
 
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using Backend.Services.ClassManagement;
 using VueCliMiddleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Logging;
@@ -70,6 +71,7 @@ namespace Backend
             services.AddGrpc();
             AddHttpServices();
 
+            services.AddSingleton<IClassManagementService, ClassManagementService>();
         }
 
 
