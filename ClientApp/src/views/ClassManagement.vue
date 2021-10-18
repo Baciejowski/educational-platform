@@ -5,7 +5,9 @@
         </div>
         <div v-else>
             <div v-for="item in classesMessage" :key="item.classID">
+                <div class="d-flex">
                 <b-button v-b-toggle="'collapse-'+item.classID">{{ item.friendlyName }}</b-button>
+                </div>
                 <b-collapse :id="'collapse-'+item.classID" class="mt-2">
                     <b-card>
                         <p class="card-text text-white">                                
@@ -28,14 +30,16 @@
 import axios from "axios"
 
 export default {
-    data() {
-        return {
-            classesMessage: [],
-            loadingData: true
+    computed: {
+        classesMessage() {
+            return this.$store.state.classData
+        },
+        loadingData() {
+            return this.$store.state.loadingData
         }
     },
     created() {
-        this.callApi()
+        this.$store.dispatch("getClassData")
     },
     methods: {
         getStudentFullName(student) {
@@ -43,20 +47,6 @@ export default {
         },
         async callApi() {
             const token = await this.$auth.getTokenSilently()
-
-            axios
-                .get("/api/classes", {
-                    // headers: {
-                    //     Authorization: `Bearer ${token}`, // send the access token through the 'Authorization' header
-                    //     // Access-Control-Allow-Origin: *
-                    // }
-                })
-                .then((res) => res.data)
-                .then((res) => {
-                    this.classesMessage = res
-                    this.loadingData = false
-                })
-                .catch((err) => (this.classesMessage = err))
 
             //na własnym serwerze walidacja działa dobrze
             axios

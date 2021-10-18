@@ -1,6 +1,7 @@
 import Vue from "vue"
 import App from "./App.vue"
 import router from "./router"
+import {store} from './store/index.js'
 import { domain, clientId, audience } from "../auth_config.json";
 import { Auth0Plugin } from "./auth"
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
@@ -30,5 +31,6 @@ Vue.config.productionTip = false;
 
 new Vue({
     router,
+    store,
     render: (h) => h(App)
 }).$mount("#app")
