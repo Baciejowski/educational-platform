@@ -182,8 +182,8 @@ namespace Backend.Migrations
                     b.Property<int?>("TeacherID")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TopicName")
-                        .HasColumnType("integer");
+                    b.Property<string>("TopicName")
+                        .HasColumnType("text");
 
                     b.HasKey("TopicID");
 

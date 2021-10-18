@@ -17,6 +17,8 @@
     <Content Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
+    <Compile Include="obj\Debug\netcoreapp3.1\20211018211757_InitialCreate.cs" />
+    <Compile Include="obj\Debug\netcoreapp3.1\20211018211757_InitialCreate.Designer.cs" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.11">
