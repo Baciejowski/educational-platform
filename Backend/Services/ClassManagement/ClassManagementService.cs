@@ -48,7 +48,7 @@ namespace Backend.Services.ClassManagement
                         new Student
                         {
                             StudentID = 2,
-                            Email = "ola.swierczek111@gmail.com"
+                            Email = "aleksandra.swierczekk@gmail.com"
                         }
                     }
                 }

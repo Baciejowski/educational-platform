@@ -1,12 +1,20 @@
 <template>
     <div class="container">
-        <div class="d-flex justify-content-center">
-            <b-spinner label="Loading..." v-if="loadingData" class="me-auto">
-        <b class="text-info">{{ data.value.last.toUpperCase() }}</b>, <b>{{ data.value.first }}</b>
-      </template>
-            </b-spinner>
-            <div v-else>
-                <b-table striped hover :items="classesMessage"></b-table>
+        <div class="d-flex justify-content-center" v-if="loadingData" >
+            <b-spinner label="Loading..." class="me-auto"></b-spinner>
+        </div>
+        <div v-else>
+            <div v-for="item in classesMessage" :key="item.classID">
+                <b-button v-b-toggle="'collapse-'+item.classID">{{ item.friendlyName }}</b-button>
+                <b-collapse :id="'collapse-'+item.classID" class="mt-2">
+                    <b-card>
+                        <p class="card-text text-white">                                
+                            <ul>
+                                <li v-for="student in item.students" :key="student.studentID">{{ getStudentFullName(student) }}</li>
+                            </ul>
+                        </p>
+                    </b-card>
+                </b-collapse>
             </div>
         </div>
 
@@ -30,6 +38,9 @@ export default {
         this.callApi()
     },
     methods: {
+        getStudentFullName(student) {
+            return `${student.firstName ?? ""} ${student.lastName ? student.lastName + " - " : ""} ${student.email}`.trim()
+        },
         async callApi() {
             const token = await this.$auth.getTokenSilently()
 
