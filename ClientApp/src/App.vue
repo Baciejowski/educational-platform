@@ -1,20 +1,21 @@
 <template>
-    <!--<nav-menu></nav-menu>-->
-    <router-view />
+  <div id="app">
+    <Navbar />
+    <router-view/>
+  </div>
 </template>
-
-<!--<script>
-    import NavMenu from './components/NavMenu.vue'
+<script>
+import Navbar from "@/components/Navbar.vue";
 
 export default {
-  name: 'App',
+  name: "app",
   components: {
-      NavMenu
-  }
-}
-</script>-->
+    Navbar,
+  },
+};
+</script>
 
 <style>
-    @import './css/materialize.css';
-    @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+@import "./css/materialize.css";
+@import "https://fonts.googleapis.com/icon?family=Material+Icons";
 </style>

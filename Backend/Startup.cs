@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using VueCliMiddleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Logging;
 
 namespace Backend
 {
@@ -44,16 +46,30 @@ namespace Backend
                 services.AddCors(options =>
                 {
                     options.AddPolicy(name: "default",
-                                      builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>()));
+                                      builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .AllowAnyMethod());
                 });
                 services.AddControllers();
                 if (Flags.RunVue)
                     services.AddSpaStaticFiles(configuration => configuration.RootPath = "../ClientApp");
             }
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = Configuration["Auth0:Authority"];
+                options.Audience = Configuration["Auth0:Audience"];
+                options.RequireHttpsMetadata = false;
+            });
             AddDatabase();
             services.AddGrpc();
             AddHttpServices();
+
         }
 
 
@@ -112,6 +128,7 @@ namespace Backend
                 });
             }
 
+            app.UseAuthentication();
             AddHttpServices();
             AddEndpoints();
             if (Flags.RunAI) RunAI();
