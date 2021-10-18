@@ -1,9 +1,9 @@
-import Vue from "vue"
+﻿import Vue from "vue"
 import VueRouter from "vue-router"
 import Home from "@/views/Home.vue"
 import Profile from "@/views/Profile.vue"
 import { authGuard } from "@/auth/authGuard"
-import ExternalApiView from "@/views/ExternalApi.vue"
+import ClassManagement from "@/views/ClassManagement.vue"
 import Counter from "@/views/Counter.vue";
 
 Vue.use(VueRouter)
@@ -21,9 +21,9 @@ const routes = [
         beforeEnter: authGuard
     },
     {
-        path: "/external-api",
-        name: "external-api",
-        component: ExternalApiView,
+        path: "/class-management",
+        name: "class-management",
+        component: ClassManagement,
         beforeEnter: authGuard
     },
     {
