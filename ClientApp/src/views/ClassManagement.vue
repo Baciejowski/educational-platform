@@ -1,25 +1,6 @@
 <template>
     <div class="container">
-        <div class="d-flex justify-content-center" v-if="loadingData" >
-            <b-spinner label="Loading..." class="me-auto"></b-spinner>
-        </div>
-        <div v-else>
-            <div v-for="item in classesMessage" :key="item.classID">
-                <div class="d-flex">
-                <b-button v-b-toggle="'collapse-'+item.classID">{{ item.friendlyName }}</b-button>
-                </div>
-                <b-collapse :id="'collapse-'+item.classID" class="mt-2">
-                    <b-card>
-                        <p class="card-text text-white">                                
-                            <ul>
-                                <li v-for="student in item.students" :key="student.studentID">{{ getStudentFullName(student) }}</li>
-                            </ul>
-                        </p>
-                    </b-card>
-                </b-collapse>
-            </div>
-        </div>
-
+        <ClassListView />
         <b-card class="mt-3 text-white" header="Data from API">
             <pre class="mt-3 text-white">{{ classesMessage }}</pre>
         </b-card>
@@ -27,24 +8,17 @@
 </template>
 
 <script>
+import ClassListView from "@/components/ClassListView"
 import axios from "axios"
 
 export default {
+    components: { ClassListView },
     computed: {
         classesMessage() {
             return this.$store.state.classData
-        },
-        loadingData() {
-            return this.$store.state.loadingData
         }
     },
-    created() {
-        this.$store.dispatch("getClassData")
-    },
     methods: {
-        getStudentFullName(student) {
-            return `${student.firstName ?? ""} ${student.lastName ? student.lastName + " - " : ""} ${student.email}`.trim()
-        },
         async callApi() {
             const token = await this.$auth.getTokenSilently()
 

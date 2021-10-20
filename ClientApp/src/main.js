@@ -1,11 +1,12 @@
 import Vue from "vue"
 import App from "./App.vue"
 import router from "./router"
-import {store} from './store/index.js'
+import {store} from './store/store.js'
 import { domain, clientId, audience } from "../auth_config.json";
 import { Auth0Plugin } from "./auth"
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import Axios from "./plugins/axios";
+
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
