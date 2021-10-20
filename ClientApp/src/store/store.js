@@ -6,7 +6,8 @@ Vue.use(Vuex)
 
 const state = {
     classData: [],
-    loadingData: true
+    loadingData: true,
+    teacher: null
 }
 
 const getters = {
@@ -29,6 +30,7 @@ const actions = {
             .then((res) => {
                 state.classData = res
                 state.loadingData = false
+                state.teacher= res[0].teacher.teacherId
             })
             .catch((err) => (state.classesMessage = err))
     }

@@ -29,11 +29,25 @@
                             <h4>Assign game to class</h4>
 
                             <label :for="'start-game' + item.classID">Choose a date</label>
-                            <Datepicker format="YYYY-MM-DD H:i:s" width="100%" :id="'start-game' + item.classID" v-model="startGame" :state="checkData()" class="mb-2 text-white"/>
+                            <Datepicker
+                                format="YYYY-MM-DD H:i:s"
+                                width="100%"
+                                :id="'start-game' + item.classID"
+                                v-model="startGame"
+                                :state="checkData()"
+                                class="mb-2 text-white"
+                            />
                             <!-- <date-picker :id="'start-game' + item.classID" v-model="startGame" :state="checkData()" class="mb-2"></date-picker> -->
                             <p>Value: '{{ startGame }}'</p>
                             <label :for="'end-game' + item.classID">Choose a date</label>
-                            <Datepicker format="YYYY-MM-DD H:i:s" width="100%" :id="'end-game' + item.classID" v-model="endGame" :state="checkData()" class="mb-2 text-white"/>
+                            <Datepicker
+                                format="YYYY-MM-DD H:i:s"
+                                width="100%"
+                                :id="'end-game' + item.classID"
+                                v-model="endGame"
+                                :state="checkData()"
+                                class="mb-2 text-white"
+                            />
                             <!-- <date-picker :id="'end-game' + item.classID" v-model="endGame" :state="checkData()" class="mb-2"></date-picker> -->
                             <p>Value: '{{ endGame }}'</p>
 
@@ -50,7 +64,7 @@
                             </div>
 
                             <div v-if="checkData() && selectedTopic && selectedScenario" class="d-flex">
-                                <b-button v-b-toggle="'collapse-' + item.classID" class="btn-success ml-auto mt-3">SEND TO STUDENTS</b-button>
+                                <b-button class="btn-success ml-auto mt-3" @click="sendGameNotification">SEND TO STUDENTS</b-button>
                             </div>
                         </div>
                     </b-card>
@@ -62,6 +76,7 @@
 
 <script>
 import Datepicker from "vuejs-datetimepicker"
+import axios from "axios"
 
 export default {
     components: {
@@ -106,6 +121,22 @@ export default {
             return this.$store.getters
                 .getScenarios({ classId: this.selectedClass, topicId: this.selectedTopic })
                 ?.map(({ scenarioID, name }) => ({ value: scenarioID, text: name }))
+        },
+        sendGameNotification() {
+            const payload = {
+                classId: this.selectedClass,
+                topicId: this.selectedTopic,
+                scenarioId: this.selectedScenario,
+                teacherId: this.$store.teacherId,
+                startGame: this.startGame,
+                endGame: this.endGame
+            }
+
+            axios
+                .post("/api/classes", payload)
+                .then((res) => res.data)
+                .then(console.log)
+                .catch((err) => console.log(err))
         }
     }
 }
