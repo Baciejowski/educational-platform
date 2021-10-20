@@ -6,6 +6,7 @@ using System.Text;
 using Backend.Controllers.APIs;
 using Backend.Models;
 using Backend.Services.EmailProvider;
+using Backend.Services.EmailProvider.Models;
 
 namespace Backend.Services.ClassManagement
 {
@@ -25,6 +26,13 @@ namespace Backend.Services.ClassManagement
 
         public async void SendGameInvitationToStudents(GameViewModel gameViewModel)
         {
+            var topic = mockClassList().ToArray()
+                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Teacher.Topics
+                .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId)?.TopicName;
+            var scenario = mockClassList().ToArray()
+                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Teacher.Topics
+                .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId)?.Scenarios
+                .FirstOrDefault(scenarioItem => scenarioItem.ScenarioID == gameViewModel.ScenarioId)?.Name;
             var students = mockClassList().ToArray()
                 .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Students;
             foreach (var student in students)
@@ -32,15 +40,19 @@ namespace Backend.Services.ClassManagement
                 var game =
                     $"{gameViewModel.ClassId}-{student.StudentID}-{gameViewModel.TeacherId}-{gameViewModel.TopicId}-{gameViewModel.ScenarioId}-{gameViewModel.StartGame}-{gameViewModel.EndGame}";
                 // var message = GetHashString(game);
-                var message  = String.Format("{0:X}", game.GetHashCode());
-                var request = new MailRequest
+                var message = String.Format("{0:X}", game.GetHashCode());
+                var request = new GameInvitationRequest
                 {
                     ToEmail = student.Email,
-                    Subject = "Game invitation",
-                    Body = message
+                    UserName = student.FirstName,
+                    Code = message,
+                    Topic = topic,
+                    Scenario = scenario,
+                    StartDate = gameViewModel.StartGame.ToString("yyyy-MM-dd HH:mm"),
+                    EndDate = gameViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
                 };
 
-                await _mailService.SendEmailAsync(request);
+                await _mailService.SendGameInvitationRequestAsync(request);
             }
         }
 
@@ -93,16 +105,16 @@ namespace Backend.Services.ClassManagement
                         new Student
                         {
                             StudentID = 1,
-                            FirstName = "FirstName",
-                            LastName = "LastName",
+                            FirstName = "Aleksandra",
+                            LastName = "Swierczek",
                             Email = "ola.swierczek111@gmail.com"
                         },
 
                         new Student
                         {
                             StudentID = 2,
-                            FirstName = "FirstName",
-                            LastName = "LastName",
+                            FirstName = "Aleksandra",
+                            LastName = "Swierczek",
                             Email = "aleksandra.swierczekk@gmail.com"
                         }
                     }
