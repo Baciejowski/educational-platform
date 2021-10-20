@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Backend.Services.ClassManagement;
+using Backend.Services.EmailProvider;
+using Backend.Services.EmailProvider.Settings;
 using VueCliMiddleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Logging;
@@ -70,6 +72,9 @@ namespace Backend
             AddDatabase();
             services.AddGrpc();
             AddHttpServices();
+
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailService, MailService>();
 
             services.AddSingleton<IClassManagementService, ClassManagementService>();
         }

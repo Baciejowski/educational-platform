@@ -88,7 +88,8 @@ export default {
             startGame: null,
             endGame: null,
             selectedTopic: null,
-            selectedScenario: null
+            selectedScenario: null,
+            selectedTeacher:1
         }
     },
     computed: {
@@ -97,7 +98,10 @@ export default {
         },
         loadingData() {
             return this.$store.state.loadingData
-        }
+        },
+        // selectedTeacher() {
+        //     return this.$store.teacher
+        // }
     },
     created() {
         this.$store.dispatch("getClassData")
@@ -127,9 +131,9 @@ export default {
                 classId: this.selectedClass,
                 topicId: this.selectedTopic,
                 scenarioId: this.selectedScenario,
-                teacherId: this.$store.teacherId,
-                startGame: this.startGame,
-                endGame: this.endGame
+                teacherId: this.selectedTeacher,
+                startGame: new Date(this.startGame).toISOString(),
+                endGame: new Date(this.endGame).toISOString()
             }
 
             axios

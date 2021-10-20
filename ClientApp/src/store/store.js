@@ -30,7 +30,7 @@ const actions = {
             .then((res) => {
                 state.classData = res
                 state.loadingData = false
-                state.teacher= res[0].teacher.teacherId
+                state.teacher= res[0].teacher.teacherID
             })
             .catch((err) => (state.classesMessage = err))
     }
