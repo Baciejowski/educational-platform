@@ -38,7 +38,7 @@
                                 class="mb-2 text-white"
                             />
                             <!-- <date-picker :id="'start-game' + item.classID" v-model="startGame" :state="checkData()" class="mb-2"></date-picker> -->
-                            <p>Value: '{{ startGame }}'</p>
+                            <p>'{{ startGame }}'</p>
                             <label :for="'end-game' + item.classID">Choose a date</label>
                             <Datepicker
                                 format="YYYY-MM-DD H:i:s"
@@ -49,7 +49,7 @@
                                 class="mb-2 text-white"
                             />
                             <!-- <date-picker :id="'end-game' + item.classID" v-model="endGame" :state="checkData()" class="mb-2"></date-picker> -->
-                            <p>Value: '{{ endGame }}'</p>
+                            <p>'{{ endGame }}'</p>
 
                             <label :for="'select-topic' + item.classID">Topic</label>
                             <b-form-select :name="'select-topic' + item.classID" v-model="selectedTopic" :options="getTopics()"></b-form-select>

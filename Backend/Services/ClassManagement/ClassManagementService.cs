@@ -13,10 +13,12 @@ namespace Backend.Services.ClassManagement
     public class ClassManagementService : IClassManagementService
     {
         private readonly IMailService _mailService;
+        private List<Session> _sessionList;
 
         public ClassManagementService(IMailService mailService)
         {
             _mailService = mailService;
+            _sessionList = new List<Session>();
         }
 
         public IEnumerable<Class> GetClassList()
@@ -26,33 +28,47 @@ namespace Backend.Services.ClassManagement
 
         public async void SendGameInvitationToStudents(GameViewModel gameViewModel)
         {
-            var topic = mockClassList().ToArray()
+            var classItem = mockClassList().ToArray()
+                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId);
+            var studentsList = mockClassList().ToArray()
+                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Students;
+            var teacherItem = classItem.Teacher;
+            var topicItem = mockClassList().ToArray()
                 .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Teacher.Topics
-                .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId)?.TopicName;
-            var scenario = mockClassList().ToArray()
+                .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId);
+            var scenarioItem = mockClassList().ToArray()
                 .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Teacher.Topics
                 .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId)?.Scenarios
-                .FirstOrDefault(scenarioItem => scenarioItem.ScenarioID == gameViewModel.ScenarioId)?.Name;
-            var students = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Students;
-            foreach (var student in students)
+                .FirstOrDefault(scenarioItem => scenarioItem.ScenarioID == gameViewModel.ScenarioId);
+            foreach (var student in studentsList)
             {
-                var game =
+                var gameId =
                     $"{gameViewModel.ClassId}-{student.StudentID}-{gameViewModel.TeacherId}-{gameViewModel.TopicId}-{gameViewModel.ScenarioId}-{gameViewModel.StartGame}-{gameViewModel.EndGame}";
                 // var message = GetHashString(game);
-                var message = String.Format("{0:X}", game.GetHashCode());
+                var code = String.Format("{0:X}", gameId.GetHashCode());
                 var request = new GameInvitationRequest
                 {
                     ToEmail = student.Email,
                     UserName = student.FirstName,
-                    Code = message,
-                    Topic = topic,
-                    Scenario = scenario,
+                    Code = code,
+                    Topic = topicItem.TopicName,
+                    Scenario = scenarioItem.Name,
                     StartDate = gameViewModel.StartGame.ToString("yyyy-MM-dd HH:mm"),
                     EndDate = gameViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
                 };
 
                 await _mailService.SendGameInvitationRequestAsync(request);
+                _sessionList.Add(new Session
+                {
+                    Class = classItem,
+                    Student = student,
+                    Topic = topicItem,
+                    Scenario = scenarioItem,
+                    Teacher = teacherItem,
+                    StartGame = gameViewModel.StartGame,
+                    EndGame = gameViewModel.EndGame,
+                    Code = code
+                });
             }
         }
 
