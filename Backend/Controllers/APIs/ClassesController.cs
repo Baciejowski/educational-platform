@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Backend.Models;
 using Backend.Services.ClassManagement;
-using Communication;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
