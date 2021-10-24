@@ -7,7 +7,7 @@ service GameRequests {
     rpc PrepareNextQuestion(QuestionRequest) returns (Question);
     rpc UpdateStudentsAnswers(StudentAnswer) returns (Empty);
     rpc UpdateCash(Cash) returns (Empty);
-    rpc FinishGame(Empty) returns (Empty);
+    rpc FinishGame(SessionCode) returns (Empty);
 }
 
 message SessionCode {
