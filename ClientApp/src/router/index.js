@@ -4,6 +4,7 @@ import Home from "@/views/Home.vue"
 import Profile from "@/views/Profile.vue"
 import { authGuard } from "@/auth/authGuard"
 import ClassManagement from "@/views/ClassManagement.vue"
+import CreateScenario from "@/views/CreateScenario.vue"
 import Counter from "@/views/Counter.vue";
 
 Vue.use(VueRouter)
@@ -24,6 +25,12 @@ const routes = [
         path: "/class-management",
         name: "class-management",
         component: ClassManagement,
+        beforeEnter: authGuard
+    },
+    {
+        path: "/create-scenario",
+        name: "create-scenario",
+        component: CreateScenario,
         beforeEnter: authGuard
     },
     {

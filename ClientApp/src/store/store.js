@@ -8,7 +8,18 @@ const state = {
     classData: [],
     loadingData: true,
     teacher: null,
-    auth: null
+    auth: null,
+    questionForm: {
+        scenario: "",
+        topic: "",
+        questions: {},
+        file: null
+    },
+    createScenario:{
+        name:'',
+        topic:'',
+        teacherTopics: []
+    }
 }
 
 const getters = {
@@ -27,15 +38,6 @@ const getters = {
 }
 
 const actions = {
-    getClassData({ state, dispatch }) {
-        dispatch("authorizedGET_Promise", "/api/classes")
-            .then((data) => {
-                state.classData = data
-                state.loadingData = false
-                state.teacher = data[0].teacher.teacherID
-            })
-            .catch((err) => (state.classesMessage = err))
-    },
     authorizedGET_Promise({ getters }, url) {
         return getters.getAuthToken().then((token) =>
             axios
@@ -57,6 +59,18 @@ const actions = {
                 })
                 .then((res) => res.data)
         )
+    },
+    getClassData({ state, dispatch }) {
+        dispatch("authorizedGET_Promise", "/api/classes")
+            .then((data) => {
+                state.classData = data
+                state.loadingData = false
+                state.teacher = data[0].teacher.teacherID
+            })
+            .catch((err) => (state.classesMessage = err))
+    },
+    getTeacherTopics({ state }) {
+        state.createScenario.teacherTopics = ["Math", "Biol"]
     }
 }
 
