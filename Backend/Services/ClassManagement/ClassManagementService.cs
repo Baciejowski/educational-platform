@@ -53,8 +53,8 @@ namespace Backend.Services.ClassManagement
                     Code = code,
                     Topic = topicItem.TopicName,
                     Scenario = scenarioItem.Name,
-                    StartDate = gameViewModel.StartGame.ToString("yyyy-MM-dd HH:mm"),
-                    EndDate = gameViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
+                    StartDate = gameViewModel.StartGame.ToLocalTime().ToString("yyyy-MM-dd HH:mm"),
+                    EndDate = gameViewModel.EndGame.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
                 };
 
                 await _mailService.SendGameInvitationRequestAsync(request);

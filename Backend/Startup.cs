@@ -6,12 +6,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Security.Claims;
+using Backend.Auth;
 using Backend.Services.ClassManagement;
 using Backend.Services.EmailProvider;
 using Backend.Services.EmailProvider.Settings;
 using VueCliMiddleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Backend
 {
@@ -59,16 +63,28 @@ namespace Backend
                     services.AddSpaStaticFiles(configuration => configuration.RootPath = "../ClientApp");
             }
 
+            var domain = $"https://{Configuration["Auth0:Domain"]}/";
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                options.Authority = Configuration["Auth0:Authority"];
+                options.Authority = domain;
                 options.Audience = Configuration["Auth0:Audience"];
-                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = ClaimTypes.NameIdentifier
+                };
+            }); 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("read:messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain)));
             });
+
+            services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+
+
             AddDatabase();
             services.AddGrpc();
             AddHttpServices();
