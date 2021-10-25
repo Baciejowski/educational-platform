@@ -11,6 +11,7 @@ using Backend.Auth;
 using Backend.Services.ClassManagement;
 using Backend.Services.EmailProvider;
 using Backend.Services.EmailProvider.Settings;
+using Backend.Services.ScenarioManagement;
 using VueCliMiddleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -92,7 +93,8 @@ namespace Backend
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, MailService>();
 
-            services.AddSingleton<IClassManagementService, ClassManagementService>();
+            services.AddScoped<IClassManagementService, ClassManagementService>();
+            services.AddSingleton<IScenarioManagementService, ScenarioManagementService>();
         }
 
 

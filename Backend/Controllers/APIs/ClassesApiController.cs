@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers.APIs
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class ClassesController : Controller
+    [Route("api/classes")]
+    public class ClassesApiController : Controller
     {
         private readonly IClassManagementService _classManagementService;
 
-        public ClassesController(IClassManagementService classManagementService)
+        public ClassesApiController(IClassManagementService classManagementService)
         {
             _classManagementService = classManagementService;
         }
@@ -26,8 +26,7 @@ namespace Backend.Controllers.APIs
 
             return _classManagementService.GetClassList();
         }
-
-        [EnableCors]
+        
         [HttpPost]
         [Authorize]
         public OkResult Post(GameViewModel payload)

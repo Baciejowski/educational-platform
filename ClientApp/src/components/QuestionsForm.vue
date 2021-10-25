@@ -124,8 +124,8 @@
                 <b-button type="reset" variant="danger">Reset</b-button>
             </div>
         </b-form>
-        <b-card class="mt-3" header="Form Data Result">
-            <pre class="m-0">{{ form }}</pre>
+        <b-card class="mt-3 text-white" header="Form Data Result">
+            <pre class="m-0 text-white">{{ sendData }}</pre>
         </b-card>
     </div>
 </template>
@@ -149,6 +149,8 @@ export default {
                         content: "",
                         isImportant: false,
                         difficulty: 0,
+                        obligatory: false,
+                        questionType: 1,
                         answers: [{ value: "", isCorrect: false }]
                     }
                 ]
@@ -161,6 +163,16 @@ export default {
             invalidImportantQuestionFeedback: "At least one question must be important"
         }
     },
+    computed: {
+        sendData() {
+            const { name, topic } = this.$store.state.createScenario
+            return {
+                name,
+                topic,
+                questions: this.form
+            }
+        }
+    },
     mounted() {
         this.resetData()
     },
@@ -170,8 +182,13 @@ export default {
         },
         onSubmit(event) {
             event.preventDefault()
-            if (this.$store.state.createScenario.name && this.$store.state.createScenario.topic) {
-                alert(JSON.stringify(this.form))
+            const { name, topic } = this.$store.state.createScenario
+            if (name && topic) {
+                alert(JSON.stringify(this.sendData))
+                this.$store
+                    .dispatch("authorizedPOST_Promise", { url: "/api/create-scenario", data: this.sendData })
+                    .then(alert("Scenario created!"))
+                    .catch(() => console.log)
             }
         },
         resetData() {
@@ -182,6 +199,8 @@ export default {
                         content: "",
                         isImportant: ix === 0 || false,
                         difficulty: ix,
+                        questionType: 1,
+                        obligatory: ix === 0 ? true : false,
                         answers: [{ value: "", isCorrect: false }]
                     }
                 ])
@@ -208,6 +227,8 @@ export default {
                 content: "",
                 isImportant: false,
                 difficulty,
+                obligatory: difficulty === 0 ? true : false,
+                questionType: 1,
                 answers: [{ value: "", isCorrect: false }]
             })
         },

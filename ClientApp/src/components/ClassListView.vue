@@ -101,7 +101,6 @@ export default {
         }
     },
     created() {
-        this.$store.commit("setAuth", this.$auth)
         this.$store.dispatch("getClassData")
     },
     methods: {
@@ -134,7 +133,10 @@ export default {
                 endGame: new Date(this.endGame).toISOString()
             }
 
-            this.$store.dispatch("authorizedPOST_Promise", { url: "/api/classes", data }).catch(() => console.log)
+            this.$store
+                .dispatch("authorizedPOST_Promise", { url: "/api/classes", data })
+                .catch(() => console.log)
+                .then(alert("Invitations created succesful"))
         }
     }
 }

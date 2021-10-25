@@ -18,12 +18,17 @@ namespace Backend.Services.ClassManagement
         public ClassManagementService(IMailService mailService)
         {
             _mailService = mailService;
-            _sessionList = new List<Session>();
+            _sessionList = new List<Session>(); //TODO: pobieranie z bazy
         }
 
         public IEnumerable<Class> GetClassList()
         {
-            return mockClassList();
+            return mockClassList(); //TODO: pobieranie z bazy
+        }
+
+        public Teacher GetTeacherByAuthName(string authName)
+        {
+            return mockTeacherList().FirstOrDefault(x => x.AuthName == authName); //TODO: pobieranie z bazy
         }
 
         public async void SendGameInvitationToStudents(GameViewModel gameViewModel)
@@ -44,7 +49,7 @@ namespace Backend.Services.ClassManagement
             {
                 var gameId =
                     $"{gameViewModel.ClassId}-{student.StudentID}-{gameViewModel.TeacherId}-{gameViewModel.TopicId}-{gameViewModel.ScenarioId}-{gameViewModel.StartGame}-{gameViewModel.EndGame}";
-                // var message = GetHashString(game);
+
                 var code = String.Format("{0:X}", gameId.GetHashCode());
                 var request = new GameInvitationRequest
                 {
@@ -68,23 +73,8 @@ namespace Backend.Services.ClassManagement
                     StartGame = gameViewModel.StartGame,
                     EndGame = gameViewModel.EndGame,
                     Code = code
-                });
+                }); //TODO: zapis do bazy
             }
-        }
-
-        private static byte[] GetHash(string inputString)
-        {
-            using (HashAlgorithm algorithm = SHA256.Create())
-                return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-        }
-
-        private static string GetHashString(string inputString)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in GetHash(inputString))
-                sb.Append(b.ToString("X2"));
-
-            return sb.ToString();
         }
 
         IEnumerable<Class> mockClassList()
@@ -107,7 +97,26 @@ namespace Backend.Services.ClassManagement
             var teacher = new Teacher
             {
                 TeacherID = 1,
+                AuthName = "google-oauth2|114172205582288262083",
                 Topics = topics
+            };
+            var students = new[]
+            {
+                new Student
+                {
+                    StudentID = 1,
+                    FirstName = "Aleksandra",
+                    LastName = "Swierczek",
+                    Email = "ola.swierczek111@gmail.com"
+                },
+
+                new Student
+                {
+                    StudentID = 2,
+                    FirstName = "Aleksandra",
+                    LastName = "Swierczek",
+                    Email = "aleksandra.swierczekk@gmail.com"
+                }
             };
             var resultClassesList = new[]
             {
@@ -116,28 +125,40 @@ namespace Backend.Services.ClassManagement
                     ClassID = 1,
                     FriendlyName = "Class 1",
                     Teacher = teacher,
-                    Students = new[]
-                    {
-                        new Student
-                        {
-                            StudentID = 1,
-                            FirstName = "Aleksandra",
-                            LastName = "Swierczek",
-                            Email = "ola.swierczek111@gmail.com"
-                        },
-
-                        new Student
-                        {
-                            StudentID = 2,
-                            FirstName = "Aleksandra",
-                            LastName = "Swierczek",
-                            Email = "aleksandra.swierczekk@gmail.com"
-                        }
-                    }
+                    Students = students
                 }
             };
 
             return resultClassesList;
+        }
+
+        IEnumerable<Teacher> mockTeacherList()
+        {
+            var mathScenarios = new[]
+            {
+                new Scenario { ScenarioID = 1, Name = "Circles" },
+                new Scenario { ScenarioID = 2, Name = "Rectangles" }
+            };
+            var bioScenarios = new[]
+            {
+                new Scenario { ScenarioID = 1, Name = "Mammals" },
+                new Scenario { ScenarioID = 2, Name = "Vertebrates" }
+            };
+            var topics = new[]
+            {
+                new Topic { TopicID = 1, TopicName = "Math", Scenarios = mathScenarios },
+                new Topic { TopicID = 2, TopicName = "Biology", Scenarios = bioScenarios }
+            };
+
+            return new[]
+            {
+                new Teacher
+                {
+                    TeacherID = 1,
+                    AuthName = "google-oauth2|114172205582288262083",
+                    Topics = topics
+                }
+            };
         }
     }
 }
