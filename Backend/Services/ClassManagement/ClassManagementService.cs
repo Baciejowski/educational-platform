@@ -36,16 +36,12 @@ namespace Backend.Services.ClassManagement
 
         public async void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel)
         {
-            var classItem = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == classesGameInvitationViewModel.ClassId);
-            var studentsList = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == classesGameInvitationViewModel.ClassId)?.Students;
-            var teacherItem = classItem.Teacher;
-            var topicItem = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == classesGameInvitationViewModel.ClassId)?.Teacher.Topics
-                .FirstOrDefault(topicItem => topicItem.TopicID == classesGameInvitationViewModel.TopicId);
-            var scenarioItem = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == classesGameInvitationViewModel.ClassId)?.Teacher.Topics
+            var classItem = mockClassList()
+                .FirstOrDefault(item => item.ClassID == classesGameInvitationViewModel.ClassId);
+            var studentsList = mockClassList()
+                .FirstOrDefault(item => item.ClassID == classesGameInvitationViewModel.ClassId)?.Students;
+            var scenarioItem = mockClassList()
+                .FirstOrDefault(item => item.ClassID == classesGameInvitationViewModel.ClassId)?.Teacher.Topics
                 .FirstOrDefault(topicItem => topicItem.TopicID == classesGameInvitationViewModel.TopicId)?.Scenarios
                 .FirstOrDefault(scenarioItem => scenarioItem.ScenarioID == classesGameInvitationViewModel.ScenarioId);
             foreach (var student in studentsList)
@@ -59,20 +55,17 @@ namespace Backend.Services.ClassManagement
                     ToEmail = student.Email,
                     UserName = student.FirstName,
                     Code = code,
-                    Topic = topicItem.TopicName,
+                    Topic = scenarioItem.Topic.TopicName,
                     Scenario = scenarioItem.Name,
-                    StartDate = classesGameInvitationViewModel.StartGame.ToLocalTime().ToString("yyyy-MM-dd HH:mm"),
-                    EndDate = classesGameInvitationViewModel.EndGame.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                    StartDate = classesGameInvitationViewModel.StartGame.ToString("yyyy-MM-dd HH:mm"),
+                    EndDate = classesGameInvitationViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
                 };
 
                 await _mailService.SendGameInvitationRequestAsync(request);
                 _sessionList.Add(new Session
                 {
-                    Class = classItem,
                     Student = student,
-                    Topic = topicItem,
                     Scenario = scenarioItem,
-                    Teacher = teacherItem,
                     StartGame = classesGameInvitationViewModel.StartGame,
                     EndGame = classesGameInvitationViewModel.EndGame,
                     Code = code
@@ -97,6 +90,17 @@ namespace Backend.Services.ClassManagement
                 new Topic { TopicID = 1, TopicName = "Math", Scenarios = mathScenarios },
                 new Topic { TopicID = 2, TopicName = "Biology", Scenarios = bioScenarios }
             };
+
+            foreach (var bioScenario in bioScenarios)
+            {
+                bioScenario.Topic = topics[1];
+            }
+
+            foreach (var mathScenario in mathScenarios)
+            {
+                mathScenario.Topic = topics[0];
+            }
+
             var teacher = new Teacher
             {
                 TeacherID = 1,
