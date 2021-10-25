@@ -13,7 +13,7 @@ namespace Backend.Services.ScenarioManagement
 
         public ScenarioManagementService()
         {
-            _scenariosList = new List<Scenario>();
+            _scenariosList = new List<Scenario>();//TODO: pobieranie z bazy
         }
 
         public void CreateScenarioFromForm(ScenarioViewModel formData, Teacher teacher)
@@ -37,22 +37,25 @@ namespace Backend.Services.ScenarioManagement
                 foreach (var question in questionSet)
                 {
                     var answers = new List<Answer>();
-                    foreach (var answer in question.answers)
+                    foreach (var answer in question.Answers)
                     {
-                        answers.Add(new Answer()
+                        if(answer.Value!= "")
                         {
-                            Correct = answer.isCorrect,
-                            Content = answer.value
-                        });
+                            answers.Add(new Answer()
+                            {
+                                Correct = answer.IsCorrect,
+                                Content = answer.Value
+                            });
+                        }
                     }
 
                     scenario.Questions.Add(new Question
                     {
-                        Difficulty = question.difficulty,
-                        Content = question.content,
-                        QuestionType = question.questionType,
-                        IsImportant = question.isImportant,
-                        IsObligatory = question.obligatory,
+                        Difficulty = question.Difficulty,
+                        Content = question.Content,
+                        QuestionType = question.QuestionType,
+                        IsImportant = question.IsImportant,
+                        IsObligatory = question.Obligatory,
                         ABCDAnswers = answers
                     });
                 }
