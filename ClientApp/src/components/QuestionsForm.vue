@@ -131,9 +131,9 @@
 </template>
 
 <script>
-import ObligatorySectionModal from "./formModals/ObligatorySectionModal"
-import ObligatoryQuestionModal from "./formModals/ObligatoryQuestionModal"
-import NormalSectionModal from "./formModals/NormalSectionModal"
+import ObligatorySectionModal from "./questionsFormModals/ObligatorySectionModal"
+import ObligatoryQuestionModal from "./questionsFormModals/ObligatoryQuestionModal"
+import NormalSectionModal from "./questionsFormModals/NormalSectionModal"
 export default {
     components: {
         ObligatorySectionModal,

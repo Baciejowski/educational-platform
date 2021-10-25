@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 
-namespace Backend.Services.EmailProvider
+namespace Backend.Services.EmailProvider.Models
 {
     public class MailRequest
     {

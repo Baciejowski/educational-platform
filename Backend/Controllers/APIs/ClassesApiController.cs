@@ -2,7 +2,6 @@
 using Backend.Models;
 using Backend.Services.ClassManagement;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers.APIs

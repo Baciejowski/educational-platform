@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using Backend.Controllers.APIs;
 using Backend.Models;
 using Backend.Services.EmailProvider;
