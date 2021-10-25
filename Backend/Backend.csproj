@@ -13,19 +13,18 @@
 
   <ItemGroup>
     <Protobuf Include="..\Protos\*.proto" GrpcServices="Server" Link="Protos\%(Filename).proto" />
-    <Compile Remove="obj\**" />
-    <Content Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <None Remove="obj\**" />
-    <Compile Include="obj\Debug\netcoreapp3.1\20211018211757_InitialCreate.cs" />
-    <Compile Include="obj\Debug\netcoreapp3.1\20211018211757_InitialCreate.Designer.cs" />
+    <Compile Remove="Analysis module\**" />
+    <EmbeddedResource Remove="Analysis module\**" />
+    <None Remove="Analysis module\**" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
+    <PackageReference Include="MailKit" Version="2.15.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.11">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="MimeKit" Version="2.15.1" />
     <PackageReference Include="VueCliMiddleware" Version="5.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
   </ItemGroup>
