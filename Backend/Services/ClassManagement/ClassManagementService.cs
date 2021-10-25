@@ -28,14 +28,8 @@ namespace Backend.Services.ClassManagement
 
         public async void SendGameInvitationToStudents(GameViewModel gameViewModel)
         {
-            var classItem = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId);
             var studentsList = mockClassList().ToArray()
                 .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Students;
-            var teacherItem = classItem.Teacher;
-            var topicItem = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Teacher.Topics
-                .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId);
             var scenarioItem = mockClassList().ToArray()
                 .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Teacher.Topics
                 .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId)?.Scenarios
@@ -51,7 +45,7 @@ namespace Backend.Services.ClassManagement
                     ToEmail = student.Email,
                     UserName = student.FirstName,
                     Code = code,
-                    Topic = topicItem.TopicName,
+                    Topic = scenarioItem.Topic.TopicName,
                     Scenario = scenarioItem.Name,
                     StartDate = gameViewModel.StartGame.ToString("yyyy-MM-dd HH:mm"),
                     EndDate = gameViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
@@ -60,11 +54,8 @@ namespace Backend.Services.ClassManagement
                 await _mailService.SendGameInvitationRequestAsync(request);
                 _sessionList.Add(new Session
                 {
-                    Class = classItem,
                     Student = student,
-                    Topic = topicItem,
                     Scenario = scenarioItem,
-                    Teacher = teacherItem,
                     StartGame = gameViewModel.StartGame,
                     EndGame = gameViewModel.EndGame,
                     Code = code
