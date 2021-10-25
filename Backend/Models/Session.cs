@@ -4,6 +4,7 @@ namespace Backend.Models
 {
     public class Session
     {
+        public int SessionID { get; set; }
         public Class Class => Student.Class;
         public Student Student { get; set; }
         public Teacher Teacher => Scenario.Topic.Teacher;
