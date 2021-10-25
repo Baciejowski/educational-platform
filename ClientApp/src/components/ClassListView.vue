@@ -76,7 +76,7 @@
 
 <script>
 import Datepicker from "vuejs-datetimepicker"
-import axios from "axios"
+// import axios from "axios"
 
 export default {
     components: {
@@ -89,7 +89,7 @@ export default {
             endGame: null,
             selectedTopic: null,
             selectedScenario: null,
-            selectedTeacher:1
+            selectedTeacher: 1
         }
     },
     computed: {
@@ -98,10 +98,7 @@ export default {
         },
         loadingData() {
             return this.$store.state.loadingData
-        },
-        // selectedTeacher() {
-        //     return this.$store.teacher
-        // }
+        }
     },
     created() {
         this.$store.dispatch("getClassData")
@@ -126,8 +123,8 @@ export default {
                 .getScenarios({ classId: this.selectedClass, topicId: this.selectedTopic })
                 ?.map(({ scenarioID, name }) => ({ value: scenarioID, text: name }))
         },
-        sendGameNotification() {
-            const payload = {
+        sendGameNotification: async function () {
+            const data = {
                 classId: this.selectedClass,
                 topicId: this.selectedTopic,
                 scenarioId: this.selectedScenario,
@@ -136,11 +133,10 @@ export default {
                 endGame: new Date(this.endGame).toISOString()
             }
 
-            axios
-                .post("/api/classes", payload)
-                .then((res) => res.data)
-                .then(console.log)
-                .catch((err) => console.log(err))
+            this.$store
+                .dispatch("authorizedPOST_Promise", { url: "/api/classes", data })
+                .catch(() => console.log)
+                .then(alert("Invitations created succesful"))
         }
     }
 }

@@ -1,34 +1,34 @@
 ﻿using System.Collections.Generic;
 using Backend.Models;
 using Backend.Services.ClassManagement;
-using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers.APIs
 {
     [ApiController]
-    [Route("api/[controller]")]
-    // [Authorize]
-    public class ClassesController : Controller
+    [Route("api/classes")]
+    public class ClassesApiController : Controller
     {
         private readonly IClassManagementService _classManagementService;
 
-        public ClassesController(IClassManagementService classManagementService)
+        public ClassesApiController(IClassManagementService classManagementService)
         {
             _classManagementService = classManagementService;
         }
         
         [HttpGet]
+        [Authorize]
         public IEnumerable<Class> Get()
         {
             var currentUser = HttpContext.User;
 
             return _classManagementService.GetClassList();
         }
-
-        [EnableCors]
+        
         [HttpPost]
-        public OkResult Post(GameViewModel payload)
+        [Authorize]
+        public OkResult Post(ClassesGameInvitationViewModel payload)
         {
             var currentUser = HttpContext.User;
             _classManagementService.SendGameInvitationToStudents(payload);

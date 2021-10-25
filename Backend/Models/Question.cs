@@ -16,6 +16,8 @@ namespace Backend.Models
         public string Hint { get; set; }
         public TypeEnum QuestionType { get; set; }
         public bool? BooleanAnswer { get; set; }
+        public bool IsImportant { get; set; }
+        public bool IsObligatory { get; set; }
         public virtual ICollection<Answer> ABCDAnswers { get; set; }
         public virtual ICollection<Scenario> Scenarios { get; set; }
     }

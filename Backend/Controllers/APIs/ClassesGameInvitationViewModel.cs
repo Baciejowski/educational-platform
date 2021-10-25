@@ -2,7 +2,7 @@
 
 namespace Backend.Controllers.APIs
 {
-    public class GameViewModel
+    public class ClassesGameInvitationViewModel
     {
         public int ClassId { get; set; }
         public int TopicId { get; set; }
