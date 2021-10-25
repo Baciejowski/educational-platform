@@ -29,7 +29,7 @@ namespace Backend.Controllers.APIs
         
         [HttpPost]
         [Authorize]
-        public OkResult Post(GameViewModel payload)
+        public OkResult Post(ClassesGameInvitationViewModel payload)
         {
             var currentUser = HttpContext.User;
             _classManagementService.SendGameInvitationToStudents(payload);

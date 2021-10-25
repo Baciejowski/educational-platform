@@ -25,19 +25,18 @@ namespace Backend.Controllers.APIs
             _scenarioManagementService = scenarioManagementService;
         }
 
-        //
-        // [HttpGet]
-        // [Authorize]
-        // public IEnumerable<Class> Get()
-        // {
-        //     var currentUser = HttpContext.User;
-        //
-        //     return _classManagementService.GetClassList();
-        // }
-        //
+        
+        [HttpGet]
+        [Authorize]
+        public IEnumerable<Topic> Get()
+        {
+            var currentUser = HttpContext.User;
+        
+            return _classManagementService.GetTeacherTopics(currentUser.Identity.Name);
+        }
+        
         [HttpPost]
         [Authorize]
-        // [Route("api/create-scenario")]
         public OkResult Post(ScenarioViewModel payload)
         {
             var currentUser = HttpContext.User;

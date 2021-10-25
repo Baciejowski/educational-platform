@@ -31,24 +31,29 @@ namespace Backend.Services.ClassManagement
             return mockTeacherList().FirstOrDefault(x => x.AuthName == authName); //TODO: pobieranie z bazy
         }
 
-        public async void SendGameInvitationToStudents(GameViewModel gameViewModel)
+        public IEnumerable<Topic> GetTeacherTopics(string? authName)
+        {
+            return mockTeacherList().FirstOrDefault(x => x.AuthName == authName)?.Topics; //TODO: pobieranie z bazy
+        }
+
+        public async void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel)
         {
             var classItem = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId);
+                .FirstOrDefault(classItem => classItem.ClassID == classesGameInvitationViewModel.ClassId);
             var studentsList = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Students;
+                .FirstOrDefault(classItem => classItem.ClassID == classesGameInvitationViewModel.ClassId)?.Students;
             var teacherItem = classItem.Teacher;
             var topicItem = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Teacher.Topics
-                .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId);
+                .FirstOrDefault(classItem => classItem.ClassID == classesGameInvitationViewModel.ClassId)?.Teacher.Topics
+                .FirstOrDefault(topicItem => topicItem.TopicID == classesGameInvitationViewModel.TopicId);
             var scenarioItem = mockClassList().ToArray()
-                .FirstOrDefault(classItem => classItem.ClassID == gameViewModel.ClassId)?.Teacher.Topics
-                .FirstOrDefault(topicItem => topicItem.TopicID == gameViewModel.TopicId)?.Scenarios
-                .FirstOrDefault(scenarioItem => scenarioItem.ScenarioID == gameViewModel.ScenarioId);
+                .FirstOrDefault(classItem => classItem.ClassID == classesGameInvitationViewModel.ClassId)?.Teacher.Topics
+                .FirstOrDefault(topicItem => topicItem.TopicID == classesGameInvitationViewModel.TopicId)?.Scenarios
+                .FirstOrDefault(scenarioItem => scenarioItem.ScenarioID == classesGameInvitationViewModel.ScenarioId);
             foreach (var student in studentsList)
             {
                 var gameId =
-                    $"{gameViewModel.ClassId}-{student.StudentID}-{gameViewModel.TeacherId}-{gameViewModel.TopicId}-{gameViewModel.ScenarioId}-{gameViewModel.StartGame}-{gameViewModel.EndGame}";
+                    $"{classesGameInvitationViewModel.ClassId}-{student.StudentID}-{classesGameInvitationViewModel.TeacherId}-{classesGameInvitationViewModel.TopicId}-{classesGameInvitationViewModel.ScenarioId}-{classesGameInvitationViewModel.StartGame}-{classesGameInvitationViewModel.EndGame}";
 
                 var code = String.Format("{0:X}", gameId.GetHashCode());
                 var request = new GameInvitationRequest
@@ -58,8 +63,8 @@ namespace Backend.Services.ClassManagement
                     Code = code,
                     Topic = topicItem.TopicName,
                     Scenario = scenarioItem.Name,
-                    StartDate = gameViewModel.StartGame.ToLocalTime().ToString("yyyy-MM-dd HH:mm"),
-                    EndDate = gameViewModel.EndGame.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                    StartDate = classesGameInvitationViewModel.StartGame.ToLocalTime().ToString("yyyy-MM-dd HH:mm"),
+                    EndDate = classesGameInvitationViewModel.EndGame.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
                 };
 
                 await _mailService.SendGameInvitationRequestAsync(request);
@@ -70,8 +75,8 @@ namespace Backend.Services.ClassManagement
                     Topic = topicItem,
                     Scenario = scenarioItem,
                     Teacher = teacherItem,
-                    StartGame = gameViewModel.StartGame,
-                    EndGame = gameViewModel.EndGame,
+                    StartGame = classesGameInvitationViewModel.StartGame,
+                    EndGame = classesGameInvitationViewModel.EndGame,
                     Code = code
                 }); //TODO: zapis do bazy
             }

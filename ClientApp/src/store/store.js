@@ -69,8 +69,12 @@ const actions = {
             })
             .catch((err) => (state.classesMessage = err))
     },
-    getTeacherTopics({ state }) {
-        state.createScenario.teacherTopics = ["Math", "Biol"]
+    getTeacherTopics({ state, dispatch }) {
+        dispatch("authorizedGET_Promise", "/api/create-scenario")
+            .then((data) => {
+                state.createScenario.teacherTopics =data?.map(item=>item.topicName)
+            })
+            .catch((err) => (state.classesMessage = err))
     }
 }
 
