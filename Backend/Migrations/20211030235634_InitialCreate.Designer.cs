@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Backend;
@@ -9,9 +10,10 @@ using Backend;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20211030235634_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,37 +142,6 @@ namespace Backend.Migrations
                     b.ToTable("Scenarios");
                 });
 
-            modelBuilder.Entity("Backend.Models.Session", b =>
-                {
-                    b.Property<int>("SessionID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Code")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("EndGame")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int?>("ScenarioID")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("StartGame")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int?>("StudentID")
-                        .HasColumnType("integer");
-
-                    b.HasKey("SessionID");
-
-                    b.HasIndex("ScenarioID");
-
-                    b.HasIndex("StudentID");
-
-                    b.ToTable("Sessions");
-                });
-
             modelBuilder.Entity("Backend.Models.Student", b =>
                 {
                     b.Property<int>("StudentID")
@@ -289,21 +260,6 @@ namespace Backend.Migrations
                     b.Navigation("Topic");
                 });
 
-            modelBuilder.Entity("Backend.Models.Session", b =>
-                {
-                    b.HasOne("Backend.Models.Scenario", "Scenario")
-                        .WithMany("Sessions")
-                        .HasForeignKey("ScenarioID");
-
-                    b.HasOne("Backend.Models.Student", "Student")
-                        .WithMany("Sessions")
-                        .HasForeignKey("StudentID");
-
-                    b.Navigation("Scenario");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("Backend.Models.Student", b =>
                 {
                     b.HasOne("Backend.Models.Class", "Class")
@@ -350,15 +306,11 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Scenario", b =>
                 {
                     b.Navigation("Games");
-
-                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("Backend.Models.Student", b =>
                 {
                     b.Navigation("Games");
-
-                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("Backend.Models.Teacher", b =>

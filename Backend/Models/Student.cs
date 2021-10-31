@@ -10,5 +10,6 @@ namespace Backend.Models
         public string Email { get; set; }
         public virtual Class Class { get; set; }
         public virtual ICollection<Game> Games { get; set; }
+        public virtual ICollection<Session> Sessions { get; set; }
     }
 }
