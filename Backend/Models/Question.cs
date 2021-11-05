@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Backend.Models
 {
@@ -19,6 +20,8 @@ namespace Backend.Models
         public bool IsImportant { get; set; }
         public bool IsObligatory { get; set; }
         public virtual ICollection<Answer> ABCDAnswers { get; set; }
+
+        [JsonIgnore]
         public virtual ICollection<Scenario> Scenarios { get; set; }
     }
 }
