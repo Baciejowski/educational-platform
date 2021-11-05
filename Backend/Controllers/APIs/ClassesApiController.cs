@@ -19,11 +19,11 @@ namespace Backend.Controllers.APIs
         
         [HttpGet]
         [Authorize]
-        public IEnumerable<Class> Get()
+        public Teacher Get()
         {
             var currentUser = HttpContext.User;
 
-            return _classManagementService.GetClassList();
+            return _classManagementService.GetTeacherData(currentUser.Identity.Name);
         }
         
         [HttpPost]

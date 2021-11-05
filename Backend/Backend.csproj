@@ -13,6 +13,10 @@
 
   <ItemGroup>
     <Protobuf Include="..\Protos\*.proto" GrpcServices="Server" Link="Protos\%(Filename).proto" />
+    <Compile Remove="obj\**" />
+    <Content Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
     <Compile Remove="Analysis module\**" />
     <EmbeddedResource Remove="Analysis module\**" />
     <None Remove="Analysis module\**" />
@@ -31,7 +35,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Analysis module\" />
   </ItemGroup>
 

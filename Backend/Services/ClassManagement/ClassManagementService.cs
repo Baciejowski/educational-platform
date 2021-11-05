@@ -19,9 +19,9 @@ namespace Backend.Services.ClassManagement
             _sessionList = new List<Session>(); //TODO: pobieranie z bazy
         }
 
-        public IEnumerable<Class> GetClassList()
+        public Teacher GetTeacherData(String authId)
         {
-            return mockClassList(); //TODO: pobieranie z bazy
+            return MockTeacher(); //TODO: pobieranie z bazy
         }
 
         public Teacher GetTeacherByAuthName(string authName)
@@ -36,13 +36,12 @@ namespace Backend.Services.ClassManagement
 
         public async void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel)
         {
-            var classItem = mockClassList()
+            var classItem = MockTeacher().Classes
                 .FirstOrDefault(item => item.ClassID == classesGameInvitationViewModel.ClassId);
-            var studentsList = mockClassList()
-                .FirstOrDefault(item => item.ClassID == classesGameInvitationViewModel.ClassId)?.Students;
-            var scenarioItem = mockClassList()
-                .FirstOrDefault(item => item.ClassID == classesGameInvitationViewModel.ClassId)?.Teacher.Topics
-                .FirstOrDefault(topicItem => topicItem.TopicID == classesGameInvitationViewModel.TopicId)?.Scenarios
+            var studentsList = classItem?.Students;
+            var topicItem = MockTeacher().Topics
+                .FirstOrDefault(topicItem => topicItem.TopicID == classesGameInvitationViewModel.TopicId);
+            var scenarioItem = topicItem?.Scenarios
                 .FirstOrDefault(scenarioItem => scenarioItem.ScenarioID == classesGameInvitationViewModel.ScenarioId);
             foreach (var student in studentsList)
             {
@@ -55,7 +54,7 @@ namespace Backend.Services.ClassManagement
                     ToEmail = student.Email,
                     UserName = student.FirstName,
                     Code = code,
-                    Topic = scenarioItem.Topic.TopicName,
+                    Topic = topicItem.TopicName,
                     Scenario = scenarioItem.Name,
                     StartDate = classesGameInvitationViewModel.StartGame.ToString("yyyy-MM-dd HH:mm"),
                     EndDate = classesGameInvitationViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
@@ -73,7 +72,7 @@ namespace Backend.Services.ClassManagement
             }
         }
 
-        IEnumerable<Class> mockClassList()
+        Teacher MockTeacher()
         {
             var mathScenarios = new[]
             {
@@ -89,23 +88,6 @@ namespace Backend.Services.ClassManagement
             {
                 new Topic { TopicID = 1, TopicName = "Math", Scenarios = mathScenarios },
                 new Topic { TopicID = 2, TopicName = "Biology", Scenarios = bioScenarios }
-            };
-
-            foreach (var bioScenario in bioScenarios)
-            {
-                bioScenario.Topic = topics[1];
-            }
-
-            foreach (var mathScenario in mathScenarios)
-            {
-                mathScenario.Topic = topics[0];
-            }
-
-            var teacher = new Teacher
-            {
-                TeacherID = 1,
-                AuthName = "google-oauth2|114172205582288262083",
-                Topics = topics
             };
             var students = new[]
             {
@@ -125,18 +107,25 @@ namespace Backend.Services.ClassManagement
                     Email = "aleksandra.swierczekk@gmail.com"
                 }
             };
-            var resultClassesList = new[]
+            var classesList = new[]
             {
                 new Class
                 {
                     ClassID = 1,
-                    FriendlyName = "Class 1",
-                    Teacher = teacher,
+                    FriendlyName = "Funny Class",
                     Students = students
                 }
             };
 
-            return resultClassesList;
+            var teacher = new Teacher
+            {
+                TeacherID = 1,
+                AuthName = "google-oauth2|114172205582288262083",
+                Topics = topics,
+                Classes = classesList
+            };
+
+            return teacher;
         }
 
         IEnumerable<Teacher> mockTeacherList()

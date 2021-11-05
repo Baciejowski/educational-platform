@@ -8,7 +8,7 @@
                         <a href="#">About<i class="material-icons">info</i></a>
                     </li>
                     <li>
-                        <a href="#"> Join the game<i class="material-icons">sports_esports</i> </a>
+                        <a href="https://yarde.github.io/"> Join the game<i class="material-icons">sports_esports</i> </a>
                     </li>
                     <li>
                         <a href="#">Teacher zone<i class="material-icons">work</i></a>
@@ -38,7 +38,7 @@
                 <a href="#">About<i class="material-icons">info</i></a>
             </li>
             <li>
-                <a href="#">Join the game<i class="material-icons">sports_esports</i></a>
+                <a href="https://yarde.github.io/">Join the game<i class="material-icons">sports_esports</i></a>
             </li>
             <li>
                 <a href="#">Teacher zone<i class="material-icons">work</i></a>

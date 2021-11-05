@@ -5,6 +5,11 @@ namespace Backend
 {
     public partial class DataContext : DbContext
     {
+        public DataContext(DbContextOptions<DataContext> options)
+            : base(options)
+        {
+        }
+
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Game> Games { get; set; }
@@ -13,10 +18,7 @@ namespace Backend
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Topic> Topics { get; set; }
-        public DataContext(DbContextOptions<DataContext> options)
-            : base(options)
-        {
-        }
+        public DbSet<Session> Sessions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //answers-question
@@ -51,6 +53,14 @@ namespace Backend
             modelBuilder.Entity<Scenario>()
                 .HasMany<Question>(s => s.Questions)
                 .WithMany(q => q.Scenarios);
+            //sessions-student
+            modelBuilder.Entity<Session>()
+                .HasOne<Student>(session => session.Student)
+                .WithMany(student => student.Sessions);
+            //sessions-scenario
+            modelBuilder.Entity<Session>()
+                .HasOne<Scenario>(session => session.Scenario)
+                .WithMany(scenario => scenario.Sessions);
         }
     }
 }

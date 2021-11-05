@@ -4,7 +4,7 @@
             <b-spinner label="Loading..." class="me-auto"></b-spinner>
         </div>
         <div v-else>
-            <div v-for="item in classesMessage" :key="item.classID">
+            <div v-for="item in teacherMessage.classes" :key="item.classID">
                 <div class="d-flex">
                     <h3>{{ item.friendlyName }}</h3>
                     <div class="ml-auto">
@@ -93,15 +93,15 @@ export default {
         }
     },
     computed: {
-        classesMessage() {
-            return this.$store.state.classData
+        teacherMessage() {
+            return this.$store.state.teacherData
         },
         loadingData() {
             return this.$store.state.loadingData
         }
     },
     created() {
-        this.$store.dispatch("getClassData")
+        this.$store.dispatch("getTeacherData")
     },
     methods: {
         getStudentFullName(student) {
@@ -115,12 +115,12 @@ export default {
         },
         getTopics() {
             return this.$store.getters
-                .getTopics({ classId: this.selectedClass })
+                .getTopics()
                 ?.map(({ topicID, topicName }) => ({ value: topicID, text: topicName }))
         },
         getScenarios() {
             return this.$store.getters
-                .getScenarios({ classId: this.selectedClass, topicId: this.selectedTopic })
+                .getScenarios({ topicId: this.selectedTopic })
                 ?.map(({ scenarioID, name }) => ({ value: scenarioID, text: name }))
         },
         sendGameNotification: async function () {

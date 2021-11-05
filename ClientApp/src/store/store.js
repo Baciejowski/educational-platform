@@ -5,7 +5,7 @@ import axios from "axios"
 Vue.use(Vuex)
 
 const state = {
-    classData: [],
+    teacherData: [],
     loadingData: true,
     teacher: null,
     auth: null,
@@ -15,22 +15,21 @@ const state = {
         questions: {},
         file: null
     },
-    createScenario:{
-        name:'',
-        topic:'',
+    createScenario: {
+        name: "",
+        topic: "",
         teacherTopics: []
     }
 }
 
 const getters = {
-    getTopics: (state) => (payload) => {
-        const { classId } = payload
-        return state.classData?.find((item) => item.classID === classId)?.teacher.topics
+    getTopics: (state) => () => {
+        return state.teacherData?.topics
     },
 
     getScenarios: (state) => (payload) => {
-        const { classId, topicId } = payload
-        return state.classData?.find((item) => item.classID === classId)?.teacher.topics.find((item) => item.topicID === topicId).scenarios
+        const { topicId } = payload
+        return state.teacherData.topics.find((item) => item.topicID === topicId).scenarios
     },
     getAuthToken: (state) => () => {
         return state.auth.getTokenSilently()
@@ -60,19 +59,19 @@ const actions = {
                 .then((res) => res.data)
         )
     },
-    getClassData({ state, dispatch }) {
+    getTeacherData({ state, dispatch }) {
         dispatch("authorizedGET_Promise", "/api/classes")
             .then((data) => {
-                state.classData = data
+                state.teacherData = data
                 state.loadingData = false
-                state.teacher = data[0].teacher.teacherID
+                state.teacher = data.teacherID
             })
             .catch((err) => (state.classesMessage = err))
     },
     getTeacherTopics({ state, dispatch }) {
         dispatch("authorizedGET_Promise", "/api/create-scenario")
             .then((data) => {
-                state.createScenario.teacherTopics =data?.map(item=>item.topicName)
+                state.createScenario.teacherTopics = data?.map((item) => item.topicName)
             })
             .catch((err) => (state.classesMessage = err))
     }
