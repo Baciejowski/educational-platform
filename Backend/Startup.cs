@@ -8,9 +8,11 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Security.Claims;
 using Backend.Auth;
+using Backend.Services;
 using Backend.Services.ClassManagement;
 using Backend.Services.EmailProvider;
 using Backend.Services.EmailProvider.Settings;
+using Backend.Services.InMemory;
 using Backend.Services.ScenarioManagement;
 using VueCliMiddleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,10 +23,10 @@ namespace Backend
 {
     public class Startup
     {
-        static private class Flags
+        private static class Flags
         {
-            static public bool RunVue = false;
-            static public bool RunAI = false;
+            public static bool RunVue = false;
+            public static bool RunAI = false;
         }
         public IConfiguration Configuration { get; }
 
@@ -94,6 +96,7 @@ namespace Backend
 
             services.AddScoped<IClassManagementService, ClassManagementService>();
             services.AddSingleton<IScenarioManagementService, ScenarioManagementService>();
+            services.AddSingleton<IInMemory, InMemory>();
         }
 
 

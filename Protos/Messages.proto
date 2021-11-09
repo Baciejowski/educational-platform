@@ -1,0 +1,76 @@
+syntax = "proto3";
+package Gameplay;
+
+
+service GameRequests {
+    rpc StartNewSession(StartGameRequest) returns (SessionResponse);
+    rpc PrepareNextQuestion(QuestionRequest) returns (QuestionResponse);
+    rpc UpdateStudentsAnswers(StudentAnswerRequest) returns (Empty);
+    rpc FinishGame(EndGameRequest) returns (Empty);
+}
+
+enum QuestionTrigger {
+	KEY = 0;
+	ENEMY = 1;
+	OBJECT = 2;
+}
+
+message StartGameRequest{
+    string email = 1;
+    string code = 2;
+}
+
+message SessionCode {
+    string sessionCode = 1;
+}
+
+message SessionResponse {
+    string sessionId = 1;
+    repeated int32 questionsNumber = 2;
+    bool error = 3;
+    string errorMsg = 4;
+    message StudentData {
+	    int32 experience = 1;
+	    int32 money = 2;
+    }
+    message MazeSetting {
+	    int32 seed = 1;
+	    int32 size = 2;
+    }
+}
+
+message QuestionRequest {
+    string sessionCode = 1;
+    QuestionTrigger questionType = 2;
+}
+
+message QuestionResponse {
+	string sessionCode = 1;
+	string content = 2;
+    repeated string answers = 3;
+    repeated int32 correctAnswers = 4;
+	message QustionReward {
+		int32 experience = 1;
+		int32 money = 2;
+    }
+}
+
+message StudentAnswerRequest {
+	string sessionCode = 1;
+	QuestionTrigger questionType = 2;
+    repeated uint32 answersID = 3;
+    uint32 timeToAnswer = 4;
+}
+
+message EndGameRequest {
+	string sessionCode = 1;
+    bool scenarioEnded = 2;
+	uint32 gameplayTime = 4;
+	message StudentData {
+		int32 experience = 1;
+		int32 money = 2;
+		repeated double skills = 3;
+	}
+}
+
+message Empty {}

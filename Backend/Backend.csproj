@@ -17,9 +17,6 @@
     <Content Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
-    <Compile Remove="Analysis module\**" />
-    <EmbeddedResource Remove="Analysis module\**" />
-    <None Remove="Analysis module\**" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
     <PackageReference Include="MailKit" Version="2.15.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.20" />
@@ -31,11 +28,6 @@
     <PackageReference Include="MimeKit" Version="2.15.1" />
     <PackageReference Include="VueCliMiddleware" Version="5.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="Analysis module\" />
   </ItemGroup>
 
 
