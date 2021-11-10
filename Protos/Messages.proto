@@ -1,0 +1,80 @@
+syntax = "proto3";
+package Gameplay;
+
+
+service GameplayMessages  {
+    rpc StartNewSession(StartGameRequest) returns (StartGameResponse);
+    rpc PrepareNextQuestion(QuestionRequest) returns (QuestionResponse);
+    rpc UpdateStudentsAnswers(StudentAnswerRequest) returns (Empty);
+    rpc FinishGame(EndGameRequest) returns (Empty);
+}
+
+enum QuestionTrigger {
+	KEY = 0;
+	ENEMY = 1;
+	OBJECT = 2;
+}
+
+message StartGameRequest{
+    string email = 1;
+    string code = 2;
+}
+
+message StartGameResponse {
+    message StudentData {
+	    int32 experience = 1;
+	    int32 money = 2;
+    }
+    message MazeSetting {
+	    int32 seed = 1;
+	    int32 size = 2;
+    }
+    string sessionCode = 1;
+    repeated int32 questionsNumber = 2;
+    bool error = 3;
+    string errorMsg = 4;
+    StudentData studentData =5;
+    MazeSetting mazeSetting =6;
+}
+
+message QuestionRequest {
+    string sessionCode = 1;
+    QuestionTrigger questionType = 2;
+}
+
+message QuestionResponse {
+	message QuestionReward {
+		int32 experience = 1;
+		int32 money = 2;
+    }
+	string sessionCode = 1;
+	string content = 2;
+	message Answer {
+		uint32 answersID = 1;
+		string content = 2;
+		bool correct = 3;
+	}
+	repeated Answer answers = 3;
+	QuestionReward questionReward =4;
+}
+
+message StudentAnswerRequest {
+	string sessionCode = 1;
+	QuestionTrigger questionType = 2;
+    repeated uint32 answersID = 3;
+    uint32 timeToAnswer = 4;
+}
+
+message EndGameRequest {
+	message StudentEndGameData {
+		int32 experience = 1;
+		int32 money = 2;
+		repeated double skills = 3;
+	}
+	string sessionCode = 1;
+    bool scenarioEnded = 2;
+	uint32 gameplayTime = 4;
+	StudentEndGameData studentEndGameData =5;
+}
+
+message Empty {}

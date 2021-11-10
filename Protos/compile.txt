@@ -1,0 +1,1 @@
+.\protoc.exe --csharp_out=Compiled  --grcp_out=Compiled --plugin=protoc-gen-grcp=grpc_csharp_plugin.exe Messages.proto
