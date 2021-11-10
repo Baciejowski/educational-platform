@@ -5,6 +5,7 @@ using Backend.Services.ScenarioManagement;
 using Backend.Services.TeacherManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers.APIs
 {
@@ -14,11 +15,13 @@ namespace Backend.Controllers.APIs
     {
         private readonly IScenarioManagementService _scenarioManagementService;
         private readonly ITeacherManagementService _teacherManagementService;
+        private readonly DataContext _context;
 
-        public ScenarioApiController(IScenarioManagementService scenarioManagementService, ITeacherManagementService teacherManagementService)
+        public ScenarioApiController(IScenarioManagementService scenarioManagementService, ITeacherManagementService teacherManagementService, DataContext context)
         {
             _scenarioManagementService = scenarioManagementService;
             _teacherManagementService = teacherManagementService;
+            _context = context;
         }
 
         
@@ -27,8 +30,10 @@ namespace Backend.Controllers.APIs
         public IEnumerable<Topic> Get()
         {
             var currentUser = HttpContext.User;
-        
-            return _teacherManagementService.GetTeacherTopics(currentUser.Identity.Name);
+            _context.Scenarios.Include(q => q.Questions).ThenInclude(a => a.ABCDAnswers); //TO DO refactoryzacja
+
+            var result=  _teacherManagementService.GetTeacherTopics(currentUser.Identity.Name);
+            return result;
         }
         
         [HttpPost]
@@ -38,7 +43,7 @@ namespace Backend.Controllers.APIs
             var currentUser = HttpContext.User;
             var teacher = _teacherManagementService.GetTeacher(currentUser.Identity.Name);
             _scenarioManagementService.CreateScenarioFromForm(payload, teacher);
-        
+
             return Ok();
         }
     }

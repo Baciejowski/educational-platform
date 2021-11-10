@@ -18,23 +18,21 @@ namespace Backend.Services.TeacherManagement
 
         public Teacher GetTeacher(string authName)
         {
-            var teacherExists = Context.Teachers
-                .FirstOrDefault(x => x.AuthName == authName);
-            if (teacherExists == null)
-            {
-                AddAccount(authName);
-            }
-
+            AddAccount(authName);
             return Context.Teachers
                 .Include(c => c.Classes)
                 .ThenInclude(s => s.Students)
                 .Include(t => t.Topics)
                 .ThenInclude(s => s.Scenarios)
-                .FirstOrDefault(x => x.AuthName == authName); ;
+                .FirstOrDefault(x => x.AuthName == authName);
         }
 
         private void AddAccount(string authName)
         {
+            var teacherExists = Context.Teachers
+                .FirstOrDefault(x => x.AuthName == authName);
+
+            if (teacherExists != null) return;
             Context.Teachers.Add(new Teacher
             {
                 AuthName = authName,
@@ -47,9 +45,10 @@ namespace Backend.Services.TeacherManagement
 
         public ICollection<Topic> GetTeacherTopics(string authName)
         {
-            var teacher = GetTeacher(authName);
-            return teacher.Topics;
+            AddAccount(authName);
+            var teachers=  Context.Teachers
+                .Include(t => t.Topics);
+            return teachers.FirstOrDefault(x => x.AuthName == authName)?.Topics;
         }
-        
     }
 }

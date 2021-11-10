@@ -2,18 +2,17 @@
 using System.Linq;
 using Backend.Controllers.APIs;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services.ScenarioManagement
 {
     public class ScenarioManagementService : IScenarioManagementService
     {
-        private List<Scenario> _scenariosList;
-        private DataContext _context;
+        private readonly DataContext _context;
 
         public ScenarioManagementService(DataContext context)
         {
             _context = context;
-            _scenariosList = _context.Scenarios.ToList();
         }
 
         public void CreateScenarioFromForm(ScenarioViewModel formData, Teacher teacher)
@@ -22,8 +21,12 @@ namespace Backend.Services.ScenarioManagement
             if (topic == null)
             {
                 topic = new Topic { TopicName = formData.Topic, Teacher = teacher };
-                teacher.Topics.Add(topic); //TODO: zapis do bazy
+                _context.Topics.Add(topic);
             }
+
+            var checkScenario = _context.Scenarios.FirstOrDefault(x => x.Name == formData.Name);
+            var checkTopic = _context.Topics.FirstOrDefault(x => x.TopicID == topic.TopicID);
+            if (checkScenario != null && checkTopic != null) return;
 
             var scenario = new Scenario
             {
@@ -39,7 +42,7 @@ namespace Backend.Services.ScenarioManagement
                     var answers = new List<Answer>();
                     foreach (var answer in question.Answers)
                     {
-                        if(answer.Value!= "")
+                        if (answer.Value != "")
                         {
                             answers.Add(new Answer()
                             {
@@ -61,7 +64,8 @@ namespace Backend.Services.ScenarioManagement
                 }
             }
 
-            _scenariosList.Add(scenario); //TODO: zapis do bazy
+            _context.Scenarios.Add(scenario);
+            _context.SaveChanges();
         }
     }
 }
