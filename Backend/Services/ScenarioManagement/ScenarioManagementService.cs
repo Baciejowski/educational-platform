@@ -8,10 +8,12 @@ namespace Backend.Services.ScenarioManagement
     public class ScenarioManagementService : IScenarioManagementService
     {
         private List<Scenario> _scenariosList;
+        private DataContext _context;
 
-        public ScenarioManagementService()
+        public ScenarioManagementService(DataContext context)
         {
-            _scenariosList = new List<Scenario>();//TODO: pobieranie z bazy
+            _context = context;
+            _scenariosList = _context.Scenarios.ToList();
         }
 
         public void CreateScenarioFromForm(ScenarioViewModel formData, Teacher teacher)

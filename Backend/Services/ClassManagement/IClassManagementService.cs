@@ -7,9 +7,6 @@ namespace Backend.Services.ClassManagement
 {
     public interface IClassManagementService
     {
-        Teacher GetTeacherData(String authId);
-        void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel);
-        Teacher GetTeacherByAuthName(string authName);
-        IEnumerable<Topic> GetTeacherTopics(string? authName);
+        void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel, string authName);
     }
 }

@@ -14,6 +14,7 @@ using Backend.Services.EmailProvider;
 using Backend.Services.EmailProvider.Settings;
 using Backend.Services.InMemory;
 using Backend.Services.ScenarioManagement;
+using Backend.Services.TeacherManagement;
 using VueCliMiddleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +48,8 @@ namespace Backend
             void AddDatabase()
             {
                 var connectionString = Configuration["DbContextSettings:ConnectionString"];
-                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString));
+                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString),
+                    ServiceLifetime.Singleton);
             }
 
             void AddHttpServices()
@@ -95,7 +97,8 @@ namespace Backend
             services.AddTransient<IMailService, MailService>();
 
             services.AddScoped<IClassManagementService, ClassManagementService>();
-            services.AddSingleton<IScenarioManagementService, ScenarioManagementService>();
+            services.AddScoped<IScenarioManagementService, ScenarioManagementService>();
+            services.AddScoped<ITeacherManagementService, TeacherManagementService>();
             services.AddSingleton<IInMemory, InMemory>();
         }
 
