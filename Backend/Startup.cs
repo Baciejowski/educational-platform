@@ -105,6 +105,8 @@ namespace Backend
                     app.UseDeveloperExceptionPage();
 
                 app.UseRouting();
+                
+        app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 
                 if (Flags.RunVue)
                     app.UseSpaStaticFiles();
@@ -119,6 +121,7 @@ namespace Backend
                 {
                     endpoints.MapControllers();
                     endpoints.MapGrpcService<GameConnector>();
+                    endpoints.MapGrpcService<GreeterService>();
                 });
             }
 
