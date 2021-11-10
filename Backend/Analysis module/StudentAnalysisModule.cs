@@ -8,7 +8,7 @@ namespace Backend.Analysis_module
     {
         public double DifficultyLevel { get; set; }
         readonly Random _random = new Random();
-        private List<QuestionAnalysisModel> _questionAnalysisModels = new List<QuestionAnalysisModel>();
+        private List<AnsweredQuestionModel> _answeredQuestionsModels = new List<AnsweredQuestionModel>();
 
         public StudentAnalysisModule()
         {
@@ -21,11 +21,7 @@ namespace Backend.Analysis_module
 
         public void AddQuestionToAnalysis(AnsweredQuestionModel question)
         {
-            QuestionAnalysisModel questionAnalysisModel = new QuestionAnalysisModel
-            {
-                QuestionType = question.QuestionType
-            };
-            _questionAnalysisModels.Add(questionAnalysisModel);
+            _answeredQuestionsModels.Add(question);
             CalculateLvl();
         }
     }
