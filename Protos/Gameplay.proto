@@ -9,6 +9,26 @@ service GameRequests {
     rpc UpdateCash(Cash) returns (Empty);
     rpc FinishGame(SessionCode) returns (Empty);
 }
+message StartGameResponse {
+    message StudentData {
+	    int32 experience = 1;
+	    int32 money = 2;
+    }
+    message MazeSetting {
+	    int32 seed = 1;
+	    int32 size = 2;
+    }
+    string sessionCode = 1;
+    repeated int32 questionsNumber = 2;
+    bool error = 3;
+    string errorMsg = 4;
+    StudentData studentData =5;
+    MazeSetting mazeSetting =6;
+}
+message StartGameRequest{
+    string email = 1;
+    string code = 2;
+}
 
 message SessionCode {
     string sessionCode = 1;

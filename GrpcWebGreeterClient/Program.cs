@@ -14,7 +14,7 @@ namespace GrpcWebGreeterClient
         static async Task Main(string[] args)
         {
 
-            using var channel = GrpcChannel.ForAddress("http://localhost:5000", new GrpcChannelOptions
+            using var channel = GrpcChannel.ForAddress("http://zpi2021.westeurope.cloudapp.azure.com", new GrpcChannelOptions
             {
                 HttpHandler = new GrpcWebHandler(new HttpClientHandler())
             });
