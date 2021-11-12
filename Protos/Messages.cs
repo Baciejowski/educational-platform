@@ -25,48 +25,48 @@ namespace Gameplay {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "Cg5NZXNzYWdlcy5wcm90bxIIR2FtZXBsYXkiLwoQU3RhcnRHYW1lUmVxdWVz",
-            "dBINCgVlbWFpbBgBIAEoCRIMCgRjb2RlGAIgASgJIrUCCg9TZXNzaW9uUmVz",
-            "cG9uc2USEwoLc2Vzc2lvbkNvZGUYASABKAkSFwoPcXVlc3Rpb25zTnVtYmVy",
-            "GAIgAygFEg0KBWVycm9yGAMgASgIEhAKCGVycm9yTXNnGAQgASgJEjoKC3N0",
-            "dWRlbnREYXRhGAUgASgLMiUuR2FtZXBsYXkuU2Vzc2lvblJlc3BvbnNlLlN0",
-            "dWRlbnREYXRhEjoKC21hemVTZXR0aW5nGAYgASgLMiUuR2FtZXBsYXkuU2Vz",
-            "c2lvblJlc3BvbnNlLk1hemVTZXR0aW5nGjAKC1N0dWRlbnREYXRhEhIKCmV4",
-            "cGVyaWVuY2UYASABKAUSDQoFbW9uZXkYAiABKAUaKQoLTWF6ZVNldHRpbmcS",
-            "DAoEc2VlZBgBIAEoBRIMCgRzaXplGAIgASgFIlcKD1F1ZXN0aW9uUmVxdWVz",
-            "dBITCgtzZXNzaW9uQ29kZRgBIAEoCRIvCgxxdWVzdGlvblR5cGUYAiABKA4y",
-            "GS5HYW1lcGxheS5RdWVzdGlvblRyaWdnZXIiqgIKEFF1ZXN0aW9uUmVzcG9u",
-            "c2USEwoLc2Vzc2lvbkNvZGUYASABKAkSDwoHY29udGVudBgCIAEoCRIyCgdh",
-            "bnN3ZXJzGAMgAygLMiEuR2FtZXBsYXkuUXVlc3Rpb25SZXNwb25zZS5BbnN3",
-            "ZXISQQoOcXVlc3Rpb25SZXdhcmQYBCABKAsyKS5HYW1lcGxheS5RdWVzdGlv",
-            "blJlc3BvbnNlLlF1ZXN0aW9uUmV3YXJkGjMKDlF1ZXN0aW9uUmV3YXJkEhIK",
-            "CmV4cGVyaWVuY2UYASABKAUSDQoFbW9uZXkYAiABKAUaRAoGQW5zd2VyEhEK",
-            "CWFuc3dlcnNJRBgBIAEoDRIPCgdjb250ZW50GAIgASgJEhYKDmNvcnJlY3RB",
-            "bnN3ZXJzGAMgASgFIoUBChRTdHVkZW50QW5zd2VyUmVxdWVzdBITCgtzZXNz",
-            "aW9uQ29kZRgBIAEoCRIvCgxxdWVzdGlvblR5cGUYAiABKA4yGS5HYW1lcGxh",
-            "eS5RdWVzdGlvblRyaWdnZXISEQoJYW5zd2Vyc0lEGAMgAygNEhQKDHRpbWVU",
-            "b0Fuc3dlchgEIAEoDSLkAQoORW5kR2FtZVJlcXVlc3QSEwoLc2Vzc2lvbkNv",
-            "ZGUYASABKAkSFQoNc2NlbmFyaW9FbmRlZBgCIAEoCBIUCgxnYW1lcGxheVRp",
-            "bWUYBCABKA0SRwoSc3R1ZGVudEVuZEdhbWVEYXRhGAUgASgLMisuR2FtZXBs",
-            "YXkuRW5kR2FtZVJlcXVlc3QuU3R1ZGVudEVuZEdhbWVEYXRhGkcKElN0dWRl",
-            "bnRFbmRHYW1lRGF0YRISCgpleHBlcmllbmNlGAEgASgFEg0KBW1vbmV5GAIg",
-            "ASgFEg4KBnNraWxscxgDIAMoASIHCgVFbXB0eSoxCg9RdWVzdGlvblRyaWdn",
-            "ZXISBwoDS0VZEAASCQoFRU5FTVkQARIKCgZPQkpFQ1QQAjKtAgoQR2FtZXBs",
-            "YXlNZXNzYWdlcxJICg9TdGFydE5ld1Nlc3Npb24SGi5HYW1lcGxheS5TdGFy",
-            "dEdhbWVSZXF1ZXN0GhkuR2FtZXBsYXkuU2Vzc2lvblJlc3BvbnNlEkwKE1By",
-            "ZXBhcmVOZXh0UXVlc3Rpb24SGS5HYW1lcGxheS5RdWVzdGlvblJlcXVlc3Qa",
-            "Gi5HYW1lcGxheS5RdWVzdGlvblJlc3BvbnNlEkgKFVVwZGF0ZVN0dWRlbnRz",
-            "QW5zd2VycxIeLkdhbWVwbGF5LlN0dWRlbnRBbnN3ZXJSZXF1ZXN0Gg8uR2Ft",
-            "ZXBsYXkuRW1wdHkSNwoKRmluaXNoR2FtZRIYLkdhbWVwbGF5LkVuZEdhbWVS",
-            "ZXF1ZXN0Gg8uR2FtZXBsYXkuRW1wdHliBnByb3RvMw=="));
+            "dBINCgVlbWFpbBgBIAEoCRIMCgRjb2RlGAIgASgJIrsCChFTdGFydEdhbWVS",
+            "ZXNwb25zZRITCgtzZXNzaW9uQ29kZRgBIAEoCRIXCg9xdWVzdGlvbnNOdW1i",
+            "ZXIYAiADKAUSDQoFZXJyb3IYAyABKAgSEAoIZXJyb3JNc2cYBCABKAkSPAoL",
+            "c3R1ZGVudERhdGEYBSABKAsyJy5HYW1lcGxheS5TdGFydEdhbWVSZXNwb25z",
+            "ZS5TdHVkZW50RGF0YRI8CgttYXplU2V0dGluZxgGIAEoCzInLkdhbWVwbGF5",
+            "LlN0YXJ0R2FtZVJlc3BvbnNlLk1hemVTZXR0aW5nGjAKC1N0dWRlbnREYXRh",
+            "EhIKCmV4cGVyaWVuY2UYASABKAUSDQoFbW9uZXkYAiABKAUaKQoLTWF6ZVNl",
+            "dHRpbmcSDAoEc2VlZBgBIAEoBRIMCgRzaXplGAIgASgFIlcKD1F1ZXN0aW9u",
+            "UmVxdWVzdBITCgtzZXNzaW9uQ29kZRgBIAEoCRIvCgxxdWVzdGlvblR5cGUY",
+            "AiABKA4yGS5HYW1lcGxheS5RdWVzdGlvblRyaWdnZXIiowIKEFF1ZXN0aW9u",
+            "UmVzcG9uc2USEwoLc2Vzc2lvbkNvZGUYASABKAkSDwoHY29udGVudBgCIAEo",
+            "CRIyCgdhbnN3ZXJzGAMgAygLMiEuR2FtZXBsYXkuUXVlc3Rpb25SZXNwb25z",
+            "ZS5BbnN3ZXISQQoOcXVlc3Rpb25SZXdhcmQYBCABKAsyKS5HYW1lcGxheS5R",
+            "dWVzdGlvblJlc3BvbnNlLlF1ZXN0aW9uUmV3YXJkGjMKDlF1ZXN0aW9uUmV3",
+            "YXJkEhIKCmV4cGVyaWVuY2UYASABKAUSDQoFbW9uZXkYAiABKAUaPQoGQW5z",
+            "d2VyEhEKCWFuc3dlcnNJRBgBIAEoDRIPCgdjb250ZW50GAIgASgJEg8KB2Nv",
+            "cnJlY3QYAyABKAgihQEKFFN0dWRlbnRBbnN3ZXJSZXF1ZXN0EhMKC3Nlc3Np",
+            "b25Db2RlGAEgASgJEi8KDHF1ZXN0aW9uVHlwZRgCIAEoDjIZLkdhbWVwbGF5",
+            "LlF1ZXN0aW9uVHJpZ2dlchIRCglhbnN3ZXJzSUQYAyADKA0SFAoMdGltZVRv",
+            "QW5zd2VyGAQgASgNIuQBCg5FbmRHYW1lUmVxdWVzdBITCgtzZXNzaW9uQ29k",
+            "ZRgBIAEoCRIVCg1zY2VuYXJpb0VuZGVkGAIgASgIEhQKDGdhbWVwbGF5VGlt",
+            "ZRgEIAEoDRJHChJzdHVkZW50RW5kR2FtZURhdGEYBSABKAsyKy5HYW1lcGxh",
+            "eS5FbmRHYW1lUmVxdWVzdC5TdHVkZW50RW5kR2FtZURhdGEaRwoSU3R1ZGVu",
+            "dEVuZEdhbWVEYXRhEhIKCmV4cGVyaWVuY2UYASABKAUSDQoFbW9uZXkYAiAB",
+            "KAUSDgoGc2tpbGxzGAMgAygBIgcKBUVtcHR5KjEKD1F1ZXN0aW9uVHJpZ2dl",
+            "chIHCgNLRVkQABIJCgVFTkVNWRABEgoKBk9CSkVDVBACMq8CChBHYW1lcGxh",
+            "eU1lc3NhZ2VzEkoKD1N0YXJ0TmV3U2Vzc2lvbhIaLkdhbWVwbGF5LlN0YXJ0",
+            "R2FtZVJlcXVlc3QaGy5HYW1lcGxheS5TdGFydEdhbWVSZXNwb25zZRJMChNQ",
+            "cmVwYXJlTmV4dFF1ZXN0aW9uEhkuR2FtZXBsYXkuUXVlc3Rpb25SZXF1ZXN0",
+            "GhouR2FtZXBsYXkuUXVlc3Rpb25SZXNwb25zZRJIChVVcGRhdGVTdHVkZW50",
+            "c0Fuc3dlcnMSHi5HYW1lcGxheS5TdHVkZW50QW5zd2VyUmVxdWVzdBoPLkdh",
+            "bWVwbGF5LkVtcHR5EjcKCkZpbmlzaEdhbWUSGC5HYW1lcGxheS5FbmRHYW1l",
+            "UmVxdWVzdBoPLkdhbWVwbGF5LkVtcHR5YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Gameplay.QuestionTrigger), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.StartGameRequest), global::Gameplay.StartGameRequest.Parser, new[]{ "Email", "Code" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.SessionResponse), global::Gameplay.SessionResponse.Parser, new[]{ "SessionCode", "QuestionsNumber", "Error", "ErrorMsg", "StudentData", "MazeSetting" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.SessionResponse.Types.StudentData), global::Gameplay.SessionResponse.Types.StudentData.Parser, new[]{ "Experience", "Money" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.SessionResponse.Types.MazeSetting), global::Gameplay.SessionResponse.Types.MazeSetting.Parser, new[]{ "Seed", "Size" }, null, null, null, null)}),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.StartGameResponse), global::Gameplay.StartGameResponse.Parser, new[]{ "SessionCode", "QuestionsNumber", "Error", "ErrorMsg", "StudentData", "MazeSetting" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.StartGameResponse.Types.StudentData), global::Gameplay.StartGameResponse.Types.StudentData.Parser, new[]{ "Experience", "Money" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.StartGameResponse.Types.MazeSetting), global::Gameplay.StartGameResponse.Types.MazeSetting.Parser, new[]{ "Seed", "Size" }, null, null, null, null)}),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionRequest), global::Gameplay.QuestionRequest.Parser, new[]{ "SessionCode", "QuestionType" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionResponse), global::Gameplay.QuestionResponse.Parser, new[]{ "SessionCode", "Content", "Answers", "QuestionReward" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionResponse.Types.QuestionReward), global::Gameplay.QuestionResponse.Types.QuestionReward.Parser, new[]{ "Experience", "Money" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionResponse.Types.Answer), global::Gameplay.QuestionResponse.Types.Answer.Parser, new[]{ "AnswersID", "Content", "CorrectAnswers" }, null, null, null, null)}),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionResponse.Types.Answer), global::Gameplay.QuestionResponse.Types.Answer.Parser, new[]{ "AnswersID", "Content", "Correct" }, null, null, null, null)}),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.StudentAnswerRequest), global::Gameplay.StudentAnswerRequest.Parser, new[]{ "SessionCode", "QuestionType", "AnswersID", "TimeToAnswer" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.EndGameRequest), global::Gameplay.EndGameRequest.Parser, new[]{ "SessionCode", "ScenarioEnded", "GameplayTime", "StudentEndGameData" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.EndGameRequest.Types.StudentEndGameData), global::Gameplay.EndGameRequest.Types.StudentEndGameData.Parser, new[]{ "Experience", "Money", "Skills" }, null, null, null, null)}),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.Empty), global::Gameplay.Empty.Parser, null, null, null, null, null)
@@ -311,16 +311,16 @@ namespace Gameplay {
 
   }
 
-  public sealed partial class SessionResponse : pb::IMessage<SessionResponse>
+  public sealed partial class StartGameResponse : pb::IMessage<StartGameResponse>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<SessionResponse> _parser = new pb::MessageParser<SessionResponse>(() => new SessionResponse());
+    private static readonly pb::MessageParser<StartGameResponse> _parser = new pb::MessageParser<StartGameResponse>(() => new StartGameResponse());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<SessionResponse> Parser { get { return _parser; } }
+    public static pb::MessageParser<StartGameResponse> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -336,7 +336,7 @@ namespace Gameplay {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public SessionResponse() {
+    public StartGameResponse() {
       OnConstruction();
     }
 
@@ -344,7 +344,7 @@ namespace Gameplay {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public SessionResponse(SessionResponse other) : this() {
+    public StartGameResponse(StartGameResponse other) : this() {
       sessionCode_ = other.sessionCode_;
       questionsNumber_ = other.questionsNumber_.Clone();
       error_ = other.error_;
@@ -356,8 +356,8 @@ namespace Gameplay {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public SessionResponse Clone() {
-      return new SessionResponse(this);
+    public StartGameResponse Clone() {
+      return new StartGameResponse(this);
     }
 
     /// <summary>Field number for the "sessionCode" field.</summary>
@@ -409,10 +409,10 @@ namespace Gameplay {
 
     /// <summary>Field number for the "studentData" field.</summary>
     public const int StudentDataFieldNumber = 5;
-    private global::Gameplay.SessionResponse.Types.StudentData studentData_;
+    private global::Gameplay.StartGameResponse.Types.StudentData studentData_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Gameplay.SessionResponse.Types.StudentData StudentData {
+    public global::Gameplay.StartGameResponse.Types.StudentData StudentData {
       get { return studentData_; }
       set {
         studentData_ = value;
@@ -421,10 +421,10 @@ namespace Gameplay {
 
     /// <summary>Field number for the "mazeSetting" field.</summary>
     public const int MazeSettingFieldNumber = 6;
-    private global::Gameplay.SessionResponse.Types.MazeSetting mazeSetting_;
+    private global::Gameplay.StartGameResponse.Types.MazeSetting mazeSetting_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Gameplay.SessionResponse.Types.MazeSetting MazeSetting {
+    public global::Gameplay.StartGameResponse.Types.MazeSetting MazeSetting {
       get { return mazeSetting_; }
       set {
         mazeSetting_ = value;
@@ -434,12 +434,12 @@ namespace Gameplay {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as SessionResponse);
+      return Equals(other as StartGameResponse);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(SessionResponse other) {
+    public bool Equals(StartGameResponse other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -569,7 +569,7 @@ namespace Gameplay {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(SessionResponse other) {
+    public void MergeFrom(StartGameResponse other) {
       if (other == null) {
         return;
       }
@@ -585,13 +585,13 @@ namespace Gameplay {
       }
       if (other.studentData_ != null) {
         if (studentData_ == null) {
-          StudentData = new global::Gameplay.SessionResponse.Types.StudentData();
+          StudentData = new global::Gameplay.StartGameResponse.Types.StudentData();
         }
         StudentData.MergeFrom(other.StudentData);
       }
       if (other.mazeSetting_ != null) {
         if (mazeSetting_ == null) {
-          MazeSetting = new global::Gameplay.SessionResponse.Types.MazeSetting();
+          MazeSetting = new global::Gameplay.StartGameResponse.Types.MazeSetting();
         }
         MazeSetting.MergeFrom(other.MazeSetting);
       }
@@ -629,14 +629,14 @@ namespace Gameplay {
           }
           case 42: {
             if (studentData_ == null) {
-              StudentData = new global::Gameplay.SessionResponse.Types.StudentData();
+              StudentData = new global::Gameplay.StartGameResponse.Types.StudentData();
             }
             input.ReadMessage(StudentData);
             break;
           }
           case 50: {
             if (mazeSetting_ == null) {
-              MazeSetting = new global::Gameplay.SessionResponse.Types.MazeSetting();
+              MazeSetting = new global::Gameplay.StartGameResponse.Types.MazeSetting();
             }
             input.ReadMessage(MazeSetting);
             break;
@@ -675,14 +675,14 @@ namespace Gameplay {
           }
           case 42: {
             if (studentData_ == null) {
-              StudentData = new global::Gameplay.SessionResponse.Types.StudentData();
+              StudentData = new global::Gameplay.StartGameResponse.Types.StudentData();
             }
             input.ReadMessage(StudentData);
             break;
           }
           case 50: {
             if (mazeSetting_ == null) {
-              MazeSetting = new global::Gameplay.SessionResponse.Types.MazeSetting();
+              MazeSetting = new global::Gameplay.StartGameResponse.Types.MazeSetting();
             }
             input.ReadMessage(MazeSetting);
             break;
@@ -693,7 +693,7 @@ namespace Gameplay {
     #endif
 
     #region Nested types
-    /// <summary>Container for nested types declared in the SessionResponse message type.</summary>
+    /// <summary>Container for nested types declared in the StartGameResponse message type.</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static partial class Types {
@@ -711,7 +711,7 @@ namespace Gameplay {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public static pbr::MessageDescriptor Descriptor {
-          get { return global::Gameplay.SessionResponse.Descriptor.NestedTypes[0]; }
+          get { return global::Gameplay.StartGameResponse.Descriptor.NestedTypes[0]; }
         }
 
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -937,7 +937,7 @@ namespace Gameplay {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public static pbr::MessageDescriptor Descriptor {
-          get { return global::Gameplay.SessionResponse.Descriptor.NestedTypes[1]; }
+          get { return global::Gameplay.StartGameResponse.Descriptor.NestedTypes[1]; }
         }
 
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1943,7 +1943,7 @@ namespace Gameplay {
         public Answer(Answer other) : this() {
           answersID_ = other.answersID_;
           content_ = other.content_;
-          correctAnswers_ = other.correctAnswers_;
+          correct_ = other.correct_;
           _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
         }
 
@@ -1977,15 +1977,15 @@ namespace Gameplay {
           }
         }
 
-        /// <summary>Field number for the "correctAnswers" field.</summary>
-        public const int CorrectAnswersFieldNumber = 3;
-        private int correctAnswers_;
+        /// <summary>Field number for the "correct" field.</summary>
+        public const int CorrectFieldNumber = 3;
+        private bool correct_;
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-        public int CorrectAnswers {
-          get { return correctAnswers_; }
+        public bool Correct {
+          get { return correct_; }
           set {
-            correctAnswers_ = value;
+            correct_ = value;
           }
         }
 
@@ -2006,7 +2006,7 @@ namespace Gameplay {
           }
           if (AnswersID != other.AnswersID) return false;
           if (Content != other.Content) return false;
-          if (CorrectAnswers != other.CorrectAnswers) return false;
+          if (Correct != other.Correct) return false;
           return Equals(_unknownFields, other._unknownFields);
         }
 
@@ -2016,7 +2016,7 @@ namespace Gameplay {
           int hash = 1;
           if (AnswersID != 0) hash ^= AnswersID.GetHashCode();
           if (Content.Length != 0) hash ^= Content.GetHashCode();
-          if (CorrectAnswers != 0) hash ^= CorrectAnswers.GetHashCode();
+          if (Correct != false) hash ^= Correct.GetHashCode();
           if (_unknownFields != null) {
             hash ^= _unknownFields.GetHashCode();
           }
@@ -2043,9 +2043,9 @@ namespace Gameplay {
             output.WriteRawTag(18);
             output.WriteString(Content);
           }
-          if (CorrectAnswers != 0) {
+          if (Correct != false) {
             output.WriteRawTag(24);
-            output.WriteInt32(CorrectAnswers);
+            output.WriteBool(Correct);
           }
           if (_unknownFields != null) {
             _unknownFields.WriteTo(output);
@@ -2065,9 +2065,9 @@ namespace Gameplay {
             output.WriteRawTag(18);
             output.WriteString(Content);
           }
-          if (CorrectAnswers != 0) {
+          if (Correct != false) {
             output.WriteRawTag(24);
-            output.WriteInt32(CorrectAnswers);
+            output.WriteBool(Correct);
           }
           if (_unknownFields != null) {
             _unknownFields.WriteTo(ref output);
@@ -2085,8 +2085,8 @@ namespace Gameplay {
           if (Content.Length != 0) {
             size += 1 + pb::CodedOutputStream.ComputeStringSize(Content);
           }
-          if (CorrectAnswers != 0) {
-            size += 1 + pb::CodedOutputStream.ComputeInt32Size(CorrectAnswers);
+          if (Correct != false) {
+            size += 1 + 1;
           }
           if (_unknownFields != null) {
             size += _unknownFields.CalculateSize();
@@ -2106,8 +2106,8 @@ namespace Gameplay {
           if (other.Content.Length != 0) {
             Content = other.Content;
           }
-          if (other.CorrectAnswers != 0) {
-            CorrectAnswers = other.CorrectAnswers;
+          if (other.Correct != false) {
+            Correct = other.Correct;
           }
           _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
         }
@@ -2133,7 +2133,7 @@ namespace Gameplay {
                 break;
               }
               case 24: {
-                CorrectAnswers = input.ReadInt32();
+                Correct = input.ReadBool();
                 break;
               }
             }
@@ -2160,7 +2160,7 @@ namespace Gameplay {
                 break;
               }
               case 24: {
-                CorrectAnswers = input.ReadInt32();
+                Correct = input.ReadBool();
                 break;
               }
             }
