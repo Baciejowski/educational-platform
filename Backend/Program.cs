@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using System.Net;
 
 namespace Backend
 {
@@ -21,6 +21,10 @@ namespace Backend
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureKestrel(options =>
+                    {
+                        options.Listen(IPAddress.Any, 5000);
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }

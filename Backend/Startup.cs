@@ -53,9 +53,10 @@ namespace Backend
                 services.AddCors(options =>
                 {
                     options.AddPolicy(name: "default",
-                                      builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
+                                      //builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
+                                      builder => builder.AllowAnyOrigin()
                         .AllowAnyHeader()
-                        .AllowCredentials()
+                        //.AllowCredentials()
                         .AllowAnyMethod());
                 });
                 services.AddControllers();
@@ -83,8 +84,8 @@ namespace Backend
             });
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
-
-
+            
+            
             AddDatabase();
             services.AddGrpc();
             AddHttpServices();
