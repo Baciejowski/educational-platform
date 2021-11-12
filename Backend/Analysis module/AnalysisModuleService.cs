@@ -76,6 +76,11 @@ namespace Backend.Analysis_module
             return new Empty();
         }
 
+        public Empty EndGame(EndGameRequest request)
+        {
+            return new Empty();
+        }
+
         private AnsweredQuestionModel studentResponseAdapter(StudentAnswerRequest request)
         {
             return new AnsweredQuestionModel

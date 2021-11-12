@@ -12,5 +12,6 @@ namespace Backend.Analysis_module
 
         QuestionResponse PrepareNextQuestion(QuestionRequest request);
         Empty UpdateStudentsAnswers(StudentAnswerRequest request);
+        Empty EndGame(EndGameRequest request);
     }
 }

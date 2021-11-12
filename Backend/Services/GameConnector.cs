@@ -54,7 +54,7 @@ namespace Backend.Services
 
         public override Task<Empty> FinishGame(EndGameRequest request, ServerCallContext context)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_analysisModuleService.EndGame(request));
         }
     }
 }

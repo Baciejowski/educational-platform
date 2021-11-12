@@ -2,6 +2,7 @@
 using Backend.Models;
 using Backend.Services.ClassManagement;
 using Backend.Services.ScenarioManagement;
+using Backend.Services.TeacherManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +14,13 @@ namespace Backend.Controllers.APIs
     {
         private readonly IClassManagementService _classManagementService;
         private readonly IScenarioManagementService _scenarioManagementService;
+        private readonly ITeacherManagementService _teacherManagementService;
 
-        public TopicApiController(IClassManagementService classManagementService, IScenarioManagementService scenarioManagementService)
+        public TopicApiController(IClassManagementService classManagementService, IScenarioManagementService scenarioManagementService, ITeacherManagementService teacherManagementService)
         {
             _classManagementService = classManagementService;
             _scenarioManagementService = scenarioManagementService;
+            _teacherManagementService = teacherManagementService;
         }
 
         
@@ -27,7 +30,7 @@ namespace Backend.Controllers.APIs
         {
             var currentUser = HttpContext.User;
         
-            return _classManagementService.GetTeacherTopics(currentUser.Identity.Name);
+            return _teacherManagementService.GetTeacherTopics(currentUser.Identity.Name);
         }
     }
 }
