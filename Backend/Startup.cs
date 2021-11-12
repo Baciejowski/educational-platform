@@ -13,7 +13,6 @@ using Backend.Services;
 using Backend.Services.ClassManagement;
 using Backend.Services.EmailProvider;
 using Backend.Services.EmailProvider.Settings;
-using Backend.Services.InMemory;
 using Backend.Services.ScenarioManagement;
 using Backend.Services.TeacherManagement;
 using VueCliMiddleware;
@@ -102,7 +101,6 @@ namespace Backend
             services.AddScoped<IScenarioManagementService, ScenarioManagementService>();
             services.AddScoped<ITeacherManagementService, TeacherManagementService>();
             services.AddSingleton<IAnalysisModuleService, AnalysisModuleService>();
-            services.AddSingleton<IInMemory, InMemory>();
         }
 
 

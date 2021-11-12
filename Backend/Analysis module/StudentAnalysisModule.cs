@@ -7,12 +7,8 @@ namespace Backend.Analysis_module
     public class StudentAnalysisModule
     {
         public double DifficultyLevel { get; set; }
-        readonly Random _random = new Random();
+        private readonly Random _random = new Random();
         private List<AnsweredQuestionModel> _answeredQuestionsModels = new List<AnsweredQuestionModel>();
-
-        public StudentAnalysisModule()
-        {
-        }
 
         public void CalculateLvl()
         {

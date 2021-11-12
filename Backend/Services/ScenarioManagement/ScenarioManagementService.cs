@@ -2,7 +2,6 @@
 using System.Linq;
 using Backend.Controllers.APIs;
 using Backend.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services.ScenarioManagement
 {

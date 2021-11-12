@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Backend.Analysis_module.Models;
 using Backend.Models;
 using Gameplay;
-using Google.Protobuf.Collections;
 
 namespace Backend.Analysis_module
 {
@@ -21,8 +19,8 @@ namespace Backend.Analysis_module
                 if (itemToRemove != null)
                     _studentSessionModules.Remove(itemToRemove);
 
-                Guid guid = Guid.NewGuid();
-                string id = guid.ToString();
+                var guid = Guid.NewGuid();
+                var id = guid.ToString();
                 var testUser = new StudentSessionModule(request.Email, 1, request.Code, id);
                 _studentSessionModules.Add(testUser);
                 return new StartGameResponse
@@ -49,7 +47,7 @@ namespace Backend.Analysis_module
             var user = GetUser(request.SessionCode);
 
             var question = user.GetQuestion((QuestionImportanceType) request.QuestionType);
-            QuestionResponse.Types.Answer[] answers = grpcQuestionResponseAnswersAdapter((List<Answer>)question.ABCDAnswers);
+            var answers = grpcQuestionResponseAnswersAdapter((List<Answer>)question.ABCDAnswers);
             var result =  new QuestionResponse()
             {
                 SessionCode = request.SessionCode,
@@ -72,7 +70,7 @@ namespace Backend.Analysis_module
         public Empty UpdateStudentsAnswers(StudentAnswerRequest request)
         {
             var user = GetUser(request.SessionCode);
-            user.SaveAnswerResponse(studentResponseAdapter(request));
+            user.SaveAnswerResponse(StudentResponseAdapter(request));
             return new Empty();
         }
 
@@ -81,7 +79,7 @@ namespace Backend.Analysis_module
             return new Empty();
         }
 
-        private AnsweredQuestionModel studentResponseAdapter(StudentAnswerRequest request)
+        private static AnsweredQuestionModel StudentResponseAdapter(StudentAnswerRequest request)
         {
             return new AnsweredQuestionModel
             {
@@ -92,7 +90,7 @@ namespace Backend.Analysis_module
         };
         }
 
-        private QuestionResponse.Types.Answer[] grpcQuestionResponseAnswersAdapter(List<Answer> answers)
+        private IEnumerable<QuestionResponse.Types.Answer> grpcQuestionResponseAnswersAdapter(List<Answer> answers)
         {
             var result = new QuestionResponse.Types.Answer[answers.Count];
             for (var i = 0; i < answers.Count; i++)

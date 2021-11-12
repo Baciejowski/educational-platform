@@ -7,13 +7,6 @@ using Gameplay;
 
 namespace Backend.Analysis_module
 {
-    public enum QuestionImportanceType
-    {
-        Required = 0,
-        Important = 1,
-        Basic = 2
-    }
-
     public class StudentSessionModule
     {
         public string Email { get; set; }
@@ -46,7 +39,7 @@ namespace Backend.Analysis_module
         {
             var result = new List<Question>[3];
             if (IsTestUser())
-                foreach (var question in mockScenario())
+                foreach (var question in MockScenario())
                 {
                     if (question.IsImportant)
                         result[0].Add(question);
@@ -59,7 +52,7 @@ namespace Backend.Analysis_module
             return result;
         }
 
-        private List<Question> mockScenario()
+        private List<Question> MockScenario()
         {
             String[] scenario = new[]
             {

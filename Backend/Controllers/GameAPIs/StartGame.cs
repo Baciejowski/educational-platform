@@ -11,9 +11,10 @@ namespace Backend.Controllers.GameAPIs
         private readonly ILogger<StartGame> _logger;
         private readonly IAnalysisModuleService _analysisModuleService;
 
-        public StartGame(ILogger<StartGame> logger)
+        public StartGame(ILogger<StartGame> logger, IAnalysisModuleService analysisModuleService)
         {
             _logger = logger;
+            _analysisModuleService = analysisModuleService;
         }
 
         [HttpPost]
