@@ -103,7 +103,7 @@ import M from "materialize-css";
                     .dispatch("authorizedDELETE_PromiseWithHeaders", { url: `/api/topics?id=${id}`})
                     .then((data) => {
                         if (data.status == 200) {
-                            M.toast({ html: "<div class='black-text'>New topic was created!</div>", classes: "green lighten-3" })
+                            M.toast({ html: "<div class='black-text'>Chosen topic was deleted!</div>", classes: "green lighten-3" })
                             document.getElementById("topic").value = ""
                             this.$store.dispatch("getTeacherData")
                         }

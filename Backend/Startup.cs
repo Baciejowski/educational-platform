@@ -7,11 +7,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Security.Claims;
+using Backend.Analysis_module;
 using Backend.Auth;
+using Backend.Services;
 using Backend.Services.ClassManagement;
 using Backend.Services.EmailProvider;
 using Backend.Services.EmailProvider.Settings;
 using Backend.Services.ScenarioManagement;
+using Backend.Services.TeacherManagement;
 using VueCliMiddleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,10 +24,10 @@ namespace Backend
 {
     public class Startup
     {
-        static private class Flags
+        private static class Flags
         {
-            static public bool RunVue = false;
-            static public bool RunAI = false;
+            public static bool RunVue = false;
+            public static bool RunAI = false;
         }
         public IConfiguration Configuration { get; }
 
@@ -45,7 +48,8 @@ namespace Backend
             void AddDatabase()
             {
                 var connectionString = Configuration["DbContextSettings:ConnectionString"];
-                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString));
+                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString),
+                    ServiceLifetime.Singleton);
             }
 
             void AddHttpServices()
@@ -94,7 +98,9 @@ namespace Backend
             services.AddTransient<IMailService, MailService>();
 
             services.AddScoped<IClassManagementService, ClassManagementService>();
-            services.AddSingleton<IScenarioManagementService, ScenarioManagementService>();
+            services.AddScoped<IScenarioManagementService, ScenarioManagementService>();
+            services.AddScoped<ITeacherManagementService, TeacherManagementService>();
+            services.AddSingleton<IAnalysisModuleService, AnalysisModuleService>();
         }
 
 

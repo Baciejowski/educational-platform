@@ -2,8 +2,10 @@
 using Backend.Models;
 using Backend.Services.ClassManagement;
 using Backend.Services.ScenarioManagement;
+using Backend.Services.TeacherManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers.APIs
 {
@@ -11,13 +13,15 @@ namespace Backend.Controllers.APIs
     [Route("api/create-scenario")]
     public class ScenarioApiController : Controller
     {
-        private readonly IClassManagementService _classManagementService;
         private readonly IScenarioManagementService _scenarioManagementService;
+        private readonly ITeacherManagementService _teacherManagementService;
+        private readonly DataContext _context;
 
-        public ScenarioApiController(IClassManagementService classManagementService, IScenarioManagementService scenarioManagementService)
+        public ScenarioApiController(IScenarioManagementService scenarioManagementService, ITeacherManagementService teacherManagementService, DataContext context)
         {
-            _classManagementService = classManagementService;
             _scenarioManagementService = scenarioManagementService;
+            _teacherManagementService = teacherManagementService;
+            _context = context;
         }
 
         
@@ -26,8 +30,10 @@ namespace Backend.Controllers.APIs
         public IEnumerable<Topic> Get()
         {
             var currentUser = HttpContext.User;
-        
-            return _classManagementService.GetTeacherTopics(currentUser.Identity.Name);
+            _context.Scenarios.Include(q => q.Questions).ThenInclude(a => a.ABCDAnswers); //TO DO refactoryzacja
+
+            var result=  _teacherManagementService.GetTeacherTopics(currentUser.Identity.Name);
+            return result;
         }
         
         [HttpPost]
@@ -35,9 +41,9 @@ namespace Backend.Controllers.APIs
         public OkResult Post(ScenarioViewModel payload)
         {
             var currentUser = HttpContext.User;
-            var teacher = _classManagementService.GetTeacherByAuthName(currentUser.Identity.Name);
+            var teacher = _teacherManagementService.GetTeacher(currentUser.Identity.Name);
             _scenarioManagementService.CreateScenarioFromForm(payload, teacher);
-        
+
             return Ok();
         }
     }

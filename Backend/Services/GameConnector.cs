@@ -16,44 +16,45 @@
 
 #endregion
 
+using System;
+using System.Threading.Tasks;
+using Backend.Analysis_module;
 using Gameplay;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System;
 
-namespace Backend
+namespace Backend.Services
 {
-    public class GameConnector : GameRequests.GameRequestsBase
+    public class GameConnector : GameplayMessages.GameplayMessagesBase
     {
         private readonly ILogger _logger;
-        private Random random = new Random();
+        private Random _random = new Random();
+        private readonly IAnalysisModuleService _analysisModuleService;
 
-        public GameConnector(ILoggerFactory loggerFactory)
+        public GameConnector(ILoggerFactory loggerFactory, IAnalysisModuleService analysisModuleService)
         {
+            _analysisModuleService = analysisModuleService;
             _logger = loggerFactory.CreateLogger<GameConnector>();
         }
 
-        public override Task<Question> PrepareNextQuestion(QuestionRequest request, ServerCallContext context)
+        public override Task<StartGameResponse> StartNewSession(StartGameRequest request, ServerCallContext context)
         {
-            Question.Types.Answer[] answers = {
-                new Question.Types.Answer { AnswerID = 1, Content = "Bad One 1", Correct = false, Argumentation = "Not the best one"},
-                new Question.Types.Answer { AnswerID = 2, Content = "Bad One 2", Correct = false, Argumentation = "You can do better"},
-                new Question.Types.Answer { AnswerID = 3, Content = "Bad One 3", Correct = false, Argumentation = "Are you that stupid"},
-                new Question.Types.Answer { AnswerID = 4, Content = "Yay!", Correct = true, Argumentation = "W/e"}
-            };
-            var question = new Question
-            {
-                QuestionID = 1,
-                Content = "This is a test question.",
-                Hint = "The shortest answer is the best one.",
-                Difficulty = (uint) (random.Next() % 5 + 1),
-                QuestionType = Question.Types.QuestionType.Abcd,
-            };
-            question.Answers.Add(answers);
+            return Task.FromResult(_analysisModuleService.StartNewSession(request));
+        }
 
+        public override Task<QuestionResponse> PrepareNextQuestion(QuestionRequest request, ServerCallContext context)
+        {
+            return Task.FromResult(_analysisModuleService.PrepareNextQuestion(request));
+        }
 
-            return Task.FromResult(question);
+        public override Task<Empty> UpdateStudentsAnswers(StudentAnswerRequest request, ServerCallContext context)
+        {
+            return Task.FromResult(_analysisModuleService.UpdateStudentsAnswers(request));
+        }
+
+        public override Task<Empty> FinishGame(EndGameRequest request, ServerCallContext context)
+        {
+            return Task.FromResult(_analysisModuleService.EndGame(request));
         }
     }
 }
