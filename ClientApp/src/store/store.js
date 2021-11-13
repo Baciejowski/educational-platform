@@ -59,6 +59,28 @@ const actions = {
                 .then((res) => res.data)
         )
     },
+    authorizedPOST_PromiseWithHeaders({ getters }, { url, data }) {
+        return getters.getAuthToken().then((token) =>
+            axios
+                .post(url, data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then((res) => res)
+        )
+    },
+    authorizedDELETE_PromiseWithHeaders({ getters }, { url }) {
+        return getters.getAuthToken().then((token) =>
+            axios
+                .delete(url, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then((res) => res)
+        )
+    },
     getTeacherData({ state, dispatch }) {
         dispatch("authorizedGET_Promise", "/api/classes")
             .then((data) => {
