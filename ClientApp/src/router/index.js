@@ -6,6 +6,7 @@ import { authGuard } from "@/auth/authGuard"
 import ClassManagement from "@/views/ClassManagement.vue"
 import CreateScenario from "@/views/CreateScenario.vue"
 import Counter from "@/views/Counter.vue";
+import TopicsManagement from "@/views/TopicsManagement.vue"
 
 Vue.use(VueRouter)
 
@@ -19,6 +20,12 @@ const routes = [
         path: "/profile",
         name: "profile",
         component: Profile,
+        beforeEnter: authGuard
+    },
+    {
+        path: "/topics-management",
+        name: "topics-management",
+        component: TopicsManagement,
         beforeEnter: authGuard
     },
     {

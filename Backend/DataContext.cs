@@ -1,5 +1,6 @@
 ﻿using Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Backend
 {
@@ -9,7 +10,26 @@ namespace Backend
             : base(options)
         {
         }
+        public Teacher ResolveOrCreateUser(System.Security.Claims.ClaimsPrincipal user)
+        {
+            if (user.Identity.Name == null || user.Identity.Name.Length == 0) return null;
+            var teacher = Teachers.FirstOrDefault(t => t.AuthName.Equals(user.Identity.Name));
 
+            if (teacher == null)
+            {
+                Add(new Teacher { AuthName = user.Identity.Name });
+                try
+                {
+                    SaveChanges();
+                }
+                catch (DbUpdateException e)
+                {
+                    return null;
+                }
+                teacher = Teachers.FirstOrDefault(t => t.AuthName.Equals(user.Identity.Name));
+            }
+            return teacher;
+        }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Game> Games { get; set; }
