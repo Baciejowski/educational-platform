@@ -59,6 +59,7 @@ namespace Backend.Services.ClassManagement
                     Scenario = scenarioItem,
                     StartGame = classesGameInvitationViewModel.StartGame,
                     EndGame = classesGameInvitationViewModel.EndGame,
+                    RandomTest = classesGameInvitationViewModel.RandomTest,
                     Code = code
                 }); 
             }

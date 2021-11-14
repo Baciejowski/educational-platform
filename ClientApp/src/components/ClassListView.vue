@@ -50,6 +50,10 @@
                             />
                             <!-- <date-picker :id="'end-game' + item.classID" v-model="endGame" :state="checkData()" class="mb-2"></date-picker> -->
                             <p>'{{ endGame }}'</p>
+                            <b-form-group label="Random test">
+                                <b-form-radio v-model="randomTest" name="test" :value="false">False</b-form-radio>
+                                <b-form-radio v-model="randomTest" name="test" :value="true">True</b-form-radio>
+                            </b-form-group>
 
                             <label :for="'select-topic' + item.classID">Topic</label>
                             <b-form-select :name="'select-topic' + item.classID" v-model="selectedTopic" :options="getTopics()"></b-form-select>
@@ -88,7 +92,8 @@ export default {
             startGame: null,
             endGame: null,
             selectedTopic: null,
-            selectedScenario: null
+            selectedScenario: null,
+            randomTest: false
         }
     },
     computed: {
@@ -126,7 +131,8 @@ export default {
                 topicId: this.selectedTopic,
                 scenarioId: this.selectedScenario,
                 startGame: new Date(this.startGame).toISOString(),
-                endGame: new Date(this.endGame).toISOString()
+                endGame: new Date(this.endGame).toISOString(),
+                randomTest: this.randomTest
             }
 
             this.$store
@@ -138,6 +144,7 @@ export default {
                     this.endGame = null
                     this.selectedTopic = null
                     this.selectedScenario = null
+                    this.randomTest = false
                     alert("Invitations created succesful")
                 })
         }

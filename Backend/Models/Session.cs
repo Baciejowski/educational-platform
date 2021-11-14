@@ -20,5 +20,6 @@ namespace Backend.Models
         public DateTime StartGame { get; set; }
         public DateTime EndGame { get; set; }
         public string Code { get; set; }
+        public bool RandomTest { get; set; }
     }
 }

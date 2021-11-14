@@ -7,6 +7,7 @@ namespace Backend.Controllers.APIs.Models
         public int ClassId { get; set; }
         public int TopicId { get; set; }
         public int ScenarioId { get; set; }
+        public bool RandomTest { get; set; }
         public DateTime StartGame { get; set; }
         public DateTime EndGame { get; set; }
     }
