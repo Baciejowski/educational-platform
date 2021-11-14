@@ -6,6 +6,7 @@ namespace Backend.Controllers.APIs.Models
     public class ScenarioViewModel
     {
         public string Name { get; set; }
+        public string Url { get; set; }
         public IEnumerable<IEnumerable<ScenarioQuestionsViewModel>> Questions { get; set; }
         public string Topic { get; set; }
     }

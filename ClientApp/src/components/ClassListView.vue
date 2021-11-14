@@ -88,8 +88,7 @@ export default {
             startGame: null,
             endGame: null,
             selectedTopic: null,
-            selectedScenario: null,
-            selectedTeacher: 1
+            selectedScenario: null
         }
     },
     computed: {
@@ -114,9 +113,7 @@ export default {
             return this.startGame && this.endGame && this.endGame > this.startGame
         },
         getTopics() {
-            return this.$store.getters
-                .getTopics()
-                ?.map(({ topicID, topicName }) => ({ value: topicID, text: topicName }))
+            return this.$store.getters.getTopics()?.map(({ topicID, topicName }) => ({ value: topicID, text: topicName }))
         },
         getScenarios() {
             return this.$store.getters
@@ -128,7 +125,6 @@ export default {
                 classId: this.selectedClass,
                 topicId: this.selectedTopic,
                 scenarioId: this.selectedScenario,
-                teacherId: this.selectedTeacher,
                 startGame: new Date(this.startGame).toISOString(),
                 endGame: new Date(this.endGame).toISOString()
             }
@@ -136,7 +132,14 @@ export default {
             this.$store
                 .dispatch("authorizedPOST_Promise", { url: "/api/classes", data })
                 .catch(() => console.log)
-                .then(alert("Invitations created succesful"))
+                .then(() => {
+                    this.selectedClass = null
+                    this.startGame = null
+                    this.endGame = null
+                    this.selectedTopic = null
+                    this.selectedScenario = null
+                    alert("Invitations created succesful")
+                })
         }
     }
 }

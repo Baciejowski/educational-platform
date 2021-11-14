@@ -31,6 +31,7 @@ namespace Backend.Services.ScenarioManagement
             var scenario = new Scenario
             {
                 Name = formData.Name,
+                Url = formData.Url,
                 Topic = topic,
                 Questions = new List<Question>()
             };

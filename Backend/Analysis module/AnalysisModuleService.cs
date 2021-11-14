@@ -59,15 +59,6 @@ namespace Backend.Analysis_module
             return result;
         }
 
-        private StudentSessionModule GetUser(string sessionCode)
-        {
-            var result =
-                _studentSessionModules.FirstOrDefault(x => x.SessionId == sessionCode);
-
-            if (result == null) throw new NullReferenceException();
-            return result;
-        }
-
         public Empty UpdateStudentsAnswers(StudentAnswerRequest request)
         {
             var user = GetUser(request.SessionCode);
@@ -78,6 +69,15 @@ namespace Backend.Analysis_module
         public Empty EndGame(EndGameRequest request)
         {
             return new Empty();
+        }
+
+        private StudentSessionModule GetUser(string sessionCode)
+        {
+            var result =
+                _studentSessionModules.FirstOrDefault(x => x.SessionId == sessionCode);
+
+            if (result == null) throw new NullReferenceException();
+            return result;
         }
 
         private static AnsweredQuestionModel StudentResponseAdapter(StudentAnswerRequest request)

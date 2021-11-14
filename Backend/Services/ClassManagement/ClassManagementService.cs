@@ -37,7 +37,7 @@ namespace Backend.Services.ClassManagement
             foreach (var student in studentsList)
             {
                 var gameId =
-                    $"{classesGameInvitationViewModel.ClassId}-{student.StudentID}-{classesGameInvitationViewModel.TeacherId}-{classesGameInvitationViewModel.TopicId}-{classesGameInvitationViewModel.ScenarioId}-{classesGameInvitationViewModel.StartGame}-{classesGameInvitationViewModel.EndGame}";
+                    $"{classesGameInvitationViewModel.ClassId}-{student.StudentID}-{teacher.TeacherID}-{classesGameInvitationViewModel.TopicId}-{classesGameInvitationViewModel.ScenarioId}-{classesGameInvitationViewModel.StartGame}-{classesGameInvitationViewModel.EndGame}";
 
                 var code = String.Format("{0:X}", gameId.GetHashCode());
                 var request = new GameInvitationRequest
