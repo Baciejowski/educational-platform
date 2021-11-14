@@ -38,16 +38,22 @@ namespace Backend.Analysis_module
         private List<Question>[] GetQuestionsFromScenario()
         {
             var result = new List<Question>[3];
+            for (var i = 0; i < result.Length; i++)
+            {
+                result[i] = new List<Question>();
+            }
             if (IsTestUser())
+            {
                 foreach (var question in MockScenario())
                 {
-                    if (question.IsImportant)
+                    if (question.IsObligatory)
                         result[0].Add(question);
                     else if (question.IsImportant)
                         result[1].Add(question);
                     else
                         result[2].Add(question);
                 }
+            }
 
             return result;
         }
@@ -88,11 +94,12 @@ namespace Backend.Analysis_module
                 "What is the coldest place on Earth?;The North Pole;Antarctica;Siberia;Cape Horn, South America;2"
             };
             var result = new List<Question>();
-            foreach (var question in scenario)
+            for (var j = 0; j < scenario.Length; j++)
             {
+                var question = scenario[j];
                 var data = question.Split(";");
                 var correctAnswer = Convert.ToInt32(data.Last());
-                var type = _random.Next(0, 2);
+                var type = j%3;
                 var newQuestion = new Question
                 {
                     Content = data[0],
@@ -110,6 +117,7 @@ namespace Backend.Analysis_module
                             Correct = correctAnswer == (i - 1)
                         });
                 }
+                result.Add(newQuestion);
             }
 
             return result;
@@ -135,6 +143,11 @@ namespace Backend.Analysis_module
         public Question GetQuestion(QuestionImportanceType questionImportanceType)
         {
             return _readyQuestions[(int)questionImportanceType];
+        }
+
+        public IEnumerable<int> GetQuestionsAmount()
+        {
+            return _availableQuestions.Select(x=>x.Count).ToList();
         }
 
         public void SaveAnswerResponse(AnsweredQuestionModel answeredQuestion)

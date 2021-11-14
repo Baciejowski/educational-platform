@@ -26,12 +26,13 @@ namespace Backend.Analysis_module
                 return new StartGameResponse
                 {
                     SessionCode = id,
+                    QuestionsNumber = { testUser.GetQuestionsAmount() },
                     Error = false,
                     StudentData = new StartGameResponse.Types.StudentData
                     {
                         Experience = 0,
                         Money = 0
-                    }
+                    },
                 };
             }
 
@@ -46,22 +47,22 @@ namespace Backend.Analysis_module
         {
             var user = GetUser(request.SessionCode);
 
-            var question = user.GetQuestion((QuestionImportanceType) request.QuestionType);
+            var question = user.GetQuestion((QuestionImportanceType)request.QuestionType);
             var answers = grpcQuestionResponseAnswersAdapter((List<Answer>)question.ABCDAnswers);
-            var result =  new QuestionResponse()
+            var result = new QuestionResponse()
             {
                 SessionCode = request.SessionCode,
-                Content = question.Content, 
-                QuestionReward = user.CalculateReward(),
+                Content = question.Content,
+                Answers = { answers },
+                QuestionReward = user.CalculateReward()
             };
-            result.Answers.Add(answers);
             return result;
         }
 
         private StudentSessionModule GetUser(string sessionCode)
         {
-            var result = 
-            _studentSessionModules.FirstOrDefault(x => x.SessionId == sessionCode);
+            var result =
+                _studentSessionModules.FirstOrDefault(x => x.SessionId == sessionCode);
 
             if (result == null) throw new NullReferenceException();
             return result;
@@ -83,11 +84,10 @@ namespace Backend.Analysis_module
         {
             return new AnsweredQuestionModel
             {
-
-                QuestionImportanceType= (QuestionImportanceType)((int)request.QuestionType),
-                AnswersId = request.AnswersID ,
-                TimeToAnswer = request.TimeToAnswer 
-        };
+                QuestionImportanceType = (QuestionImportanceType)((int)request.QuestionType),
+                AnswersId = request.AnswersID,
+                TimeToAnswer = request.TimeToAnswer
+            };
         }
 
         private IEnumerable<QuestionResponse.Types.Answer> grpcQuestionResponseAnswersAdapter(List<Answer> answers)
