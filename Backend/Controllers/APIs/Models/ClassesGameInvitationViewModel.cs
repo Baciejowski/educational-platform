@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Backend.Controllers.APIs
+namespace Backend.Controllers.APIs.Models
 {
     public class ClassesGameInvitationViewModel
     {

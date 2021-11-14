@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Backend.Controllers.APIs;
+using Backend.Controllers.APIs.Models;
 using Backend.Models;
 using Backend.Services.EmailProvider;
 using Backend.Services.EmailProvider.Models;

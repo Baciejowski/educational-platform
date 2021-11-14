@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Backend.Models;
 
-namespace Backend.Controllers.APIs
+namespace Backend.Controllers.APIs.Models
 {
     public class ScenarioViewModel
     {
