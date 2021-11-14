@@ -133,6 +133,9 @@ namespace Backend.Migrations
                     b.Property<int?>("TopicID")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
                     b.HasKey("ScenarioID");
 
                     b.HasIndex("TopicID");

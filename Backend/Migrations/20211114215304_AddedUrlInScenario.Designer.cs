@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using test2;
+using Backend;
 
-namespace test2.Migrations
+namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20211114215304_AddedUrlInScenario")]
