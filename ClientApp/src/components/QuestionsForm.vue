@@ -21,6 +21,16 @@
                 ></b-form-file>
                 <div class="p-3">Selected file: {{ files ? files.map((file) => file.name) : "" }}</div>
             </div>
+            <div class="py-2">
+                <h4>Study materials - URL</h4>
+                <p>To let students familiarize themselves with the topic before the game, please add ulr to your study materials.</p>
+
+                <b-row class="my-1">
+                    <b-col >
+                        <b-form-input id="input-small" size="sm" placeholder="Enter your url" v-model="url"></b-form-input>
+                    </b-col>
+                </b-row>
+            </div>
             <div v-for="(_, difficulty) in 6" :key="difficulty">
                 <div v-if="difficulty === 0" class="d-flex justify-content-between">
                     <h4>Obligatory questions</h4>
@@ -143,6 +153,7 @@ export default {
     data() {
         return {
             files: [],
+            url:null,
             form: [
                 [
                     {
@@ -169,6 +180,7 @@ export default {
             return {
                 name,
                 topic,
+                url:this.url,
                 questions: this.form
             }
         }
@@ -184,10 +196,12 @@ export default {
             event.preventDefault()
             const { name, topic } = this.$store.state.createScenario
             if (name && topic) {
-                alert(JSON.stringify(this.sendData))
                 this.$store
                     .dispatch("authorizedPOST_Promise", { url: "/api/create-scenario", data: this.sendData })
-                    .then(alert("Scenario created!"))
+                    .then(()=>{
+                        this.resetData()
+                        alert("Scenario created!")
+                    })
                     .catch(() => console.log)
             }
         },

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Backend.Controllers.APIs.Models;
 using Backend.Models;
 using Backend.Services.ClassManagement;
 using Backend.Services.TeacherManagement;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Backend.Controllers.APIs.Models;
 using Backend.Models;
-using Backend.Services.ClassManagement;
 using Backend.Services.ScenarioManagement;
 using Backend.Services.TeacherManagement;
 using Microsoft.AspNetCore.Authorization;

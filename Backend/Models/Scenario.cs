@@ -17,6 +17,6 @@ namespace Backend.Models
         [JsonIgnore]
         public virtual ICollection<Game> Games { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
-
+        public string Url { get; set; }
     }
 }

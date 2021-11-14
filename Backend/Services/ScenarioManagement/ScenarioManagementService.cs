@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Backend.Controllers.APIs;
+using Backend.Controllers.APIs.Models;
 using Backend.Models;
 
 namespace Backend.Services.ScenarioManagement
@@ -30,6 +31,7 @@ namespace Backend.Services.ScenarioManagement
             var scenario = new Scenario
             {
                 Name = formData.Name,
+                Url = formData.Url,
                 Topic = topic,
                 Questions = new List<Question>()
             };
