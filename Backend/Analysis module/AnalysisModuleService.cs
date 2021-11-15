@@ -97,7 +97,7 @@ namespace Backend.Analysis_module
             {
                 result[i] = new QuestionResponse.Types.Answer
                 {
-                    AnswersID = (uint)answers[i].AnswerID,
+                    AnswersID = answers[i].AnswerID,
                     Content = answers[i].Content,
                     Correct = answers[i].Correct
                 };

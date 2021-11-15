@@ -50,7 +50,7 @@ message QuestionResponse {
 	string sessionCode = 1;
 	string content = 2;
 	message Answer {
-		uint32 answersID = 1;
+		int32 answersID = 1;
 		string content = 2;
 		bool correct = 3;
 	}
@@ -61,19 +61,20 @@ message QuestionResponse {
 message StudentAnswerRequest {
 	string sessionCode = 1;
 	QuestionTrigger questionType = 2;
-    repeated uint32 answersID = 3;
-    uint32 timeToAnswer = 4;
+    repeated int32 answersID = 3;
+    int32 timeToAnswer = 4;
+	float questionCorrectnes = 5;
 }
 
 message EndGameRequest {
 	message StudentEndGameData {
 		int32 experience = 1;
 		int32 money = 2;
-		repeated double skills = 3;
+		repeated float skills = 3;
 	}
 	string sessionCode = 1;
     bool scenarioEnded = 2;
-	uint32 gameplayTime = 4;
+	int32 gameplayTime = 4;
 	StudentEndGameData studentEndGameData =5;
 }
 

@@ -112,9 +112,9 @@ namespace Backend.Analysis_module
                     newQuestion.ABCDAnswers.Add(
                         new Answer
                         {
-                            AnswerID = i - 1,
+                            AnswerID = i ,
                             Content = data[i],
-                            Correct = correctAnswer == (i - 1)
+                            Correct = correctAnswer == (i)
                         });
                 }
                 result.Add(newQuestion);
