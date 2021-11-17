@@ -6,6 +6,8 @@ Vue.use(Vuex)
 
 const state = {
     teacherData: [],
+    topics: [],
+    scenario: {},
     loadingData: true,
     teacher: null,
     auth: null,
@@ -19,7 +21,8 @@ const state = {
         name: "",
         topic: "",
         teacherTopics: []
-    }
+    },
+    editionMode: false
 }
 
 const getters = {
@@ -48,6 +51,17 @@ const actions = {
                 .then((res) => res.data)
         )
     },
+    authorizedGET_PromiseWithHeaders({ getters }, url) {
+        return getters.getAuthToken().then((token) =>
+            axios
+                .get(url, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then((res) => res)
+        )
+    },
     authorizedPOST_Promise({ getters }, { url, data }) {
         return getters.getAuthToken().then((token) =>
             axios
@@ -69,6 +83,29 @@ const actions = {
                 })
                 .then((res) => res)
         )
+    },
+    authorizedPUT_PromiseWithHeaders({ getters }, { url, data }) {
+        return getters.getAuthToken().then((token) =>
+            axios
+                .put(url, data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then((res) => res)
+        )
+    },
+    authorizedCOPY_PromiseWithHeaders({ getters }, { _url }) {
+        return getters.getAuthToken().then((token) =>
+            axios(
+            {
+                method: "COPY",
+                url: _url,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+                })
+                .then((res) => res))
     },
     authorizedDELETE_PromiseWithHeaders({ getters }, { url }) {
         return getters.getAuthToken().then((token) =>
@@ -94,6 +131,24 @@ const actions = {
         dispatch("authorizedGET_Promise", "/api/create-scenario")
             .then((data) => {
                 state.createScenario.teacherTopics = data?.map((item) => item.topicName)
+            })
+            .catch((err) => (state.classesMessage = err))
+    },
+    getTopicsWithScenarios({ state, dispatch }) {
+        state.loadingData = true
+        dispatch("authorizedGET_PromiseWithHeaders", "/api/topics?includeScenarios=true")
+            .then((resp) => {
+                state.topics = resp.data
+                state.loadingData = false
+            })
+            .catch((err) => (state.classesMessage = err))
+    },
+    getScenarioByID({ state, dispatch }, { id }) {
+        state.isLoading = true
+        dispatch("authorizedGET_Promise", `/api/scenarios/${id}?includeQuestions=true&includeAnswers=true`)
+            .then((data) => {
+                state.scenario = data
+                state.loadingData = false
             })
             .catch((err) => (state.classesMessage = err))
     }
