@@ -12,12 +12,12 @@ namespace Backend.Controllers.APIs
 {
     [ApiController]
     [Route("api/scenarios")]
-    public class ScenarioApiController2 : Controller
+    public class ScenarioManagementApiController : Controller
     {
         private readonly DataContext _dataContext;
-        private readonly ILogger<ScenarioApiController2> _logger;
+        private readonly ILogger<ScenarioManagementApiController> _logger;
 
-        public ScenarioApiController2(DataContext dataContext, ILogger<ScenarioApiController2> logger)
+        public ScenarioManagementApiController(DataContext dataContext, ILogger<ScenarioManagementApiController> logger)
         {
             _dataContext = dataContext;
             _logger = logger;
