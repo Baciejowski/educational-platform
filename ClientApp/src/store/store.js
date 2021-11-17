@@ -21,8 +21,7 @@ const state = {
         name: "",
         topic: "",
         teacherTopics: []
-    },
-    editionMode: false
+    }
 }
 
 const getters = {
@@ -59,7 +58,6 @@ const actions = {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                .then((res) => res)
         )
     },
     authorizedHEAD_PromiseWithHeaders({ getters }, { url }) {
@@ -70,7 +68,6 @@ const actions = {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                .then((res) => res)
         )
     },
     authorizedPOST_Promise({ getters }, { url, data }) {
@@ -92,7 +89,6 @@ const actions = {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                .then((res) => res)
         )
     },
     authorizedPUT_PromiseWithHeaders({ getters }, { url, data }) {
@@ -103,7 +99,6 @@ const actions = {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                .then((res) => res)
         )
     },
     authorizedCOPY_PromiseWithHeaders({ getters }, { _url }) {
@@ -116,7 +111,7 @@ const actions = {
                     Authorization: `Bearer ${token}`
                 }
                 })
-                .then((res) => res))
+        )
     },
     authorizedDELETE_PromiseWithHeaders({ getters }, { url }) {
         return getters.getAuthToken().then((token) =>
@@ -126,7 +121,6 @@ const actions = {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                .then((res) => res)
         )
     },
     getTeacherData({ state, dispatch }) {
