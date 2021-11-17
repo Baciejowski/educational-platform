@@ -24,6 +24,22 @@ namespace Backend.Controllers.APIs
 
         }
 
+        [HttpHead]
+        [Route("/api/scenarios/{id}")]
+        [Authorize]
+        public IActionResult Head([FromRoute][Required] int id, bool includeQuestions, bool includeAnswers)
+        {
+            if (includeAnswers && !includeQuestions) return BadRequest();
+
+            Teacher teacher = _dataContext.ResolveOrCreateUser(HttpContext.User);
+            if (teacher == null) return Unauthorized();
+
+            Scenario scenario = _dataContext.Scenarios.FirstOrDefault(s => s.ScenarioID == id);
+            if (scenario == null) return NotFound();
+
+            return Ok();
+        }
+
         [HttpGet]
         [Route("/api/scenarios/{id}")]
         [Authorize]

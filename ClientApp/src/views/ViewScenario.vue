@@ -131,10 +131,25 @@
             }
         },
         created() {
-            this.$store.dispatch({
-                type: 'getScenarioByID',
-                id: (new URL(window.location.href)).searchParams.get("id")
-            })
+            this.$store.state.loadingData = true
+            const _id = (new URL(window.location.href)).searchParams.get("id")
+            if (_id) {
+                this.$store
+                    .dispatch("authorizedHEAD_PromiseWithHeaders", { url: `/api/scenarios/${_id}?includeQuestions=true&includeAnswers=true` })
+                    .then((data) => {
+                        if (data.status == 200) {
+                            this.$store.dispatch({
+                                type: 'getScenarioByID',
+                                id: _id
+                            })
+                        }
+                    })
+                    .catch(() => window.location.href = '/404')
+                this.$store.state.loadingData = false
+            }
+            else
+                window.location.href = '/404'
+            
         },
         mounted() {
             M.Modal.init(document.querySelectorAll('.modal'));
@@ -169,6 +184,7 @@
                 document.getElementById(event.path[2].id).remove()
             },
             deleteQuestion(id) {
+                this.$store.state.loadingData = true
                 this.$store
                     .dispatch("authorizedDELETE_PromiseWithHeaders", { url: `/api/questions?id=${id}` })
                     .then((data) => {
@@ -181,6 +197,7 @@
                         }
                     })
                     .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
+                this.$store.state.loadingData = false
             },
             addAnswer() {
                 const questionForm = document.getElementById("questionForm")
@@ -239,6 +256,7 @@
                 return arr[lvl-1]
             },
             async onSubmit(event) {
+                this.$store.state.loadingData = true
                 event.preventDefault()
                 this.answersToKeep = []
                 let editedQuestion = this.scenario.Questions.find(q => q.QuestionID === this.editedQuestionID)
@@ -284,6 +302,7 @@
                             id: (new URL(window.location.href)).searchParams.get("id")
                         })
                     })
+                this.$store.state.loadingData = false
                 await this.sleep(1500);
                 document.getElementById(`questionCard${this.editedQuestionID}`).scrollIntoView({
                     behavior: 'smooth'

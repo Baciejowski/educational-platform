@@ -62,6 +62,17 @@ const actions = {
                 .then((res) => res)
         )
     },
+    authorizedHEAD_PromiseWithHeaders({ getters }, { url }) {
+        return getters.getAuthToken().then((token) =>
+            axios
+                .head(url, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then((res) => res)
+        )
+    },
     authorizedPOST_Promise({ getters }, { url, data }) {
         return getters.getAuthToken().then((token) =>
             axios
