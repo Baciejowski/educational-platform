@@ -43,7 +43,7 @@
                         <a href="#!" @click="copyScenario(scenario.scenarioID)" class="secondary-content grey-link hovered-turquoise"><i class="material-icons">content_copy</i></a>
                         <a href="#!" class="secondary-content grey-link hovered-blue"><i class="material-icons">ios_share</i></a>
                         <a href="#!" class="secondary-content grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
-                        <a href="#!" class="secondary-content grey-link hovered-orange"><i class="material-icons">edit</i></a>
+                        <a :href="'/scenario?id=' + scenario.scenarioID" class="secondary-content grey-link hovered-orange"><i class="material-icons">edit</i></a>
                         <a :href="'/scenario?id=' + scenario.scenarioID" class="secondary-content grey-link hovered-green"><i class="material-icons">search</i></a>
                     </a>
                 </div>
