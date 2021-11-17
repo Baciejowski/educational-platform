@@ -17,13 +17,13 @@
             <div class="divider orange" style="margin-bottom:10px" />
             <div v-if="scenario && Object.keys(scenario).length > 0 ">
                 <div style="display: inline;">
-                    <a class="waves-effect waves-light btn orange disabled" href="#!">Add Question</a>
+                    <a class="waves-effect waves-light btn orange disabled" style="margin-bottom: 10px" href="#!">Add Question</a>
                 </div>
                 <div style="display: inline;">
-                    <a class="right waves-effect waves-light btn orange disabled" href="#!">Review questions proposed by AI</a>
+                    <a class="right waves-effect waves-light btn orange disabled" style="margin-left: 10px; margin-bottom: 10px" href="#!">Review questions proposed by AI</a>
                 </div>
                 <div v-if="scenario.Url" style="display: inline;">
-                    <a class="right waves-effect waves-light btn orange" style="margin-right: 10px;" :href="scenario.Url" target="_blank">Reference materials</a>
+                    <a class="right waves-effect waves-light btn orange" :href="scenario.Url" target="_blank">Reference materials</a>
                 </div>
                 <form>
                     <div class="input-field">
