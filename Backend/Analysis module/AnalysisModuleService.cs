@@ -4,42 +4,77 @@ using System.Linq;
 using Backend.Analysis_module.Models;
 using Backend.Models;
 using Gameplay;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Analysis_module
 {
     public class AnalysisModuleService : IAnalysisModuleService
     {
+        protected readonly DataContext Context;
         private List<StudentSessionModule> _studentSessionModules = new List<StudentSessionModule>();
+
+        public AnalysisModuleService(DataContext context)
+        {
+            Context = context;
+        }
 
         public StartGameResponse StartNewSession(StartGameRequest request)
         {
+            var id = GenerateGameId();
+            StudentSessionModule studentSessionModule;
             if (request.Email == "test" && request.Code == "test")
             {
                 var itemToRemove = _studentSessionModules.FirstOrDefault(x => x.Email == "test" && x.Code == "test");
                 if (itemToRemove != null)
                     _studentSessionModules.Remove(itemToRemove);
 
-                var guid = Guid.NewGuid();
-                var id = guid.ToString();
-                var testUser = new StudentSessionModule(request.Email, 1, request.Code, id);
-                _studentSessionModules.Add(testUser);
-                return new StartGameResponse
+                studentSessionModule = new StudentSessionModule(request.Email, 1, request.Code, id);
+            }
+            else
+            {
+                var userSession = Context.Sessions.Include(s => s.Student).Include(s => s.Scenario)
+                    .FirstOrDefault(x => x.Code == request.Code && x.Student.Email == request.Email);
+                if (userSession == null)
                 {
-                    SessionCode = id,
-                    QuestionsNumber = { testUser.GetQuestionsAmount() },
-                    Error = false,
-                    StudentData = new StartGameResponse.Types.StudentData
+                    return new StartGameResponse
                     {
-                        Experience = 0,
-                        Money = 0
-                    },
-                };
+                        Error = true,
+                        ErrorMsg = "Wrong credentials."
+                    };
+                }
+
+                if (!BetweenDates(DateTime.Now, userSession.StartGame, userSession.EndGame))
+                {
+                    return new StartGameResponse
+                    {
+                        Error = true,
+                        ErrorMsg = "Sorry! Your game expired."
+                    };
+                }
+
+                // if(userSession.Attempts>0)
+                // {
+                //     return new StartGameResponse
+                //     {
+                //         Error = true,
+                //         ErrorMsg = "Sorry! You have reached the limit of attempts."
+                //     };
+                // }
+                studentSessionModule =
+                    new StudentSessionModule(request.Email, userSession.Student.StudentID, request.Code, id, userSession.Scenario);
             }
 
+            _studentSessionModules.Add(studentSessionModule);
             return new StartGameResponse
             {
-                Error = true,
-                ErrorMsg = "Not implemented"
+                SessionCode = id,
+                QuestionsNumber = { studentSessionModule.GetQuestionsAmount() },
+                Error = false,
+                StudentData = new StartGameResponse.Types.StudentData
+                {
+                    Experience = 0,
+                    Money = 0
+                } // TO DO  - pobieranie statow ucznia
             };
         }
 
@@ -104,6 +139,16 @@ namespace Backend.Analysis_module
             }
 
             return result;
+        }
+
+        private static bool BetweenDates(DateTime input, DateTime date1, DateTime date2)
+        {
+            return (input > date1 && input < date2);
+        }
+
+        private static string GenerateGameId()
+        {
+            return Guid.NewGuid().ToString();
         }
     }
 }

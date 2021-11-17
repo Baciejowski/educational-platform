@@ -14,6 +14,7 @@ namespace Backend.Analysis_module
         public string SessionId { get; set; }
         public string Code { get; set; }
 
+        private readonly Scenario _userSessionScenario;
         private Question[] _readyQuestions;
         private List<Question>[] _availableQuestions;
         private StudentAnalysisModule _studentAnalysisModule = new StudentAnalysisModule();
@@ -25,7 +26,18 @@ namespace Backend.Analysis_module
             StudentId = studentId;
             Code = code;
             SessionId = sessionId;
+            _availableQuestions = GetQuestionsFromScenario();
+            _readyQuestions = SetInitialQuestions();
+        }
 
+        public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId,
+            Scenario userSessionScenario)
+        {
+            Email = studentEmail;
+            StudentId = studentId;
+            Code = code;
+            SessionId = sessionId;
+            _userSessionScenario = userSessionScenario;
             _availableQuestions = GetQuestionsFromScenario();
             _readyQuestions = SetInitialQuestions();
         }
@@ -42,26 +54,79 @@ namespace Backend.Analysis_module
             {
                 result[i] = new List<Question>();
             }
-            if (IsTestUser())
+
+            var scenario = IsTestUser() ? MockScenario() : _userSessionScenario.Questions;
+            foreach (var question in scenario)
             {
-                foreach (var question in MockScenario())
-                {
-                    if (question.IsObligatory)
-                        result[0].Add(question);
-                    else if (question.IsImportant)
-                        result[1].Add(question);
-                    else
-                        result[2].Add(question);
-                }
+                if (question.IsObligatory)
+                    result[0].Add(question);
+                else if (question.IsImportant)
+                    result[1].Add(question);
+                else
+                    result[2].Add(question);
             }
 
             return result;
         }
 
-        private List<Question> MockScenario()
+        private Question[] SetInitialQuestions()
         {
-            String[] scenario = new[]
+            var result = new Question[3];
+            for (var i = 0; i < 3; i++)
             {
+                result[i] = GetRandomQuestionOfType(i);
+            }
+
+            return result;
+        }
+
+        private Question GetRandomQuestionOfType(int questionImportanceType)
+        {
+            var index = _random.Next(_availableQuestions[questionImportanceType].Count);
+            return _availableQuestions[questionImportanceType].ElementAt(index);
+        }
+
+        public Question GetQuestion(QuestionImportanceType questionImportanceType)
+        {
+            return _readyQuestions[(int)questionImportanceType];
+        }
+
+        public IEnumerable<int> GetQuestionsAmount()
+        {
+            return _availableQuestions.Select(x => x.Count).ToList();
+        }
+
+        public void SaveAnswerResponse(AnsweredQuestionModel answeredQuestion)
+        {
+            answeredQuestion.Question = GetQuestion(answeredQuestion.QuestionImportanceType);
+            _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
+            FindNextQuestion(answeredQuestion.QuestionImportanceType);
+        }
+
+        public QuestionResponse.Types.QuestionReward CalculateReward()
+        {
+            return new QuestionResponse.Types.QuestionReward
+            {
+                Money = 100,
+                Experience = 100
+            };
+        }
+
+        private void FindNextQuestion(QuestionImportanceType questionImportanceType)
+        {
+            var questionIndex = (int)questionImportanceType;
+            RemoveQuestion(questionIndex);
+            _readyQuestions[questionIndex] = GetRandomQuestionOfType(questionIndex);
+        }
+
+        private void RemoveQuestion(int questionIndex)
+        {
+            _availableQuestions[questionIndex].Remove(_readyQuestions[questionIndex]);
+        }
+
+        private static List<Question> MockScenario()
+        {
+            string[] scenario = {
                 "Who was the first president of United States of America?;George Washington;Thomas Jefferson;Abraham Lincoln;Benjamin Franklin;1",
                 "What is the largest big cat?;Lion;Tiger;Cheetah;Leopard;2",
                 "What land animal can open its mouth the widest?;Alligator;Crocodile;Baboon;Hippo;4",
@@ -99,7 +164,7 @@ namespace Backend.Analysis_module
                 var question = scenario[j];
                 var data = question.Split(";");
                 var correctAnswer = Convert.ToInt32(data.Last());
-                var type = j%3;
+                var type = j % 3;
                 var newQuestion = new Question
                 {
                     Content = data[0],
@@ -112,69 +177,16 @@ namespace Backend.Analysis_module
                     newQuestion.ABCDAnswers.Add(
                         new Answer
                         {
-                            AnswerID = i ,
+                            AnswerID = i,
                             Content = data[i],
                             Correct = correctAnswer == (i)
                         });
                 }
+
                 result.Add(newQuestion);
             }
 
             return result;
-        }
-
-        private Question[] SetInitialQuestions()
-        {
-            var result = new Question[3];
-            for (var i = 0; i < 3; i++)
-            {
-                result[i] = GetRandomQuestionOfType(i);
-            }
-
-            return result;
-        }
-
-        private Question GetRandomQuestionOfType(int questionImportanceType)
-        {
-            var index = _random.Next(_availableQuestions[questionImportanceType].Count);
-            return _availableQuestions[questionImportanceType].ElementAt(index);
-        }
-
-        public Question GetQuestion(QuestionImportanceType questionImportanceType)
-        {
-            return _readyQuestions[(int)questionImportanceType];
-        }
-
-        public IEnumerable<int> GetQuestionsAmount()
-        {
-            return _availableQuestions.Select(x=>x.Count).ToList();
-        }
-
-        public void SaveAnswerResponse(AnsweredQuestionModel answeredQuestion)
-        {
-            answeredQuestion.Question = GetQuestion(answeredQuestion.QuestionImportanceType);
-            _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
-            FindNextQuestion(answeredQuestion.QuestionImportanceType);
-        }
-
-        public QuestionResponse.Types.QuestionReward CalculateReward()
-        {
-            return new QuestionResponse.Types.QuestionReward
-            {
-                Money = 100,
-                Experience = 100
-            };
-        }
-
-        private void FindNextQuestion(QuestionImportanceType questionImportanceType)
-        {
-            RemoveQuestion(questionImportanceType);
-            _readyQuestions[(int)questionImportanceType] = GetRandomQuestionOfType((int)questionImportanceType);
-        }
-
-        private void RemoveQuestion(QuestionImportanceType questionImportanceType)
-        {
-            _availableQuestions[(int)questionImportanceType].Remove(_readyQuestions[(int)questionImportanceType]);
         }
     }
 }
