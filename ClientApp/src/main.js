@@ -6,8 +6,7 @@ import { domain, clientId, audience } from "../auth_config.json";
 import { Auth0Plugin } from "./auth"
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import Axios from "./plugins/axios";
-
-
+import titleMixin from './js/custom/titleMixin'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
@@ -29,6 +28,7 @@ Vue.use(Auth0Plugin, {
 });
 
 Vue.config.productionTip = false;
+Vue.mixin(titleMixin)
 
 new Vue({
     router,

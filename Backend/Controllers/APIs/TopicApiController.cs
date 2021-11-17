@@ -17,6 +17,19 @@ namespace Backend.Controllers.APIs
             _dataContext = dataContext;
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult Get(bool includeScenarios)
+        {
+            Teacher teacher = _dataContext.ResolveOrCreateUser(HttpContext.User);
+            if (teacher == null) return Unauthorized();
+            _dataContext.Entry(teacher).Collection(t => t.Topics).Load();
+            if (includeScenarios)
+                foreach (Topic topic in teacher.Topics)
+                    _dataContext.Entry(topic).Collection(t => t.Scenarios).Load();
+            return new ObjectResult(teacher.Topics);
+        }
+
 
         [HttpPost]
         [Authorize]
@@ -44,11 +57,12 @@ namespace Backend.Controllers.APIs
             Teacher teacher = _dataContext.ResolveOrCreateUser(HttpContext.User);
             if (teacher == null) return Unauthorized();
 
-            Topic topic = _dataContext.Topics.Include(topic => topic.Teacher).Include(topic => topic.Scenarios).FirstOrDefault(t => t.TopicID == id);
+            Topic topic = _dataContext.Topics.FirstOrDefault(t => t.TopicID == id);
             if (topic == null) return NotFound();
 
+            _dataContext.Entry(topic).Reference(topic => topic.Teacher).Load();
             if (!topic.Teacher.Equals(teacher)) return Unauthorized();
-            if (topic.Scenarios.Count > 0) return Conflict();
+            if (_dataContext.Entry(topic).Collection(t => t.Scenarios).Query().Count() > 0) return Conflict();
 
             _dataContext.Remove(topic);
             try

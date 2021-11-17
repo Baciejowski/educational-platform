@@ -1,7 +1,18 @@
 <template>
     <div class="container">
         <div class="section">
-            <h1>Topics</h1>
+            <h1 style="display: inline-block;">Topics</h1>
+            <div v-if="isLoading" class="preloader-wrapper small active right">
+                <div class="spinner-layer spinner-yellow-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
             <div class="divider orange" />
         </div>
         <div class="card grey darken-3">
@@ -18,22 +29,22 @@
                     <button class="right btn waves-effect waves-light orange" type="submit" name="submit">Create</button>
                 </form>
             </div>
-        </div><!--.sort(compareTopicsNames)-->
-        <div v-for="topic in teacherMessage.topics" :key="topic.topicID">
+        </div>
+        <div v-for="topic in topicsFromApi" :key="topic.topicID">
             <div class="collection with-header">
                 <div class="collection-header">
                     <h3>{{topic.topicName}}</h3>
                     <a :href="'/create-scenario?topic=' + topic.topicID" class="right waves-effect waves-light btn-small orange grey-text text-darken-4">Add scenario</a>
-                </div><!--.sort(compareScenariosNames)-->
+                </div>
                 <div v-for="scenario in topic.scenarios" :key="scenario.scenarioID">
-                    <a href="#!" class="collection-item black-text">
+                    <a :href="'/scenario?id=' + scenario.scenarioID" class="collection-item black-text">
                         {{scenario.name}}
-                        <a href="#!" class="secondary-content grey-link hovered-red"><i class="material-icons">delete</i></a>
-                        <a href="#!" class="secondary-content grey-link hovered-turquoise"><i class="material-icons">content_copy</i></a>
+                        <a href="#!" @click="deleteScenario(scenario.scenarioID)" class="secondary-content grey-link hovered-red"><i class="material-icons">delete</i></a>
+                        <a href="#!" @click="copyScenario(scenario.scenarioID)" class="secondary-content grey-link hovered-turquoise"><i class="material-icons">content_copy</i></a>
                         <a href="#!" class="secondary-content grey-link hovered-blue"><i class="material-icons">ios_share</i></a>
                         <a href="#!" class="secondary-content grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
                         <a href="#!" class="secondary-content grey-link hovered-orange"><i class="material-icons">edit</i></a>
-                        <a @click="jsfunction('aaa')" href="#!" class="secondary-content grey-link hovered-green"><i class="material-icons">search</i></a>
+                        <a :href="'/scenario?id=' + scenario.scenarioID" class="secondary-content grey-link hovered-green"><i class="material-icons">search</i></a>
                     </a>
                 </div>
                 <div v-if="!topic.scenarios.length">
@@ -50,36 +61,20 @@
 </template>
 
 <script>
-import M from "materialize-css";
+    import M from "materialize-css"
     export default {
         computed: {
-            teacherMessage() {
-                return this.$store.state.teacherData
+            topicsFromApi() {
+                return this.$store.state.topics
+            },
+            isLoading() {
+                return this.$store.state.loadingData
             }
         },
         created() {
-            this.$store.dispatch("getTeacherData")
+            this.$store.dispatch("getTopicsWithScenarios")
         },
         methods: {
-            compareTopicsNames(a, b) {
-                console.log(a)
-                if (a.topicName < b.topicName) {
-                    return -1;
-                }
-                if (a.topicName > b.topicName) {
-                    return 1;
-                }
-                return 0;
-            },
-            compareScenariosNames(a, b) {
-                if (a.name < b.name) {
-                    return -1;
-                }
-                if (a.name > b.name) {
-                    return 1;
-                }
-                return 0;
-            },
             onSubmit(event) {
                 event.preventDefault()
                 const topic = document.getElementById("topic").value
@@ -90,7 +85,7 @@ import M from "materialize-css";
                             if (data.status == 200) {
                                 M.toast({ html: "<div class='black-text'>New topic was created!</div>", classes: "green lighten-3" })
                                 document.getElementById("topic").value = ""
-                                this.$store.dispatch("getTeacherData")
+                                this.$store.dispatch("getTopicsWithScenarios")
                             }
                         })
                         .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
@@ -100,12 +95,33 @@ import M from "materialize-css";
             },
             deleteTopic(id) {
                 this.$store
-                    .dispatch("authorizedDELETE_PromiseWithHeaders", { url: `/api/topics?id=${id}`})
+                    .dispatch("authorizedDELETE_PromiseWithHeaders", { url: `/api/topics?id=${id}` })
                     .then((data) => {
                         if (data.status == 200) {
                             M.toast({ html: "<div class='black-text'>Chosen topic was deleted!</div>", classes: "green lighten-3" })
-                            document.getElementById("topic").value = ""
-                            this.$store.dispatch("getTeacherData")
+                            this.$store.dispatch("getTopicsWithScenarios")
+                        }
+                    })
+                    .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
+            },
+            deleteScenario(id) {
+                this.$store
+                    .dispatch("authorizedDELETE_PromiseWithHeaders", { url: `/api/scenarios?id=${id}` })
+                    .then((data) => {
+                        if (data.status == 200) {
+                            M.toast({ html: "<div class='black-text'>Chosen scenario was deleted!</div>", classes: "green lighten-3" })
+                            this.$store.dispatch("getTopicsWithScenarios")
+                        }
+                    })
+                    .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
+            },
+            copyScenario(id) {
+                this.$store
+                    .dispatch("authorizedCOPY_PromiseWithHeaders", {_url: `/api/scenarios/${id}`})
+                    .then((resp) => {
+                        if (resp.status == 200) {
+                            M.toast({ html: "<div class='black-text'>Chosen scenario was copied!</div>", classes: "green lighten-3" })
+                            this.$store.dispatch("getTopicsWithScenarios")
                         }
                     })
                     .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))

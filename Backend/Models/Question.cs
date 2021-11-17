@@ -23,5 +23,18 @@ namespace Backend.Models
 
         [JsonIgnore]
         public virtual ICollection<Scenario> Scenarios { get; set; }
+
+        [JsonIgnore]
+        public string AIRespresentation
+        {
+            get
+            {
+                string res = $"{{\"QuestionID\":{QuestionID},\"Difficulty\":{Difficulty},\"Content\":\"{Content}\",\"QuestionType\":{((int)QuestionType)},\"BooleanAnswer\":{BooleanAnswer},\"CorrectAnswer\":";
+                if (QuestionType == TypeEnum.BOOLEAN) return res + "null}";
+                foreach (var a in ABCDAnswers)
+                    if (a.Correct) return res + $"\"{a.Content}\"}}";
+                return res + "null}";
+            }
+        }
     }
 }
