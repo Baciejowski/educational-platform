@@ -29,7 +29,7 @@ namespace Backend.Models
         {
             get
             {
-                string res = $"{{\"QuestionID\":{QuestionID},\"Difficulty\":{Difficulty},\"Content\":\"{Content}\",\"QuestionType\":{((int)QuestionType)},\"BooleanAnswer\":{BooleanAnswer},\"CorrectAnswer\":";
+                string res = $"{{\"QuestionID\":{QuestionID},\"Difficulty\":{Difficulty},\"Content\":\"{Content}\",\"QuestionType\":{((int)QuestionType)},\"BooleanAnswer\":{(BooleanAnswer==null ? "null" : BooleanAnswer.ToString().ToLower())},\"CorrectAnswer\":";
                 if (QuestionType == TypeEnum.BOOLEAN) return res + "null}";
                 foreach (var a in ABCDAnswers)
                     if (a.Correct) return res + $"\"{a.Content}\"}}";
