@@ -1,12 +1,15 @@
 ﻿using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers.APIs
 {
@@ -110,6 +113,26 @@ namespace Backend.Controllers.APIs
             catch (DbUpdateException e)
             {
                 return StatusCode(400, e.Message + " -> " + e.InnerException.Message);
+            }
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("/api/scenarios/media")]
+        public async Task<IActionResult> UploadFile(IFormCollection upload)
+        {
+            long size = upload.Files.Sum(f => f.Length);
+            foreach (var formFile in upload.Files)
+            {
+                if (formFile.Length > 0)
+                {
+                    var filePath = Path.Combine("Media",Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(formFile.FileName)));
+                    _logger.LogCritical(filePath.ToString());
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+                }
             }
             return Ok();
         }
