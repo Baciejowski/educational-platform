@@ -25,6 +25,12 @@
                 <div v-if="scenario.Url" style="display: inline;">
                     <a class="right waves-effect waves-light btn orange" style="margin-right: 10px;" :href="scenario.Url" target="_blank">Reference materials</a>
                 </div>
+                <form>
+                    <div class="input-field">
+                        <input id="search" placeholder="search" type="search" v-model="search" required autocomplete="off">
+                        <i v-if="search" @click="clearSearch()" class="material-icons black-text">close</i>
+                    </div>
+                </form>
                 <div v-if="obligatoryQ.length" class="section">
                     <h3><i class="material-icons">tips_and_updates</i></h3><h5>Obligatory questions</h5>
                     <div v-for="question in obligatoryQ" :key="question.QuestionID">
@@ -116,7 +122,8 @@
                 editedQuestionID: 0,
                 difficulty: 0,
                 answersToKeep: [],
-                addedAnswers: 0
+                addedAnswers: 0,
+                search: ""
             }
         },
         computed: {
@@ -127,7 +134,7 @@
                 return this.$store.state.loadingData
             },
             obligatoryQ() {
-                return this.scenario.Questions.filter(q => q.IsObligatory === true)
+                return this.scenario.Questions.filter(q => q.IsObligatory === true && (q.Content.includes(this.search) || q.ABCDAnswers.filter(a=>a.Content.includes(this.search)).length))
             }
         },
         created() {
@@ -157,6 +164,9 @@
             document.getElementById('questionObligatory').addEventListener('change', this.obligatoryChange, false)
         },
         methods: {
+            clearSearch() {
+                this.search = ""
+            },
             sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
             },
@@ -246,7 +256,7 @@
                 questionForm.appendChild(button)
             },
             questions(lvl) {
-                return this.scenario.Questions.filter(q => !q.IsObligatory && q.Difficulty === lvl)
+                return this.scenario.Questions.filter(q => !q.IsObligatory && q.Difficulty === lvl && (q.Content.includes(this.search) || q.ABCDAnswers.filter(a => a.Content.includes(this.search)).length))
             },
             sectionHeaderIcon(lvl) {
                 return "\u2605".repeat(lvl)
@@ -389,5 +399,12 @@
 <style scoped>
     a:hover, a:active {
         text-decoration: none;
+    }
+    input:not([type]):focus:not([readonly]) + label, input[type=text]:not(.browser-default):focus:not([readonly]) + label, input[type=password]:not(.browser-default):focus:not([readonly]) + label, input[type=email]:not(.browser-default):focus:not([readonly]) + label, input[type=url]:not(.browser-default):focus:not([readonly]) + label, input[type=time]:not(.browser-default):focus:not([readonly]) + label, input[type=date]:not(.browser-default):focus:not([readonly]) + label, input[type=datetime]:not(.browser-default):focus:not([readonly]) + label, input[type=datetime-local]:not(.browser-default):focus:not([readonly]) + label, input[type=tel]:not(.browser-default):focus:not([readonly]) + label, input[type=number]:not(.browser-default):focus:not([readonly]) + label, input[type=search]:not(.browser-default):focus:not([readonly]) + label, textarea.materialize-textarea:focus:not([readonly]) + label {
+        color: #ffab40;
+    }
+    input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
+        border-bottom: 1px solid orange;
+        box-shadow: 0 1px 0 0 orange;
     }
 </style>
