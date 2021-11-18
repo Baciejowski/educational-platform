@@ -10,5 +10,6 @@ namespace Backend.Analysis_module.Models
         public IEnumerable<int> AnswersId { get; set; }
         public Question Question { get; set; }
         public int TimeToAnswer { get; set; }
+        public float Correctness { get; set; }
     }
 }

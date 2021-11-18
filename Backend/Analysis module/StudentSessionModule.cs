@@ -4,6 +4,7 @@ using System.Linq;
 using Backend.Analysis_module.Models;
 using Backend.Models;
 using Gameplay;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 
 namespace Backend.Analysis_module
 {
@@ -14,11 +15,11 @@ namespace Backend.Analysis_module
         public string SessionId { get; set; }
         public string Code { get; set; }
 
-        private readonly Scenario _userSessionScenario;
+        private readonly Session _userSession;
         private Question[] _readyQuestions;
         private List<Question>[] _availableQuestions;
-        private StudentAnalysisModule _studentAnalysisModule = new StudentAnalysisModule();
-        private readonly Random _random = new Random();
+        private StudentAnalysisModule _studentAnalysisModule;
+        private static readonly Random _random = new Random();
 
         public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId)
         {
@@ -28,18 +29,64 @@ namespace Backend.Analysis_module
             SessionId = sessionId;
             _availableQuestions = GetQuestionsFromScenario();
             _readyQuestions = SetInitialQuestions();
+            _studentAnalysisModule = new StudentAnalysisModule(TestLimit());
         }
 
         public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId,
-            Scenario userSessionScenario)
+            Session userSession)
         {
             Email = studentEmail;
             StudentId = studentId;
             Code = code;
             SessionId = sessionId;
-            _userSessionScenario = userSessionScenario;
+            _userSession = userSession;
+
+
             _availableQuestions = GetQuestionsFromScenario();
             _readyQuestions = SetInitialQuestions();
+            _studentAnalysisModule =
+                new StudentAnalysisModule(_userSession.RandomTest, TestLimit());
+        }
+
+        public Question GetQuestion(QuestionImportanceType questionImportanceType)
+        {
+            return _readyQuestions[(int)questionImportanceType];
+        }
+
+        public IEnumerable<int> GetQuestionsAmount()
+        {
+            int[] index = { 0, 1, 2 };
+            return index.Select(GetQuestionAmount);
+        }
+
+        private int GetQuestionAmount(int questionImportanceIndex)
+        {
+            return _availableQuestions[questionImportanceIndex]
+                .GroupBy(x => x.Difficulty)
+                .Select(group =>  group.Count())
+                .OrderByDescending(x=>x)
+                .First();
+        }
+
+        public void SaveAnswerResponse(AnsweredQuestionModel answeredQuestion)
+        {
+            answeredQuestion.Question = GetQuestion(answeredQuestion.QuestionImportanceType);
+            _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
+            FindNextQuestion(answeredQuestion.QuestionImportanceType);
+        }
+
+        public QuestionResponse.Types.QuestionReward CalculateReward()
+        {
+            return new QuestionResponse.Types.QuestionReward
+            {
+                Money = 100,
+                Experience = 100
+            };//To Do  - oblicza
+        }
+
+        private int TestLimit()
+        {
+            return (int)Math.Round(_availableQuestions[0].Count * 0.3);
         }
 
         private bool IsTestUser()
@@ -55,7 +102,7 @@ namespace Backend.Analysis_module
                 result[i] = new List<Question>();
             }
 
-            var scenario = IsTestUser() ? MockScenario() : _userSessionScenario.Questions;
+            var scenario = IsTestUser() ? MockScenario() : _userSession.Scenario.Questions;
             foreach (var question in scenario)
             {
                 if (question.IsObligatory)
@@ -80,43 +127,28 @@ namespace Backend.Analysis_module
             return result;
         }
 
-        private Question GetRandomQuestionOfType(int questionImportanceType)
+        private Question GetRandomQuestionOfType(int questionIndex)
         {
-            var index = _random.Next(_availableQuestions[questionImportanceType].Count);
-            return _availableQuestions[questionImportanceType].ElementAt(index);
+            var index = _random.Next(_availableQuestions[questionIndex].Count);
+            return _availableQuestions[questionIndex].ElementAt(index);
         }
 
-        public Question GetQuestion(QuestionImportanceType questionImportanceType)
+        private Question GetRankedQuestionOfType(int questionIndex)
         {
-            return _readyQuestions[(int)questionImportanceType];
-        }
-
-        public IEnumerable<int> GetQuestionsAmount()
-        {
-            return _availableQuestions.Select(x => x.Count).ToList();
-        }
-
-        public void SaveAnswerResponse(AnsweredQuestionModel answeredQuestion)
-        {
-            answeredQuestion.Question = GetQuestion(answeredQuestion.QuestionImportanceType);
-            _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
-            FindNextQuestion(answeredQuestion.QuestionImportanceType);
-        }
-
-        public QuestionResponse.Types.QuestionReward CalculateReward()
-        {
-            return new QuestionResponse.Types.QuestionReward
-            {
-                Money = 100,
-                Experience = 100
-            };
+            var nextQuestionDifficulty = _studentAnalysisModule.GetNextQuestionDifficulty();
+            var filteredQuestions = _availableQuestions[questionIndex].Where(x => x.Difficulty == nextQuestionDifficulty ).ToList();
+            var index = _random.Next(filteredQuestions.Count);
+            return filteredQuestions.ElementAt(index);
         }
 
         private void FindNextQuestion(QuestionImportanceType questionImportanceType)
         {
             var questionIndex = (int)questionImportanceType;
             RemoveQuestion(questionIndex);
-            _readyQuestions[questionIndex] = GetRandomQuestionOfType(questionIndex);
+            _readyQuestions[questionIndex] =
+                _studentAnalysisModule.DifficultyLevel < 0
+                    ? GetRandomQuestionOfType(questionIndex)
+                    : GetRankedQuestionOfType(questionIndex);
         }
 
         private void RemoveQuestion(int questionIndex)
@@ -126,7 +158,8 @@ namespace Backend.Analysis_module
 
         private static List<Question> MockScenario()
         {
-            string[] scenario = {
+            string[] scenario =
+            {
                 "Who was the first president of United States of America?;George Washington;Thomas Jefferson;Abraham Lincoln;Benjamin Franklin;1",
                 "What is the largest big cat?;Lion;Tiger;Cheetah;Leopard;2",
                 "What land animal can open its mouth the widest?;Alligator;Crocodile;Baboon;Hippo;4",
@@ -165,11 +198,13 @@ namespace Backend.Analysis_module
                 var data = question.Split(";");
                 var correctAnswer = Convert.ToInt32(data.Last());
                 var type = j % 3;
+                var difficulty = (byte)_random.Next(0,6);
                 var newQuestion = new Question
                 {
                     Content = data[0],
                     IsObligatory = type == 0,
                     IsImportant = type == 1,
+                    Difficulty = 1,
                     ABCDAnswers = new List<Answer>()
                 };
                 for (var i = 1; i < data.Length - 1; i++)

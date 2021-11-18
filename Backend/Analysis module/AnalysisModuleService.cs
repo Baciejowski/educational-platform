@@ -32,36 +32,22 @@ namespace Backend.Analysis_module
             }
             else
             {
-                var userSession = Context.Sessions.Include(s => s.Student).Include(s => s.Scenario)
+                var userSession = Context.Sessions
+                    .Include(s => s.Student)
+                    .Include(s => s.Scenario)
+                    .ThenInclude(scenario => scenario.Questions)
+                    .Include(s=>s.Topic)
                     .FirstOrDefault(x => x.Code == request.Code && x.Student.Email == request.Email);
-                if (userSession == null)
-                {
-                    return new StartGameResponse
-                    {
-                        Error = true,
-                        ErrorMsg = "Wrong credentials."
-                    };
-                }
 
-                if (!BetweenDates(DateTime.Now, userSession.StartGame, userSession.EndGame))
-                {
-                    return new StartGameResponse
-                    {
-                        Error = true,
-                        ErrorMsg = "Sorry! Your game expired."
-                    };
-                }
+                var error = CheckUserConditions(userSession);
+                if (error != null)
+                    return error;
 
-                // if(userSession.Attempts>0)
-                // {
-                //     return new StartGameResponse
-                //     {
-                //         Error = true,
-                //         ErrorMsg = "Sorry! You have reached the limit of attempts."
-                //     };
-                // }
+                // userSession.Attempts++;
+
                 studentSessionModule =
-                    new StudentSessionModule(request.Email, userSession.Student.StudentID, request.Code, id, userSession.Scenario);
+                    new StudentSessionModule(request.Email, userSession.Student.StudentID, request.Code, id,
+                        userSession);
             }
 
             _studentSessionModules.Add(studentSessionModule);
@@ -125,7 +111,7 @@ namespace Backend.Analysis_module
             };
         }
 
-        private IEnumerable<QuestionResponse.Types.Answer> grpcQuestionResponseAnswersAdapter(List<Answer> answers)
+        private IEnumerable<QuestionResponse.Types.Answer> grpcQuestionResponseAnswersAdapter(IReadOnlyList<Answer> answers)
         {
             var result = new QuestionResponse.Types.Answer[answers.Count];
             for (var i = 0; i < answers.Count; i++)
@@ -149,6 +135,38 @@ namespace Backend.Analysis_module
         private static string GenerateGameId()
         {
             return Guid.NewGuid().ToString();
+        }
+
+        private static StartGameResponse CheckUserConditions(Session userSession)
+        {
+            if (userSession == null)
+            {
+                return new StartGameResponse
+                {
+                    Error = true,
+                    ErrorMsg = "Wrong credentials."
+                };
+            }
+
+            if (!BetweenDates(DateTime.Now, userSession.StartGame, userSession.EndGame))
+            {
+                return new StartGameResponse
+                {
+                    Error = true,
+                    ErrorMsg = "Sorry! Your game expired."
+                };
+            }
+
+            // if(userSession.Attempts>0)
+            // {
+            //     return new StartGameResponse
+            //     {
+            //         Error = true,
+            //         ErrorMsg = "Sorry! You have reached the limit of attempts."
+            //     };
+            // }
+
+            return null;
         }
     }
 }
