@@ -36,7 +36,10 @@
                     <div v-for="question in obligatoryQ" :key="question.QuestionID">
                         <div class="card white z-depth-0" style="border:1px solid; border-color:darkorange;" :id="'questionCard'+question.QuestionID">
                             <div class="card-content">
-                                <span class="card-title black-text" style="text-align:left">{{question.Content}}</span>
+                                <div class="card-title" style="text-align: left">
+                                    <span class="right orange-text" style="display: inline; margin-left:10px;">{{difficultyRepresentation(question.Difficulty)}}</span>
+                                    <span class="black-text" style="display: inline;">{{question.Content}}</span>
+                                </div>
                                 <div v-if="question.Hint" class="black-text">Hint: {{question.Hint}}</div>
                                 <div v-for="answer in question.ABCDAnswers" :key="answer.AnswerID">
                                     <div v-if="answer.Correct" class="black-text">
@@ -64,7 +67,10 @@
                         <div v-for="question in questions(lvl)" :key="question.QuestionID">
                             <div class="card white z-depth-0" style="border:1px solid; border-color:darkorange;" :id="'questionCard'+question.QuestionID">
                                 <div class="card-content">
-                                    <span class="card-title black-text" style="text-align:left">{{question.Content}}<span v-if="question.IsImportant" class="right material-icons">priority_high</span></span>
+                                    <div class="card-title" style="text-align: left">
+                                        <span v-if="question.IsImportant" class="right black-text orange material-icons" style="display: inline; margin-left:10px;">priority_high</span>
+                                        <span class="black-text" style="display: inline;">{{question.Content}}</span>
+                                    </div>
                                     <div v-if="question.Hint" class="black-text">Hint: {{question.Hint}}</div>
                                     <div v-for="answer in question.ABCDAnswers" :key="answer.AnswerID">
                                         <div v-if="answer.Correct" class="black-text">
@@ -134,7 +140,7 @@
                 return this.$store.state.loadingData
             },
             obligatoryQ() {
-                return this.scenario.Questions.filter(q => q.IsObligatory === true && (q.Content.includes(this.search) || q.ABCDAnswers.filter(a=>a.Content.includes(this.search)).length))
+                return this.scenario.Questions.filter(q => q.IsObligatory === true && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a=>a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
             }
         },
         created() {
@@ -256,7 +262,7 @@
                 questionForm.appendChild(button)
             },
             questions(lvl) {
-                return this.scenario.Questions.filter(q => !q.IsObligatory && q.Difficulty === lvl && (q.Content.includes(this.search) || q.ABCDAnswers.filter(a => a.Content.includes(this.search)).length))
+                return this.scenario.Questions.filter(q => !q.IsObligatory && q.Difficulty === lvl && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a => a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
             },
             sectionHeaderIcon(lvl) {
                 return "\u2605".repeat(lvl)
@@ -264,6 +270,9 @@
             sectionHeaderText(lvl) {
                 const arr = ["Very easy", "Easy", "Average", "Difficult", "Very difficult"]
                 return arr[lvl-1]
+            },
+            difficultyRepresentation(lvl) {
+                return "\u2605".repeat(lvl)+"\u2606".repeat(5-lvl)
             },
             async onSubmit(event) {
                 this.$store.state.loadingData = true
