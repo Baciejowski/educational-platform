@@ -89,8 +89,15 @@ namespace Backend.Controllers.APIs
             Teacher teacher = _dataContext.ResolveOrCreateUser(HttpContext.User);
             if (teacher == null) return Unauthorized();
 
-            Scenario scenario = _dataContext.Scenarios.Include(s => s.Questions).ThenInclude(q => q.ABCDAnswers).AsNoTracking().FirstOrDefault(s => s.ScenarioID == id);
+            Scenario scenario = _dataContext.Scenarios
+                .Include(s => s.Topic)
+                    .ThenInclude(topic => topic.Teacher)
+                .Include(s => s.Questions)
+                    .ThenInclude(q => q.ABCDAnswers)
+                .AsNoTracking()
+                .FirstOrDefault(s => s.ScenarioID == id);
             if (scenario == null) return NotFound();
+            if (!scenario.Topic.Teacher.Equals(teacher)) return Unauthorized();
 
             scenario.ScenarioID = 0;
             scenario.Name += " (Copy)";
@@ -126,7 +133,7 @@ namespace Backend.Controllers.APIs
             {
                 if (formFile.Length > 0)
                 {
-                    var filePath = Path.Combine("Media",Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(formFile.FileName)));
+                    var filePath = Path.Combine("Media", Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(formFile.FileName)));
                     _logger.LogCritical(filePath.ToString());
                     using (var stream = System.IO.File.Create(filePath))
                     {

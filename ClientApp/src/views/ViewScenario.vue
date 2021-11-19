@@ -17,7 +17,7 @@
             <div class="divider orange" style="margin-bottom:10px" />
             <div v-if="scenario && Object.keys(scenario).length > 0 ">
                 <div style="display: inline;">
-                    <a class="waves-effect waves-light btn orange disabled" style="margin-bottom: 10px" href="#!">Add Question</a>
+                    <a class="waves-effect waves-light btn orange" style="margin-bottom: 10px" @click="add()">Add Question</a>
                 </div>
                 <div style="display: inline;">
                     <a class="right waves-effect waves-light btn orange disabled" style="margin-left: 10px; margin-bottom: 10px" href="#!">Review questions proposed by AI</a>
@@ -25,7 +25,7 @@
                 <div v-if="scenario.Url" style="display: inline;">
                     <a class="right waves-effect waves-light btn orange" :href="scenario.Url" target="_blank">Reference materials</a>
                 </div>
-                <form>
+                <form v-if="scenario.Questions.length">
                     <div class="input-field">
                         <input id="search" placeholder="search" type="search" v-model="search" required autocomplete="off" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
                         <i v-if="search" @click="clearSearch()" class="material-icons black-text">close</i>
@@ -97,8 +97,16 @@
         <div id="modal1" class="modal bottom-sheet" style="max-height: 100% !important; height: fit-content; overflow-y: auto; ">
             <div class="modal-content">
                 <div class="container">
-                    <h4>Question editing</h4>
+                    <h4 id="modalHeader">Question editing</h4>
                     <b-form style="margin-bottom: 15px; margin-top: 15px; ">
+                        <div class="input-field" style="display: inline-block; margin-right: 20px; min-width: 200px">
+                            <select id="questionType" class="black-text" disabled>
+                                <option value="0"><span class="black-text">True/false</span></option>
+                                <option value="1"><span class="black-text">Single/multiple choice</span></option>
+                                <option value="2"><span class="black-text">Open</span></option>
+                            </select>
+                            <label>Question type</label>
+                        </div>
                         <label style="margin-right: 20px">
                             <input type="checkbox" id="questionImportance" />
                             <span>Important</span>
@@ -107,7 +115,7 @@
                             <input type="checkbox" id="questionObligatory" />
                             <span>Obligatory</span>
                         </label>
-                        <b-form-rating inline no-border variant="warning" class="mb-2" style="padding: 0px 0px 0px 0px;float:right" v-model="difficulty"></b-form-rating>
+                        <b-form-rating inline no-border variant="warning" class="mb-2" style="padding: 0px 0px 0px 0px;float:right;margin-top:20px" v-model="difficulty"></b-form-rating>
                     </b-form>
                     <form id="questionForm" @submit="onSubmit">
                     </form>
@@ -140,7 +148,7 @@
                 return this.$store.state.loadingData
             },
             obligatoryQ() {
-                return this.scenario.Questions.filter(q => q.IsObligatory === true && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a=>a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
+                return this.scenario.Questions.filter(q => q.QuestionID && q.IsObligatory === true && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a=>a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
             }
         },
         created() {
@@ -170,6 +178,18 @@
             document.getElementById('questionObligatory').addEventListener('change', this.obligatoryChange, false)
         },
         methods: {
+            getEmptyQuestion() {
+                return {
+                    QuestionID: 0,
+                    QuestionType: 1,
+                    Difficulty: 1,
+                    Content: "",
+                    Hint: "",
+                    IsImportant: false,
+                    IsObligatory: false,
+                    BooleanAnswer: null,
+                    ABCDAnswers: []}
+            },
             clearSearch() {
                 this.search = ""
             },
@@ -226,9 +246,9 @@
                 row.classList.add("row");
                 row.id = `answer+${id}Row`
                 row.innerHTML = `
-                        <label style="margin-top:27px">
-                            <input class="orange" name="group1" id="correctAnswer+${id}" type="radio"/>
-                            <span>\u2713</span>
+                        <label style="margin-top:27px;margin-left:12px">
+                            <input class="orange" id="correctAnswer+${id}" type="checkbox"/>
+                            <span> </span>
                         </label>
                         <div class="input-field col s6">
                             <input id="Answer+${id}" type="text" class="validate" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
@@ -238,7 +258,7 @@
                             <input id="Argumentation+${id}" type="text" class="validate" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
                             <label class="grey-text">Argumentation</label>
                         </div>
-                        <a href="#!" id="deleteAnswer+${id}" class="red-text text-darken-3"><i class="material-icons">delete</i></a>
+                        <a href="#!" id="deleteAnswer+${id}" class="red-text text-darken-3" style="margin-top:25px;margin-right:12px"><i class="material-icons">delete</i></a>
                     `
                 questionForm.appendChild(row)
                 document.getElementById(`deleteAnswer+${id}`).addEventListener('click', this.deleteAnswer, true);
@@ -262,7 +282,7 @@
                 questionForm.appendChild(button)
             },
             questions(lvl) {
-                return this.scenario.Questions.filter(q => !q.IsObligatory && q.Difficulty === lvl && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a => a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
+                return this.scenario.Questions.filter(q => q.QuestionID && !q.IsObligatory && q.Difficulty === lvl && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a => a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
             },
             sectionHeaderIcon(lvl) {
                 return "\u2605".repeat(lvl)
@@ -275,26 +295,55 @@
                 return "\u2605".repeat(lvl)+"\u2606".repeat(5-lvl)
             },
             async onSubmit(event) {
-                this.$store.state.loadingData = true
                 event.preventDefault()
-                this.answersToKeep = []
                 let editedQuestion = this.scenario.Questions.find(q => q.QuestionID === this.editedQuestionID)
+                
+                    //check if at least one answer is correct
+                if (document.getElementById("questionType").selectedIndex) {
+                    let correctAnswerExists = false
+                    if (editedQuestion.QuestionID) {
+                        for (const a of editedQuestion.ABCDAnswers) {
+                            if (document.getElementById(`correctAnswer${a.AnswerID}`) && document.getElementById(`correctAnswer${a.AnswerID}`).checked) {
+                                correctAnswerExists = true
+                                break
+                            }
+                        }
+                    }
+                    for (let i = 0; i < this.addedAnswers; i++) {
+                        if (document.getElementById(`correctAnswer+${i}`) && document.getElementById(`correctAnswer+${i}`).checked) {
+                            correctAnswerExists = true
+                            break
+                        }
+                    }
+                    console.log(correctAnswerExists)
+                    if (!correctAnswerExists) {
+                        M.toast({ html: "<div class='black-text'>At least one answer must be correct!<br/></div>", classes: "red lighten-3" })
+                        return
+                    }
+                }
+
+                this.$store.state.loadingData = true
                 editedQuestion.Difficulty = this.difficulty
                 editedQuestion.Content = document.getElementById("editedQuestionContent").value
                 editedQuestion.Hint = document.getElementById("editedQuestionHint").value
-                //editedQuestion.QuestionType =
+                editedQuestion.QuestionType = document.getElementById("questionType").selectedIndex
                 //editedQuestion.BooleanAnswer = 
                 editedQuestion.IsImportant = document.getElementById("questionImportance").checked
                 editedQuestion.IsObligatory = document.getElementById("questionObligatory").checked
-                for (const a of editedQuestion.ABCDAnswers) {
-                    if (document.getElementById(`correctAnswer${a.AnswerID}`)) {
-                        a.Correct = document.getElementById(`correctAnswer${a.AnswerID}`).checked
-                        a.Content = document.getElementById(`Answer${a.AnswerID}`).value
-                        a.Argumentation = document.getElementById(`Argumentation${a.AnswerID}`).value
-                        this.answersToKeep.push(a.AnswerID)
+                this.answersToKeep = []
+
+                if (editedQuestion.QuestionID) {
+                    for (const a of editedQuestion.ABCDAnswers) {
+                        if (document.getElementById(`correctAnswer${a.AnswerID}`)) {
+                            a.Correct = document.getElementById(`correctAnswer${a.AnswerID}`).checked
+                            a.Content = document.getElementById(`Answer${a.AnswerID}`).value
+                            a.Argumentation = document.getElementById(`Argumentation${a.AnswerID}`).value
+                            this.answersToKeep.push(a.AnswerID)
+                        }
                     }
+                    editedQuestion.ABCDAnswers = editedQuestion.ABCDAnswers.filter(a => this.answersToKeep.includes(a.AnswerID))
                 }
-                editedQuestion.ABCDAnswers = editedQuestion.ABCDAnswers.filter(a => this.answersToKeep.includes(a.AnswerID))
+
                 for (let i = 0; i < this.addedAnswers; i++) {
                     if (document.getElementById(`correctAnswer+${i}`)) {
                         const answer =
@@ -307,28 +356,49 @@
                     }
                 }
                 M.Modal.getInstance(document.getElementById("modal1")).close()
-                this.$store
-                    .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/questions", data: editedQuestion })
-                    .then((data) => {
-                        if (data.status == 200) {
-                            M.toast({ html: "<div class='black-text'>Question was modified</div>", classes: "green lighten-3" })
-                        }
-                    })
-                    .catch((err) => {
-                        M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
-                        this.$store.dispatch({
-                            type: 'getScenarioByID',
-                            id: (new URL(window.location.href)).searchParams.get("id")
+
+                if (editedQuestion.QuestionID) {
+                    await this.$store
+                        .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/questions", data: editedQuestion })
+                        .then((data) => {
+                            if (data.status == 200) {
+                                M.toast({ html: "<div class='black-text'>Question was modified</div>", classes: "green lighten-3" })
+                            }
                         })
+                        .catch((err) => {
+                            M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
+                            this.$store.dispatch({
+                                type: 'getScenarioByID',
+                                id: (new URL(window.location.href)).searchParams.get("id")
+                            })
+                        })
+                }
+                else {
+                    await this.$store
+                        .dispatch("authorizedPOST_PromiseWithHeaders", { url: `/api/questions?scenarioID=${this.scenario.ScenarioID}`, data: editedQuestion })
+                        .then((resp) => {
+                            if (resp.status == 201) {
+                                M.toast({ html: "<div class='black-text'>Question was modified</div>", classes: "green lighten-3" })
+                                this.editedQuestionID = resp.data
+                            }
+                        })
+                        .catch((err) => {
+                            M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
+                        })
+                    await this.$store.dispatch({
+                        type: 'getScenarioByID',
+                        id: (new URL(window.location.href)).searchParams.get("id")
                     })
+                }
+
                 this.$store.state.loadingData = false
-                await this.sleep(1500);
                 document.getElementById(`questionCard${this.editedQuestionID}`).scrollIntoView({
                     behavior: 'smooth'
                 });
 
             },
             edit(id) {
+                document.getElementById("modalHeader").innerText = id ? "Question editing" : "Create question"
                 this.addedAnswers = 0
                 this.editedQuestionID = id
                 const questionForm = document.getElementById("questionForm")
@@ -339,6 +409,7 @@
                 if (question.IsImportant) document.getElementById("questionObligatory").disabled = true
                 document.getElementById("questionObligatory").checked = question.IsObligatory
                 if (question.IsObligatory) document.getElementById("questionImportance").disabled = true
+                document.getElementById("questionType").selectedIndex = question.QuestionType
                 questionForm.innerHTML = `
                     <div class="row" style="margin-bottom: 0px">
                         <div class="input-field col s12">
@@ -362,9 +433,9 @@
                     row.classList.add("row");
                     row.id = `answer${a.AnswerID}Row`
                     row.innerHTML = `
-                        <label style="margin-top:27px">
-                            <input class="orange" name="group1" id="correctAnswer${a.AnswerID}" type="radio"${a.Correct ? ' checked' : ''}/>
-                            <span>\u2713</span>
+                        <label style="margin-top:27px;margin-left:12px">
+                            <input class="orange" id="correctAnswer${a.AnswerID}" type="checkbox"${a.Correct ? ' checked' : ''}/>
+                            <span> </span>
                         </label>
                         <div class="input-field col s6">
                             <input id="Answer${a.AnswerID}" type="text" class="validate" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
@@ -374,7 +445,7 @@
                             <input id="Argumentation${a.AnswerID}" type="text" class="validate" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
                             <label class="grey-text">Argumentation</label>
                         </div>
-                        <a href="#!" id="deleteAnswer${a.AnswerID}" class="red-text text-darken-3" style="padding: 25px 0 0 0;"><i class="material-icons">delete</i></a>
+                        <a href="#!" id="deleteAnswer${a.AnswerID}" class="red-text text-darken-3" style="margin-top:25px;margin-right:12px"><i class="material-icons">delete</i></a>
                     `
                     row.querySelector(`#Answer${a.AnswerID}`).value = a.Content
                     row.querySelector(`#Argumentation${a.AnswerID}`).value = a.Argumentation
@@ -394,12 +465,17 @@
                 button.classList.add("right", "btn", "waves-effect", "waves-light", "orange")
                 button.type = "submit"
                 button.name = "submit"
-                button.textContent = "Update"
+                button.textContent = id ? "Update" : "Create"
                 questionForm.appendChild(button)
 
-
+                M.FormSelect.init(document.querySelectorAll('select'));
                 M.updateTextFields();
                 instance.open()
+            },
+            add() {
+                this.scenario.Questions = this.scenario.Questions.filter(q => q.QuestionID)
+                this.scenario.Questions.push(this.getEmptyQuestion())
+                this.edit(0)
             }
         }
     }
