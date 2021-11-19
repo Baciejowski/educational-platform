@@ -20,6 +20,7 @@ namespace Backend.Analysis_module
         private List<Question>[] _availableQuestions;
         private StudentAnalysisModule _studentAnalysisModule;
         private static readonly Random _random = new Random();
+        private bool _questionAsked =false;
 
         public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId)
         {
@@ -50,6 +51,7 @@ namespace Backend.Analysis_module
 
         public Question GetQuestion(QuestionImportanceType questionImportanceType)
         {
+            _questionAsked = true;
             return _readyQuestions[(int)questionImportanceType];
         }
 
@@ -70,6 +72,8 @@ namespace Backend.Analysis_module
 
         public void SaveAnswerResponse(AnsweredQuestionModel answeredQuestion)
         {
+            if (!_questionAsked) return;
+            _questionAsked = false;
             answeredQuestion.Question = GetQuestion(answeredQuestion.QuestionImportanceType);
             _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
             FindNextQuestion(answeredQuestion.QuestionImportanceType);

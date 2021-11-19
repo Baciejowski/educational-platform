@@ -69,6 +69,7 @@ namespace Backend.Analysis_module
             var user = GetUser(request.SessionCode);
 
             var question = user.GetQuestion((QuestionImportanceType)request.QuestionType);
+
             var answers = grpcQuestionResponseAnswersAdapter((List<Answer>)question.ABCDAnswers);
             var result = new QuestionResponse()
             {
@@ -83,6 +84,7 @@ namespace Backend.Analysis_module
         public Empty UpdateStudentsAnswers(StudentAnswerRequest request)
         {
             var user = GetUser(request.SessionCode);
+
             user.SaveAnswerResponse(StudentResponseAdapter(request));
             return new Empty();
         }
@@ -96,8 +98,6 @@ namespace Backend.Analysis_module
         {
             var result =
                 _studentSessionModules.FirstOrDefault(x => x.SessionId == sessionCode);
-
-            if (result == null) throw new NullReferenceException();
             return result;
         }
 
