@@ -11,24 +11,27 @@ namespace Backend.Analysis_module
     public class AnalysisModuleService : IAnalysisModuleService
     {
         protected readonly DataContext Context;
-        private List<StudentSessionModule> _studentSessionModules = new List<StudentSessionModule>();
+        private readonly IStudentSessionFactory _studentSessionFactory;
+        private List<IStudentSessionModule> _studentSessionModules = new List<IStudentSessionModule>();
 
-        public AnalysisModuleService(DataContext context)
+        public AnalysisModuleService(DataContext context, IStudentSessionFactory studentSessionFactory)
         {
             Context = context;
+            _studentSessionFactory = studentSessionFactory;
         }
 
         public StartGameResponse StartNewSession(StartGameRequest request)
         {
             var id = GenerateGameId();
-            StudentSessionModule studentSessionModule;
+            IStudentSessionModule studentSessionModule;
             if (request.Email == "test" && request.Code == "test")
             {
-                var itemToRemove = _studentSessionModules.FirstOrDefault(x => x.Email == "test" && x.Code == "test");
+                var itemToRemove = _studentSessionModules.FirstOrDefault(x =>
+                    x.StudentSessionData.Email == "test" && x.StudentSessionData.Code == "test");
                 if (itemToRemove != null)
                     _studentSessionModules.Remove(itemToRemove);
 
-                studentSessionModule = new StudentSessionModule(request.Email, 1, request.Code, id);
+                studentSessionModule = _studentSessionFactory.Create(request.Email, 1, request.Code, id);
             }
             else
             {
@@ -36,17 +39,17 @@ namespace Backend.Analysis_module
                     .Include(s => s.Student)
                     .Include(s => s.Scenario)
                     .ThenInclude(scenario => scenario.Questions)
-                    .Include(s=>s.Topic)
+                    .Include(s => s.Topic)
                     .FirstOrDefault(x => x.Code == request.Code && x.Student.Email == request.Email);
 
                 var error = CheckUserConditions(userSession);
                 if (error != null)
                     return error;
 
-                // userSession.Attempts++;
+                userSession.Attempts++;
 
                 studentSessionModule =
-                    new StudentSessionModule(request.Email, userSession.Student.StudentID, request.Code, id,
+                    _studentSessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
                         userSession);
             }
 
@@ -91,13 +94,17 @@ namespace Backend.Analysis_module
 
         public Empty EndGame(EndGameRequest request)
         {
+            var user = GetUser(request.SessionCode);
+
+            user.EndGame(request);
+
             return new Empty();
         }
 
-        private StudentSessionModule GetUser(string sessionCode)
+        private IStudentSessionModule GetUser(string sessionCode)
         {
             var result =
-                _studentSessionModules.FirstOrDefault(x => x.SessionId == sessionCode);
+                _studentSessionModules.FirstOrDefault(x => x.StudentSessionData.SessionId == sessionCode);
             return result;
         }
 
@@ -111,7 +118,8 @@ namespace Backend.Analysis_module
             };
         }
 
-        private IEnumerable<QuestionResponse.Types.Answer> grpcQuestionResponseAnswersAdapter(IReadOnlyList<Answer> answers)
+        private IEnumerable<QuestionResponse.Types.Answer> grpcQuestionResponseAnswersAdapter(
+            IReadOnlyList<Answer> answers)
         {
             var result = new QuestionResponse.Types.Answer[answers.Count];
             for (var i = 0; i < answers.Count; i++)
@@ -157,14 +165,14 @@ namespace Backend.Analysis_module
                 };
             }
 
-            // if(userSession.Attempts>0)
-            // {
-            //     return new StartGameResponse
-            //     {
-            //         Error = true,
-            //         ErrorMsg = "Sorry! You have reached the limit of attempts."
-            //     };
-            // }
+            if (userSession.Attempts > 0)
+            {
+                return new StartGameResponse
+                {
+                    Error = true,
+                    ErrorMsg = "Sorry! You have reached the limit of attempts."
+                };
+            }
 
             return null;
         }

@@ -4,12 +4,13 @@ using System.Linq;
 using Backend.Analysis_module.Models;
 using Backend.Models;
 using Gameplay;
-using Org.BouncyCastle.Math.EC.Rfc7748;
 
 namespace Backend.Analysis_module
 {
-    public class StudentSessionModule
+    public class StudentSessionModule : IStudentSessionModule
     {
+        protected readonly DataContext Context;
+        public StudentSessionData StudentSessionData { get; set; }
         public string Email { get; set; }
         public int StudentId { get; set; }
         public string SessionId { get; set; }
@@ -20,27 +21,32 @@ namespace Backend.Analysis_module
         private List<Question>[] _availableQuestions;
         private StudentAnalysisModule _studentAnalysisModule;
         private static readonly Random _random = new Random();
-        private bool _questionAsked =false;
+        private bool _questionAsked = false;
 
-        public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId)
+        public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId, DataContext context)
         {
-            Email = studentEmail;
-            StudentId = studentId;
-            Code = code;
-            SessionId = sessionId;
+            Context = context;
+            StudentSessionData = new StudentSessionData
+            {
+                Email = studentEmail,
+                StudentId = studentId,
+                Code = code,
+                SessionId = sessionId
+            };
             _availableQuestions = GetQuestionsFromScenario();
             _readyQuestions = SetInitialQuestions();
             _studentAnalysisModule = new StudentAnalysisModule(TestLimit());
         }
 
         public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId,
-            Session userSession)
+            Session userSession, DataContext context)
         {
             Email = studentEmail;
             StudentId = studentId;
             Code = code;
             SessionId = sessionId;
             _userSession = userSession;
+            Context = context;
 
 
             _availableQuestions = GetQuestionsFromScenario();
@@ -74,6 +80,7 @@ namespace Backend.Analysis_module
         {
             if (!_questionAsked) return;
             _questionAsked = false;
+
             answeredQuestion.Question = GetQuestion(answeredQuestion.QuestionImportanceType);
             _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
             FindNextQuestion(answeredQuestion.QuestionImportanceType);
@@ -227,6 +234,12 @@ namespace Backend.Analysis_module
             }
 
             return result;
+        }
+
+        public void EndGame(EndGameRequest request)
+        {
+            // DataContext.
+            throw new NotImplementedException();
         }
     }
 }
