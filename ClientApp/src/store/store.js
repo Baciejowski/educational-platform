@@ -124,7 +124,7 @@ const actions = {
         )
     },
     getTeacherData({ state, dispatch }) {
-        dispatch("authorizedGET_Promise", "/api/classes")
+        dispatch("authorizedGET_Promise", "/api/teachers")
             .then((data) => {
                 state.teacherData = data
                 state.loadingData = false
