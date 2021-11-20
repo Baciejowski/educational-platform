@@ -20,361 +20,370 @@ namespace Backend.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Backend.Models.Answer", b =>
-                {
-                    b.Property<int>("AnswerID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("AnswerID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Argumentation")
-                        .HasColumnType("text");
+                b.Property<string>("Argumentation")
+                    .HasColumnType("text");
 
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
+                b.Property<string>("Content")
+                    .HasColumnType("text");
 
-                    b.Property<bool>("Correct")
-                        .HasColumnType("boolean");
+                b.Property<bool>("Correct")
+                    .HasColumnType("boolean");
 
-                    b.Property<int?>("QuestionID")
-                        .HasColumnType("integer");
+                b.Property<int?>("QuestionID")
+                    .HasColumnType("integer");
 
-                    b.HasKey("AnswerID");
+                b.HasKey("AnswerID");
 
-                    b.HasIndex("QuestionID");
+                b.HasIndex("QuestionID");
 
-                    b.ToTable("Answers");
-                });
+                b.ToTable("Answers");
+            });
 
             modelBuilder.Entity("Backend.Models.Class", b =>
-                {
-                    b.Property<int>("ClassID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("ClassID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("FriendlyName")
-                        .HasColumnType("text");
+                b.Property<string>("FriendlyName")
+                    .HasColumnType("text");
 
-                    b.Property<int?>("TeacherID")
-                        .HasColumnType("integer");
+                b.Property<int?>("TeacherID")
+                    .HasColumnType("integer");
 
-                    b.HasKey("ClassID");
+                b.HasKey("ClassID");
 
-                    b.HasIndex("TeacherID");
+                b.HasIndex("TeacherID");
 
-                    b.ToTable("Classes");
-                });
+                b.ToTable("Classes");
+            });
 
             modelBuilder.Entity("Backend.Models.Game", b =>
-                {
-                    b.Property<int>("GameID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("GameID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("ScenarioID")
-                        .HasColumnType("integer");
+                b.Property<int?>("ScenarioID")
+                    .HasColumnType("integer");
 
-                    b.Property<int?>("StudentID")
-                        .HasColumnType("integer");
+                b.Property<int?>("StudentID")
+                    .HasColumnType("integer");
 
-                    b.HasKey("GameID");
+                b.HasKey("GameID");
 
-                    b.HasIndex("ScenarioID");
+                b.HasIndex("ScenarioID");
 
-                    b.HasIndex("StudentID");
+                b.HasIndex("StudentID");
 
-                    b.ToTable("Games");
-                });
+                b.ToTable("Games");
+            });
 
             modelBuilder.Entity("Backend.Models.Question", b =>
-                {
-                    b.Property<int>("QuestionID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("QuestionID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<bool?>("BooleanAnswer")
-                        .HasColumnType("boolean");
+                b.Property<bool?>("BooleanAnswer")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
+                b.Property<string>("Content")
+                    .HasColumnType("text");
 
-                    b.Property<byte>("Difficulty")
-                        .HasColumnType("smallint");
+                b.Property<byte>("Difficulty")
+                    .HasColumnType("smallint");
 
-                    b.Property<string>("Hint")
-                        .HasColumnType("text");
+                b.Property<string>("Hint")
+                    .HasColumnType("text");
 
-                    b.Property<bool>("IsImportant")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsImportant")
+                    .HasColumnType("boolean");
 
-                    b.Property<bool>("IsObligatory")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsObligatory")
+                    .HasColumnType("boolean");
 
-                    b.Property<byte>("QuestionType")
-                        .HasColumnType("smallint");
+                b.Property<byte>("QuestionType")
+                    .HasColumnType("smallint");
 
-                    b.HasKey("QuestionID");
+                b.HasKey("QuestionID");
 
-                    b.ToTable("Questions");
-                });
+                b.ToTable("Questions");
+            });
 
             modelBuilder.Entity("Backend.Models.Scenario", b =>
-                {
-                    b.Property<int>("ScenarioID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("ScenarioID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                b.Property<string>("Name")
+                    .HasColumnType("text");
 
-                    b.Property<int?>("TopicID")
-                        .HasColumnType("integer");
+                b.Property<int?>("TopicID")
+                    .HasColumnType("integer");
 
-                    b.Property<string>("Url")
-                        .HasColumnType("text");
+                b.Property<string>("Url")
+                    .HasColumnType("text");
 
-                    b.HasKey("ScenarioID");
+                b.HasKey("ScenarioID");
 
-                    b.HasIndex("TopicID");
+                b.HasIndex("TopicID");
 
-                    b.ToTable("Scenarios");
-                });
+                b.ToTable("Scenarios");
+            });
 
             modelBuilder.Entity("Backend.Models.Session", b =>
-                {
-                    b.Property<int>("SessionID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("SessionID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("text");
+                b.Property<int>("Attempts")
+                    .HasColumnType("integer");
 
-                    b.Property<DateTime>("EndGame")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<string>("Code")
+                    .HasColumnType("text");
 
-                    b.Property<int?>("ScenarioID")
-                        .HasColumnType("integer");
+                b.Property<DateTime>("EndGame")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("StartGame")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<bool>("RandomCategorization")
+                    .HasColumnType("boolean");
 
-                    b.Property<int?>("StudentID")
-                        .HasColumnType("integer");
+                b.Property<bool>("RandomTest")
+                    .HasColumnType("boolean");
 
-                    b.HasKey("SessionID");
+                b.Property<int?>("ScenarioID")
+                    .HasColumnType("integer");
 
-                    b.HasIndex("ScenarioID");
+                b.Property<DateTime>("StartGame")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.HasIndex("StudentID");
+                b.Property<int?>("StudentID")
+                    .HasColumnType("integer");
 
-                    b.ToTable("Sessions");
-                });
+                b.HasKey("SessionID");
+
+                b.HasIndex("ScenarioID");
+
+                b.HasIndex("StudentID");
+
+                b.ToTable("Sessions");
+            });
 
             modelBuilder.Entity("Backend.Models.Student", b =>
-                {
-                    b.Property<int>("StudentID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("StudentID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("ClassID")
-                        .HasColumnType("integer");
+                b.Property<int?>("ClassID")
+                    .HasColumnType("integer");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
+                b.Property<string>("Email")
+                    .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
+                b.Property<string>("FirstName")
+                    .HasColumnType("text");
 
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
+                b.Property<string>("LastName")
+                    .HasColumnType("text");
 
-                    b.HasKey("StudentID");
+                b.HasKey("StudentID");
 
-                    b.HasIndex("ClassID");
+                b.HasIndex("ClassID");
 
-                    b.ToTable("Students");
-                });
+                b.ToTable("Students");
+            });
 
             modelBuilder.Entity("Backend.Models.Teacher", b =>
-                {
-                    b.Property<int>("TeacherID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("TeacherID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("AuthName")
-                        .HasColumnType("text");
+                b.Property<string>("AuthName")
+                    .HasColumnType("text");
 
-                    b.HasKey("TeacherID");
+                b.HasKey("TeacherID");
 
-                    b.ToTable("Teachers");
-                });
+                b.ToTable("Teachers");
+            });
 
             modelBuilder.Entity("Backend.Models.Topic", b =>
-                {
-                    b.Property<int>("TopicID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            {
+                b.Property<int>("TopicID")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("TeacherID")
-                        .HasColumnType("integer");
+                b.Property<int?>("TeacherID")
+                    .HasColumnType("integer");
 
-                    b.Property<string>("TopicName")
-                        .HasColumnType("text");
+                b.Property<string>("TopicName")
+                    .HasColumnType("text");
 
-                    b.HasKey("TopicID");
+                b.HasKey("TopicID");
 
-                    b.HasIndex("TeacherID");
+                b.HasIndex("TeacherID");
 
-                    b.ToTable("Topics");
-                });
+                b.ToTable("Topics");
+            });
 
             modelBuilder.Entity("QuestionScenario", b =>
-                {
-                    b.Property<int>("QuestionsQuestionID")
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("QuestionsQuestionID")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("ScenariosScenarioID")
-                        .HasColumnType("integer");
+                b.Property<int>("ScenariosScenarioID")
+                    .HasColumnType("integer");
 
-                    b.HasKey("QuestionsQuestionID", "ScenariosScenarioID");
+                b.HasKey("QuestionsQuestionID", "ScenariosScenarioID");
 
-                    b.HasIndex("ScenariosScenarioID");
+                b.HasIndex("ScenariosScenarioID");
 
-                    b.ToTable("QuestionScenario");
-                });
+                b.ToTable("QuestionScenario");
+            });
 
             modelBuilder.Entity("Backend.Models.Answer", b =>
-                {
-                    b.HasOne("Backend.Models.Question", "Question")
-                        .WithMany("ABCDAnswers")
-                        .HasForeignKey("QuestionID");
+            {
+                b.HasOne("Backend.Models.Question", "Question")
+                    .WithMany("ABCDAnswers")
+                    .HasForeignKey("QuestionID");
 
-                    b.Navigation("Question");
-                });
+                b.Navigation("Question");
+            });
 
             modelBuilder.Entity("Backend.Models.Class", b =>
-                {
-                    b.HasOne("Backend.Models.Teacher", "Teacher")
-                        .WithMany("Classes")
-                        .HasForeignKey("TeacherID");
+            {
+                b.HasOne("Backend.Models.Teacher", "Teacher")
+                    .WithMany("Classes")
+                    .HasForeignKey("TeacherID");
 
-                    b.Navigation("Teacher");
-                });
+                b.Navigation("Teacher");
+            });
 
             modelBuilder.Entity("Backend.Models.Game", b =>
-                {
-                    b.HasOne("Backend.Models.Scenario", "Scenario")
-                        .WithMany("Games")
-                        .HasForeignKey("ScenarioID");
+            {
+                b.HasOne("Backend.Models.Scenario", "Scenario")
+                    .WithMany("Games")
+                    .HasForeignKey("ScenarioID");
 
-                    b.HasOne("Backend.Models.Student", "Student")
-                        .WithMany("Games")
-                        .HasForeignKey("StudentID");
+                b.HasOne("Backend.Models.Student", "Student")
+                    .WithMany("Games")
+                    .HasForeignKey("StudentID");
 
-                    b.Navigation("Scenario");
+                b.Navigation("Scenario");
 
-                    b.Navigation("Student");
-                });
+                b.Navigation("Student");
+            });
 
             modelBuilder.Entity("Backend.Models.Scenario", b =>
-                {
-                    b.HasOne("Backend.Models.Topic", "Topic")
-                        .WithMany("Scenarios")
-                        .HasForeignKey("TopicID");
+            {
+                b.HasOne("Backend.Models.Topic", "Topic")
+                    .WithMany("Scenarios")
+                    .HasForeignKey("TopicID");
 
-                    b.Navigation("Topic");
-                });
+                b.Navigation("Topic");
+            });
 
             modelBuilder.Entity("Backend.Models.Session", b =>
-                {
-                    b.HasOne("Backend.Models.Scenario", "Scenario")
-                        .WithMany("Sessions")
-                        .HasForeignKey("ScenarioID");
+            {
+                b.HasOne("Backend.Models.Scenario", "Scenario")
+                    .WithMany("Sessions")
+                    .HasForeignKey("ScenarioID");
 
-                    b.HasOne("Backend.Models.Student", "Student")
-                        .WithMany("Sessions")
-                        .HasForeignKey("StudentID");
+                b.HasOne("Backend.Models.Student", "Student")
+                    .WithMany("Sessions")
+                    .HasForeignKey("StudentID");
 
-                    b.Navigation("Scenario");
+                b.Navigation("Scenario");
 
-                    b.Navigation("Student");
-                });
+                b.Navigation("Student");
+            });
 
             modelBuilder.Entity("Backend.Models.Student", b =>
-                {
-                    b.HasOne("Backend.Models.Class", "Class")
-                        .WithMany("Students")
-                        .HasForeignKey("ClassID");
+            {
+                b.HasOne("Backend.Models.Class", "Class")
+                    .WithMany("Students")
+                    .HasForeignKey("ClassID");
 
-                    b.Navigation("Class");
-                });
+                b.Navigation("Class");
+            });
 
             modelBuilder.Entity("Backend.Models.Topic", b =>
-                {
-                    b.HasOne("Backend.Models.Teacher", "Teacher")
-                        .WithMany("Topics")
-                        .HasForeignKey("TeacherID");
+            {
+                b.HasOne("Backend.Models.Teacher", "Teacher")
+                    .WithMany("Topics")
+                    .HasForeignKey("TeacherID");
 
-                    b.Navigation("Teacher");
-                });
+                b.Navigation("Teacher");
+            });
 
             modelBuilder.Entity("QuestionScenario", b =>
-                {
-                    b.HasOne("Backend.Models.Question", null)
-                        .WithMany()
-                        .HasForeignKey("QuestionsQuestionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("Backend.Models.Question", null)
+                    .WithMany()
+                    .HasForeignKey("QuestionsQuestionID")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.HasOne("Backend.Models.Scenario", null)
-                        .WithMany()
-                        .HasForeignKey("ScenariosScenarioID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                b.HasOne("Backend.Models.Scenario", null)
+                    .WithMany()
+                    .HasForeignKey("ScenariosScenarioID")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
 
             modelBuilder.Entity("Backend.Models.Class", b =>
-                {
-                    b.Navigation("Students");
-                });
+            {
+                b.Navigation("Students");
+            });
 
             modelBuilder.Entity("Backend.Models.Question", b =>
-                {
-                    b.Navigation("ABCDAnswers");
-                });
+            {
+                b.Navigation("ABCDAnswers");
+            });
 
             modelBuilder.Entity("Backend.Models.Scenario", b =>
-                {
-                    b.Navigation("Games");
+            {
+                b.Navigation("Games");
 
-                    b.Navigation("Sessions");
-                });
+                b.Navigation("Sessions");
+            });
 
             modelBuilder.Entity("Backend.Models.Student", b =>
-                {
-                    b.Navigation("Games");
+            {
+                b.Navigation("Games");
 
-                    b.Navigation("Sessions");
-                });
+                b.Navigation("Sessions");
+            });
 
             modelBuilder.Entity("Backend.Models.Teacher", b =>
-                {
-                    b.Navigation("Classes");
+            {
+                b.Navigation("Classes");
 
-                    b.Navigation("Topics");
-                });
+                b.Navigation("Topics");
+            });
 
             modelBuilder.Entity("Backend.Models.Topic", b =>
-                {
-                    b.Navigation("Scenarios");
-                });
+            {
+                b.Navigation("Scenarios");
+            });
 #pragma warning restore 612, 618
         }
     }
