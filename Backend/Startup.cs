@@ -100,6 +100,7 @@ namespace Backend
             services.AddScoped<IClassManagementService, ClassManagementService>();
             services.AddScoped<IScenarioManagementService, ScenarioManagementService>();
             services.AddScoped<ITeacherManagementService, TeacherManagementService>();
+            services.AddSingleton<IStudentSessionFactory, StudentSessionFactory>();
             services.AddSingleton<IAnalysisModuleService, AnalysisModuleService>();
         }
 

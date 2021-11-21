@@ -4,17 +4,14 @@ using System.Linq;
 using Backend.Analysis_module.Models;
 using Backend.Models;
 using Gameplay;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Analysis_module
 {
-    public class StudentSessionModule : IStudentSessionModule
+    public class StudentSessionModule
     {
         protected readonly DataContext Context;
         public StudentSessionData StudentSessionData { get; set; }
-        public string Email { get; set; }
-        public int StudentId { get; set; }
-        public string SessionId { get; set; }
-        public string Code { get; set; }
 
         private readonly Session _userSession;
         private Question[] _readyQuestions;
@@ -22,29 +19,39 @@ namespace Backend.Analysis_module
         private StudentAnalysisModule _studentAnalysisModule;
         private static readonly Random _random = new Random();
         private bool _questionAsked = false;
+        private DateTime _startDate;
+        private DateTime _lastRequest;
+        private const int AllowedAfkTime = 30;
 
-        public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId, DataContext context)
+
+        public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId,
+            DataContext context)
         {
             Context = context;
             StudentSessionData = new StudentSessionData
             {
-                Email = studentEmail,
+                Email = studentEmail.ToLower(),
                 StudentId = studentId,
-                Code = code,
+                Code = code.ToLower(),
                 SessionId = sessionId
             };
             _availableQuestions = GetQuestionsFromScenario();
             _readyQuestions = SetInitialQuestions();
             _studentAnalysisModule = new StudentAnalysisModule(TestLimit());
+            _startDate = DateTime.Now;
+            SetRequestTime();
         }
 
         public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId,
             Session userSession, DataContext context)
         {
-            Email = studentEmail;
-            StudentId = studentId;
-            Code = code;
-            SessionId = sessionId;
+            StudentSessionData = new StudentSessionData
+            {
+                Email = studentEmail.ToLower(),
+                StudentId = studentId,
+                Code = code.ToLower(),
+                SessionId = sessionId
+            };
             _userSession = userSession;
             Context = context;
 
@@ -53,18 +60,91 @@ namespace Backend.Analysis_module
             _readyQuestions = SetInitialQuestions();
             _studentAnalysisModule =
                 new StudentAnalysisModule(_userSession.RandomTest, TestLimit());
+            _startDate = DateTime.Now;
+            SetRequestTime();
         }
 
-        public Question GetQuestion(QuestionImportanceType questionImportanceType)
+        public  Question GetQuestion(QuestionImportanceType questionImportanceType)
         {
             _questionAsked = true;
+            SetRequestTime();
             return _readyQuestions[(int)questionImportanceType];
         }
 
         public IEnumerable<int> GetQuestionsAmount()
         {
             int[] index = { 0, 1, 2 };
+            SetRequestTime();
             return index.Select(GetQuestionAmount);
+        }
+
+        public void SaveAnswerResponse(StudentAnswerRequest request)
+        {
+            if (!_questionAsked) return;
+            _questionAsked = false;
+
+            var answeredQuestion = StudentResponseAdapter(request);
+            _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
+            FindNextQuestion(answeredQuestion.QuestionImportanceType);
+            SetRequestTime();
+        }
+
+        public QuestionResponse.Types.QuestionReward CalculateReward()
+        {
+            SetRequestTime();
+            return new QuestionResponse.Types.QuestionReward
+            {
+                Money = 100,
+                Experience = 100
+            }; //To Do  - oblicza
+        }
+
+        public bool EndGame(EndGameRequest request)
+        {
+            var session = new Session();
+            if (!IsTestUser())
+                session = Context.Sessions.Include(s => s.Student).FirstOrDefault(x =>
+                    x.Student.StudentID == StudentSessionData.StudentId && x.Code == StudentSessionData.Code);
+
+            var analysisResult = _studentAnalysisModule.GetData(request.ScenarioEnded);
+            var gameplayData = new GameplayData
+            {
+                Experience = request.StudentEndGameData.Experience,
+                Money = request.StudentEndGameData.Money,
+                GameplayTime = request.GameplayTime,
+                Light = request.StudentEndGameData.Skills[0],
+                Vision = request.StudentEndGameData.Skills[1],
+                Speed = request.StudentEndGameData.Skills[2]
+            };
+
+            var result = new SessionRecord
+            {
+                AnalysisResult = analysisResult,
+                Session = session,
+                GameplayData = gameplayData
+            };
+            SetRequestTime();
+
+            return true;
+        }
+
+        public bool IsAbandoned()
+        {
+            var afkTime = (DateTime.Now - _lastRequest).TotalMinutes;
+
+            if (afkTime < AllowedAfkTime) return false;
+
+            var gameTime = (int)Math.Round((_lastRequest - _startDate).TotalSeconds);
+            var result = new EndGameRequest
+            {
+                ScenarioEnded = false,
+                GameplayTime = gameTime,
+                StudentEndGameData = new EndGameRequest.Types.StudentEndGameData
+                    { Experience = 0, Money = 0, Skills = { 0, 0, 0 } }
+            };
+            EndGame(result);
+            return true;
+
         }
 
         private int GetQuestionAmount(int questionImportanceIndex)
@@ -76,23 +156,19 @@ namespace Backend.Analysis_module
                 .First();
         }
 
-        public void SaveAnswerResponse(AnsweredQuestionModel answeredQuestion)
+        private AnsweredQuestion StudentResponseAdapter(StudentAnswerRequest request)
         {
-            if (!_questionAsked) return;
-            _questionAsked = false;
-
-            answeredQuestion.Question = GetQuestion(answeredQuestion.QuestionImportanceType);
-            _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
-            FindNextQuestion(answeredQuestion.QuestionImportanceType);
-        }
-
-        public QuestionResponse.Types.QuestionReward CalculateReward()
-        {
-            return new QuestionResponse.Types.QuestionReward
+            var type = (QuestionImportanceType)((int)request.QuestionType);
+            var question = GetQuestion(type);
+            var answersId = request.AnswersID.ToList();
+            var answers = question.ABCDAnswers.Where(x => answersId.Contains(x.AnswerID)).ToList();
+            return new AnsweredQuestion
             {
-                Money = 100,
-                Experience = 100
-            }; //To Do  - oblicza
+                QuestionImportanceType = type,
+                Question = question,
+                AnsweredAnswers = answers,
+                TimeToAnswer = request.TimeToAnswer
+            };
         }
 
         private Question[] SetInitialQuestions()
@@ -113,7 +189,12 @@ namespace Backend.Analysis_module
 
         private bool IsTestUser()
         {
-            return Email == "test" && Code == "test";
+            return StudentSessionData.Email == "test" && StudentSessionData.Code == "test";
+        }
+
+        private void SetRequestTime()
+        {
+            _lastRequest = DateTime.Now;
         }
 
         private List<Question>[] GetQuestionsFromScenario()
@@ -216,7 +297,7 @@ namespace Backend.Analysis_module
                     Content = data[0],
                     IsObligatory = type == 0,
                     IsImportant = type == 1,
-                    Difficulty = 1,
+                    Difficulty = difficulty,
                     ABCDAnswers = new List<Answer>()
                 };
                 for (var i = 1; i < data.Length - 1; i++)
@@ -234,12 +315,6 @@ namespace Backend.Analysis_module
             }
 
             return result;
-        }
-
-        public void EndGame(EndGameRequest request)
-        {
-            // DataContext.
-            throw new NotImplementedException();
         }
     }
 }

@@ -9,8 +9,9 @@ namespace Backend.Analysis_module
     {
         public double DifficultyLevel { get; set; }
         private readonly Random _random = new Random();
-        private List<AnsweredQuestionModel> _answeredQuestionsModels = new List<AnsweredQuestionModel>();
-        private readonly bool _controlUser = false;
+        private List<AnsweredQuestion> _answeredQuestionsModels = new List<AnsweredQuestion>();
+        private readonly bool _randomTest = false;
+        private readonly bool _randomCategorization = false;
         private readonly int _testLimit;
         private readonly float _prevRank = 0;
 
@@ -21,7 +22,13 @@ namespace Backend.Analysis_module
 
         public StudentAnalysisModule(bool randomTest, int testLimit) : this(testLimit)
         {
-            _controlUser = randomTest;
+            _randomTest = randomTest;
+            //TO DO: get prev rank
+        }
+        public StudentAnalysisModule(bool randomTest, bool randomCategorization, int testLimit) : this(testLimit)
+        {
+            _randomTest = randomTest;
+            _randomCategorization = randomCategorization;
             //TO DO: get prev rank
         }
 
@@ -41,7 +48,7 @@ namespace Backend.Analysis_module
 
         public void CalculateLvl()
         {
-            if (_controlUser || _answeredQuestionsModels.Count < _testLimit)
+            if (_randomTest || _answeredQuestionsModels.Count < _testLimit)
                 DifficultyLevel = -1;
             else
             {
@@ -58,19 +65,29 @@ namespace Backend.Analysis_module
             }
         }
 
-        public void AddQuestionToAnalysis(AnsweredQuestionModel question)
+        public void AddQuestionToAnalysis(AnsweredQuestion question)
         {
             question.Correctness = CalculateCorrectness(question);
             _answeredQuestionsModels.Add(question);
             CalculateLvl();
         }
 
-        private static float CalculateCorrectness(AnsweredQuestionModel question)
+        private static float CalculateCorrectness(AnsweredQuestion question)
         {
-            var answers = question.Question.ABCDAnswers.Where(x => question.AnswersId.Contains(x.AnswerID)).ToList();
             var correctCount = question.Question.ABCDAnswers.Count(x => x.Correct);
-            return answers.Where(answer => !answer.Correct)
+            return question.AnsweredAnswers.Where(answer => !answer.Correct)
                 .Aggregate(1.0f, (current, answer) => current - 1f / correctCount);
+        }
+
+        public AnalysisResult GetData(bool scenarioEnded)
+        {
+            return new AnalysisResult
+            {
+                DifficultyLevel = DifficultyLevel,
+                AnsweredQuestions = _answeredQuestionsModels,
+                ScenarioEnded = scenarioEnded,
+                EndDate= DateTime.Now
+            };
         }
     }
 }

@@ -11,11 +11,11 @@ namespace Backend.Analysis_module
             Context = context;
         }
 
-        public IStudentSessionModule Create(string studentEmail, int studentId, string code, string sessionId)
+        public StudentSessionModule Create(string studentEmail, int studentId, string code, string sessionId)
         {
             return new StudentSessionModule( studentEmail,  studentId,  code,  sessionId, Context);
         }
-        public IStudentSessionModule Create(string requestEmail, int testLimit, string requestCode, string sessionId,
+        public StudentSessionModule Create(string requestEmail, int testLimit, string requestCode, string sessionId,
             Session userSession)
         {
             return new StudentSessionModule(requestEmail, testLimit, requestCode, sessionId, userSession, Context);

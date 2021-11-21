@@ -12,24 +12,27 @@ namespace Backend.Analysis_module
     {
         protected readonly DataContext Context;
         private readonly IStudentSessionFactory _studentSessionFactory;
-        private List<IStudentSessionModule> _studentSessionModules = new List<IStudentSessionModule>();
+        private List<StudentSessionModule> _studentSessionModules = new List<StudentSessionModule>();
 
         public AnalysisModuleService(DataContext context, IStudentSessionFactory studentSessionFactory)
         {
             Context = context;
             _studentSessionFactory = studentSessionFactory;
+
+            var startTimeSpan = TimeSpan.Zero;
+            var periodTimeSpan = TimeSpan.FromMinutes(15);
+
+            var timer = new System.Threading.Timer((e) => FindAbandonedScenarios(), null, startTimeSpan,
+                periodTimeSpan);
         }
 
         public StartGameResponse StartNewSession(StartGameRequest request)
         {
             var id = GenerateGameId();
-            IStudentSessionModule studentSessionModule;
-            if (request.Email == "test" && request.Code == "test")
+            StudentSessionModule studentSessionModule;
+            if (request.Email.ToLower() == "test" && request.Code.ToLower() == "test")
             {
-                var itemToRemove = _studentSessionModules.FirstOrDefault(x =>
-                    x.StudentSessionData.Email == "test" && x.StudentSessionData.Code == "test");
-                if (itemToRemove != null)
-                    _studentSessionModules.Remove(itemToRemove);
+                RemoveUser("test",  "test");
 
                 studentSessionModule = _studentSessionFactory.Create(request.Email, 1, request.Code, id);
             }
@@ -40,7 +43,8 @@ namespace Backend.Analysis_module
                     .Include(s => s.Scenario)
                     .ThenInclude(scenario => scenario.Questions)
                     .Include(s => s.Topic)
-                    .FirstOrDefault(x => x.Code == request.Code && x.Student.Email == request.Email);
+                    .FirstOrDefault(x =>
+                        x.Code == request.Code.ToLower() && x.Student.Email == request.Email.ToLower());
 
                 var error = CheckUserConditions(userSession);
                 if (error != null)
@@ -59,6 +63,7 @@ namespace Backend.Analysis_module
                 SessionCode = id,
                 QuestionsNumber = { studentSessionModule.GetQuestionsAmount() },
                 Error = false,
+                MazeSetting = new StartGameResponse.Types.MazeSetting(),
                 StudentData = new StartGameResponse.Types.StudentData
                 {
                     Experience = 0,
@@ -88,7 +93,7 @@ namespace Backend.Analysis_module
         {
             var user = GetUser(request.SessionCode);
 
-            user.SaveAnswerResponse(StudentResponseAdapter(request));
+            user.SaveAnswerResponse(request);
             return new Empty();
         }
 
@@ -96,27 +101,43 @@ namespace Backend.Analysis_module
         {
             var user = GetUser(request.SessionCode);
 
-            user.EndGame(request);
+            if (user.EndGame(request))
+            {
+
+            }
 
             return new Empty();
         }
 
-        private IStudentSessionModule GetUser(string sessionCode)
+        private void FindAbandonedScenarios()
+        {
+            foreach (var studentSessionModule in _studentSessionModules.Where(studentSessionModule => studentSessionModule.IsAbandoned()))
+            {
+                RemoveUser(studentSessionModule);
+            }
+        }
+
+        private void RemoveUser(StudentSessionModule studentSessionModule)
+        {
+            _studentSessionModules.Remove(studentSessionModule);
+        }
+
+        private void RemoveUser(string email, string code)
+        {
+
+            var itemToRemove = _studentSessionModules.FirstOrDefault(x =>
+                x.StudentSessionData.Email == email && x.StudentSessionData.Code == code);
+            if (itemToRemove != null)
+                RemoveUser(itemToRemove);
+        }
+
+        private StudentSessionModule GetUser(string sessionCode)
         {
             var result =
                 _studentSessionModules.FirstOrDefault(x => x.StudentSessionData.SessionId == sessionCode);
             return result;
         }
 
-        private static AnsweredQuestionModel StudentResponseAdapter(StudentAnswerRequest request)
-        {
-            return new AnsweredQuestionModel
-            {
-                QuestionImportanceType = (QuestionImportanceType)((int)request.QuestionType),
-                AnswersId = request.AnswersID,
-                TimeToAnswer = request.TimeToAnswer
-            };
-        }
 
         private IEnumerable<QuestionResponse.Types.Answer> grpcQuestionResponseAnswersAdapter(
             IReadOnlyList<Answer> answers)
