@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Security.Claims;
 using Backend.Analysis_module;
+using Backend.Analysis_module.SessionModule;
 using Backend.Auth;
 using Backend.Services;
 using Backend.Services.ClassManagement;
@@ -100,7 +101,7 @@ namespace Backend
             services.AddScoped<IClassManagementService, ClassManagementService>();
             services.AddScoped<IScenarioManagementService, ScenarioManagementService>();
             services.AddScoped<ITeacherManagementService, TeacherManagementService>();
-            services.AddSingleton<IStudentSessionFactory, StudentSessionFactory>();
+            services.AddSingleton<ISessionFactory, SessionFactory>();
             services.AddSingleton<IAnalysisModuleService, AnalysisModuleService>();
         }
 

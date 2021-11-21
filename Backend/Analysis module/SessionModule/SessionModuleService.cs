@@ -1,34 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Backend.Analysis_module.AdaptivityModule;
 using Backend.Analysis_module.Models;
 using Backend.Models;
 using Gameplay;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Analysis_module
+namespace Backend.Analysis_module.SessionModule
 {
-    public class StudentSessionModule
+    public class SessionModuleService
     {
         protected readonly DataContext Context;
-        public StudentSessionData StudentSessionData { get; set; }
+        public StudentData StudentData { get; set; }
 
         private readonly Session _userSession;
         private Question[] _readyQuestions;
         private List<Question>[] _availableQuestions;
-        private StudentAnalysisModule _studentAnalysisModule;
-        private static readonly Random _random = new Random();
+        private AdaptivityModuleService _adaptivityModuleService;
+        private static readonly Random Random = new Random();
         private bool _questionAsked = false;
-        private DateTime _startDate;
+        private readonly DateTime _startDate;
         private DateTime _lastRequest;
         private const int AllowedAfkTime = 30;
 
 
-        public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId,
+        public SessionModuleService(string studentEmail, int studentId, string code, string sessionId,
             DataContext context)
         {
             Context = context;
-            StudentSessionData = new StudentSessionData
+            StudentData = new StudentData
             {
                 Email = studentEmail.ToLower(),
                 StudentId = studentId,
@@ -37,15 +38,15 @@ namespace Backend.Analysis_module
             };
             _availableQuestions = GetQuestionsFromScenario();
             _readyQuestions = SetInitialQuestions();
-            _studentAnalysisModule = new StudentAnalysisModule(TestLimit());
+            _adaptivityModuleService = new AdaptivityModuleService(TestLimit());
             _startDate = DateTime.Now;
             SetRequestTime();
         }
 
-        public StudentSessionModule(string studentEmail, int studentId, string code, string sessionId,
+        public SessionModuleService(string studentEmail, int studentId, string code, string sessionId,
             Session userSession, DataContext context)
         {
-            StudentSessionData = new StudentSessionData
+            StudentData = new StudentData
             {
                 Email = studentEmail.ToLower(),
                 StudentId = studentId,
@@ -58,13 +59,13 @@ namespace Backend.Analysis_module
 
             _availableQuestions = GetQuestionsFromScenario();
             _readyQuestions = SetInitialQuestions();
-            _studentAnalysisModule =
-                new StudentAnalysisModule(_userSession.RandomTest, TestLimit());
+            _adaptivityModuleService =
+                new AdaptivityModuleService(_userSession.RandomTest, TestLimit());
             _startDate = DateTime.Now;
             SetRequestTime();
         }
 
-        public  Question GetQuestion(QuestionImportanceType questionImportanceType)
+        public Question GetQuestion(QuestionImportanceType questionImportanceType)
         {
             _questionAsked = true;
             SetRequestTime();
@@ -84,7 +85,7 @@ namespace Backend.Analysis_module
             _questionAsked = false;
 
             var answeredQuestion = StudentResponseAdapter(request);
-            _studentAnalysisModule.AddQuestionToAnalysis(answeredQuestion);
+            _adaptivityModuleService.AddQuestionToAnalysis(answeredQuestion);
             FindNextQuestion(answeredQuestion.QuestionImportanceType);
             SetRequestTime();
         }
@@ -104,9 +105,9 @@ namespace Backend.Analysis_module
             var session = new Session();
             if (!IsTestUser())
                 session = Context.Sessions.Include(s => s.Student).FirstOrDefault(x =>
-                    x.Student.StudentID == StudentSessionData.StudentId && x.Code == StudentSessionData.Code);
+                    x.Student.StudentID == StudentData.StudentId && x.Code == StudentData.Code);
 
-            var analysisResult = _studentAnalysisModule.GetData(request.ScenarioEnded);
+            var analysisResult = _adaptivityModuleService.GetData(request.ScenarioEnded);
             var gameplayData = new GameplayData
             {
                 Experience = request.StudentEndGameData.Experience,
@@ -144,7 +145,6 @@ namespace Backend.Analysis_module
             };
             EndGame(result);
             return true;
-
         }
 
         private int GetQuestionAmount(int questionImportanceIndex)
@@ -189,7 +189,7 @@ namespace Backend.Analysis_module
 
         private bool IsTestUser()
         {
-            return StudentSessionData.Email == "test" && StudentSessionData.Code == "test";
+            return StudentData.Email == "test" && StudentData.Code == "test";
         }
 
         private void SetRequestTime()
@@ -221,16 +221,16 @@ namespace Backend.Analysis_module
 
         private Question GetRandomQuestionOfType(int questionIndex)
         {
-            var index = _random.Next(_availableQuestions[questionIndex].Count);
+            var index = Random.Next(_availableQuestions[questionIndex].Count);
             return _availableQuestions[questionIndex].ElementAt(index);
         }
 
         private Question GetRankedQuestionOfType(int questionIndex)
         {
-            var nextQuestionDifficulty = _studentAnalysisModule.GetNextQuestionDifficulty();
+            var nextQuestionDifficulty = _adaptivityModuleService.GetNextQuestionDifficulty();
             var filteredQuestions = _availableQuestions[questionIndex]
                 .Where(x => x.Difficulty == nextQuestionDifficulty).ToList();
-            var index = _random.Next(filteredQuestions.Count);
+            var index = Random.Next(filteredQuestions.Count);
             return filteredQuestions.ElementAt(index);
         }
 
@@ -239,7 +239,7 @@ namespace Backend.Analysis_module
             var questionIndex = (int)questionImportanceType;
             RemoveQuestion(questionIndex);
             _readyQuestions[questionIndex] =
-                _studentAnalysisModule.DifficultyLevel < 0
+                _adaptivityModuleService.DifficultyLevel < 0
                     ? GetRandomQuestionOfType(questionIndex)
                     : GetRankedQuestionOfType(questionIndex);
         }
@@ -291,7 +291,7 @@ namespace Backend.Analysis_module
                 var data = question.Split(";");
                 var correctAnswer = Convert.ToInt32(data.Last());
                 var type = j % 3;
-                var difficulty = (byte)_random.Next(0, 6);
+                var difficulty = (byte)Random.Next(0, 6);
                 var newQuestion = new Question
                 {
                     Content = data[0],

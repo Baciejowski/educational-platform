@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Backend.Models;
+using Backend.Analysis_module.Models;
 
-namespace Backend.Analysis_module.Models
+namespace Backend.Models
 {
     public class AnsweredQuestion
     {

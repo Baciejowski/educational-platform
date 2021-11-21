@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Backend.Analysis_module.Models;
+using Backend.Models;
 
-namespace Backend.Analysis_module
+namespace Backend.Analysis_module.AdaptivityModule
 {
-    public class StudentAnalysisModule
+    public class AdaptivityModuleService
     {
         public double DifficultyLevel { get; set; }
         private readonly Random _random = new Random();
@@ -15,17 +15,18 @@ namespace Backend.Analysis_module
         private readonly int _testLimit;
         private readonly float _prevRank = 0;
 
-        public StudentAnalysisModule(int testLimit)
+        public AdaptivityModuleService(int testLimit)
         {
             _testLimit = testLimit;
         }
 
-        public StudentAnalysisModule(bool randomTest, int testLimit) : this(testLimit)
+        public AdaptivityModuleService(bool randomTest, int testLimit) : this(testLimit)
         {
             _randomTest = randomTest;
             //TO DO: get prev rank
         }
-        public StudentAnalysisModule(bool randomTest, bool randomCategorization, int testLimit) : this(testLimit)
+
+        public AdaptivityModuleService(bool randomTest, bool randomCategorization, int testLimit) : this(testLimit)
         {
             _randomTest = randomTest;
             _randomCategorization = randomCategorization;
@@ -86,7 +87,7 @@ namespace Backend.Analysis_module
                 DifficultyLevel = DifficultyLevel,
                 AnsweredQuestions = _answeredQuestionsModels,
                 ScenarioEnded = scenarioEnded,
-                EndDate= DateTime.Now
+                EndDate = DateTime.Now
             };
         }
     }

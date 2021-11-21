@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using Backend.Analysis_module.Models;
 
 namespace Backend.Models
 {

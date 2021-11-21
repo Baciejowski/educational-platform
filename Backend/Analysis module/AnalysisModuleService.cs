@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Backend.Analysis_module.Models;
+using Backend.Analysis_module.SessionModule;
 using Backend.Models;
 using Gameplay;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +12,13 @@ namespace Backend.Analysis_module
     public class AnalysisModuleService : IAnalysisModuleService
     {
         protected readonly DataContext Context;
-        private readonly IStudentSessionFactory _studentSessionFactory;
-        private List<StudentSessionModule> _studentSessionModules = new List<StudentSessionModule>();
+        private readonly ISessionFactory _sessionFactory;
+        private List<SessionModuleService> _sessionModules = new List<SessionModuleService>();
 
-        public AnalysisModuleService(DataContext context, IStudentSessionFactory studentSessionFactory)
+        public AnalysisModuleService(DataContext context, ISessionFactory sessionFactory)
         {
             Context = context;
-            _studentSessionFactory = studentSessionFactory;
+            _sessionFactory = sessionFactory;
 
             var startTimeSpan = TimeSpan.Zero;
             var periodTimeSpan = TimeSpan.FromMinutes(15);
@@ -29,12 +30,12 @@ namespace Backend.Analysis_module
         public StartGameResponse StartNewSession(StartGameRequest request)
         {
             var id = GenerateGameId();
-            StudentSessionModule studentSessionModule;
+            SessionModuleService sessionModule;
             if (request.Email.ToLower() == "test" && request.Code.ToLower() == "test")
             {
                 RemoveUser("test",  "test");
 
-                studentSessionModule = _studentSessionFactory.Create(request.Email, 1, request.Code, id);
+                sessionModule = _sessionFactory.Create(request.Email, 1, request.Code, id);
             }
             else
             {
@@ -52,16 +53,16 @@ namespace Backend.Analysis_module
 
                 userSession.Attempts++;
 
-                studentSessionModule =
-                    _studentSessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
+                sessionModule =
+                    _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
                         userSession);
             }
 
-            _studentSessionModules.Add(studentSessionModule);
+            _sessionModules.Add(sessionModule);
             return new StartGameResponse
             {
                 SessionCode = id,
-                QuestionsNumber = { studentSessionModule.GetQuestionsAmount() },
+                QuestionsNumber = { sessionModule.GetQuestionsAmount() },
                 Error = false,
                 MazeSetting = new StartGameResponse.Types.MazeSetting(),
                 StudentData = new StartGameResponse.Types.StudentData
@@ -111,30 +112,30 @@ namespace Backend.Analysis_module
 
         private void FindAbandonedScenarios()
         {
-            foreach (var studentSessionModule in _studentSessionModules.Where(studentSessionModule => studentSessionModule.IsAbandoned()))
+            foreach (var SessionModule in _sessionModules.Where(SessionModule => SessionModule.IsAbandoned()))
             {
-                RemoveUser(studentSessionModule);
+                RemoveUser(SessionModule);
             }
         }
 
-        private void RemoveUser(StudentSessionModule studentSessionModule)
+        private void RemoveUser(SessionModuleService sessionModule)
         {
-            _studentSessionModules.Remove(studentSessionModule);
+            _sessionModules.Remove(sessionModule);
         }
 
         private void RemoveUser(string email, string code)
         {
 
-            var itemToRemove = _studentSessionModules.FirstOrDefault(x =>
-                x.StudentSessionData.Email == email && x.StudentSessionData.Code == code);
+            var itemToRemove = _sessionModules.FirstOrDefault(x =>
+                x.StudentData.Email == email && x.StudentData.Code == code);
             if (itemToRemove != null)
                 RemoveUser(itemToRemove);
         }
 
-        private StudentSessionModule GetUser(string sessionCode)
+        private SessionModuleService GetUser(string sessionCode)
         {
             var result =
-                _studentSessionModules.FirstOrDefault(x => x.StudentSessionData.SessionId == sessionCode);
+                _sessionModules.FirstOrDefault(x => x.StudentData.SessionId == sessionCode);
             return result;
         }
 

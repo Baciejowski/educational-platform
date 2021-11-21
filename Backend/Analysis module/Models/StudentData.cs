@@ -1,6 +1,6 @@
 ﻿namespace Backend.Analysis_module.Models
 {
-    public class StudentSessionData
+    public class StudentData
     {
 
         public string Email { get; set; }

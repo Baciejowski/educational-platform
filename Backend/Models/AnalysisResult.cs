@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Backend.Analysis_module.Models
+namespace Backend.Models
 {
     public class AnalysisResult
     {
