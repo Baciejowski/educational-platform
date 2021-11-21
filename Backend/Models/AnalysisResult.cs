@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Backend.Models
 {
@@ -10,5 +12,11 @@ namespace Backend.Models
         public List<AnsweredQuestion> AnsweredQuestions { get; set; }
         public bool ScenarioEnded { get; set; }
         public DateTime EndDate { get; set; }
+
+        [JsonIgnore]
+        public virtual SessionRecord SessionRecord { get; set; }
+
+        [ForeignKey("SessionRecord")]
+        public int SessionRecordID { get; set; }
     }
 }

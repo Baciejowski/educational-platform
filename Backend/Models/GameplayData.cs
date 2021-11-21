@@ -1,4 +1,7 @@
-﻿namespace Backend.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
+namespace Backend.Models
 {
     public class GameplayData
     {
@@ -10,5 +13,11 @@
         public float Light { get; set; }
         public float Vision { get; set; }
         public float Speed { get; set; }
+
+        [JsonIgnore]
+        public SessionRecord SessionRecord { get; set; }
+
+        [ForeignKey("SessionRecord")]
+        public int SessionRecordID { get; set; }
     }
 }

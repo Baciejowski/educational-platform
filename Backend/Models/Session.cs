@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Backend.Models
@@ -25,6 +26,9 @@ namespace Backend.Models
         public Topic Topic => Scenario.Topic;
 
         [JsonIgnore]
-        public SessionRecord SessionRecord { get; set; }
+        public virtual SessionRecord SessionRecord { get; set; }
+
+        [ForeignKey("SessionRecord")]
+        public int SessionRecordID { get; set; }
     }
 }
