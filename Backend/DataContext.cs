@@ -109,10 +109,10 @@ namespace Backend
             modelBuilder.Entity<AnsweredQuestion>()
                 .HasOne<AnalysisResult>(answeredQuestions => answeredQuestions.AnalysisResult)
                 .WithMany(analysisResult => analysisResult.AnsweredQuestions);
-            //answeredQuestion-answers
+            //answeredQuestions-question
             modelBuilder.Entity<AnsweredQuestion>()
-                .HasMany<Answer>(answeredQuestion => answeredQuestion.AnsweredAnswers)
-                .WithMany(answers => answers.AnsweredQuestions);
+                .HasOne<Question>(answeredQuestions => answeredQuestions.Question)
+                .WithMany(question => question.AnsweredQuestion);
         }
     }
 }

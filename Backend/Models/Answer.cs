@@ -12,8 +12,5 @@ namespace Backend.Models
 
         [JsonIgnore]
         public virtual Question Question { get; set; }
-
-        [JsonIgnore]
-        public virtual List<AnsweredQuestion> AnsweredQuestions { get; set; }
     }
 }

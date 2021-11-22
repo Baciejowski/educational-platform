@@ -76,7 +76,8 @@ namespace Backend.Analysis_module.AdaptivityModule
         private static float CalculateCorrectness(AnsweredQuestion question)
         {
             var correctCount = question.Question.ABCDAnswers.Count(x => x.Correct);
-            return question.AnsweredAnswers.Where(answer => !answer.Correct)
+            var answers = question.Question.ABCDAnswers.Where(x => question.AnsweredAnswers.Contains(x.AnswerID)).ToList();
+            return answers.Where(answer => !answer.Correct)
                 .Aggregate(1.0f, (current, answer) => current - 1f / correctCount);
         }
 

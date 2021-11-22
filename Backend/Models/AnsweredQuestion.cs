@@ -8,7 +8,7 @@ namespace Backend.Models
     {
         public int AnsweredQuestionID { get; set; }
         public QuestionImportanceType QuestionImportanceType { get; set; }
-        public List<Answer> AnsweredAnswers { get; set; }
+        public List<int> AnsweredAnswers { get; set; }
         public Question Question { get; set; }
         public int TimeToAnswer { get; set; }
         public float Correctness { get; set; }

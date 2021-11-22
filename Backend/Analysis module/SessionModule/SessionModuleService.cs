@@ -40,6 +40,8 @@ namespace Backend.Analysis_module.SessionModule
             _readyQuestions = SetInitialQuestions();
             _adaptivityModuleService = new AdaptivityModuleService(TestLimit());
             _startDate = DateTime.Now;
+            _userSession = Context.Scenarios.Include(x => x.Sessions).FirstOrDefault(x => x.Name == "TestRectangles")
+                ?.Sessions.First();
             SetRequestTime();
         }
 
@@ -102,40 +104,36 @@ namespace Backend.Analysis_module.SessionModule
 
         public bool EndGame(EndGameRequest request)
         {
-            Session session;
-            if (!IsTestUser())
-                session = Context.Sessions.Include(s => s.Student).FirstOrDefault(x =>
-                    x.Student.StudentID == StudentData.StudentId && x.Code == StudentData.Code);
-            else session = Context.Scenarios.Include(x=>x.Sessions).FirstOrDefault(x => x.Name == "TestRectangles").Sessions.First();
-
             var analysisResult = _adaptivityModuleService.GetData(request.ScenarioEnded);
             var gameplayData = new GameplayData
             {
                 Experience = request.StudentEndGameData.Experience,
                 Money = request.StudentEndGameData.Money,
                 GameplayTime = request.GameplayTime,
-                Light = 0,
-                Vision = 0,
-                Speed = 0
+                Light = request.StudentEndGameData.Light,
+                Vision = request.StudentEndGameData.Vision,
+                Speed = request.StudentEndGameData.Speed
             };
+            Context.AnalysisResults.Add(analysisResult);
+            Context.SaveChanges();
 
             var result = new SessionRecord
             {
-                AnalysisResult = analysisResult,
-                Session = session,
-                GameplayData = gameplayData
+                AnalysisResult = new AnalysisResult(),
+                Session = new Session(),
+                GameplayData = new GameplayData()
             };
-            try
-            {
+            // try
+            // {
+            //     Context.SessionRecords.Add(result);
+            //     Context.SaveChanges();
+            // }
+            // catch (Exception e)
+            // {
+            //     Console.WriteLine(e);
+            //     throw;
+            // }
 
-                Context.SessionRecords.Add(result);
-                Context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
             SetRequestTime();
 
             return true;
@@ -153,7 +151,7 @@ namespace Backend.Analysis_module.SessionModule
                 ScenarioEnded = false,
                 GameplayTime = gameTime,
                 StudentEndGameData = new EndGameRequest.Types.StudentEndGameData
-                    { Experience = 0, Money = 0, Skills = { 0, 0, 0 } }
+                    { Experience = 0, Money = 0 }
             };
             EndGame(result);
             return true;
@@ -178,7 +176,7 @@ namespace Backend.Analysis_module.SessionModule
             {
                 QuestionImportanceType = type,
                 Question = question,
-                AnsweredAnswers = answers,
+                AnsweredAnswers = request.AnswersID.ToList(),
                 TimeToAnswer = request.TimeToAnswer
             };
         }
