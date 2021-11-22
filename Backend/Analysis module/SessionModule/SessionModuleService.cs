@@ -105,6 +105,9 @@ namespace Backend.Analysis_module.SessionModule
         public bool EndGame(EndGameRequest request)
         {
             var analysisResult = _adaptivityModuleService.GetData(request.ScenarioEnded);
+            // if(IsTestUser())
+            //     analysisResult.AnsweredQuestions.ForEach(x=>x.Question = null);
+
             var gameplayData = new GameplayData
             {
                 Experience = request.StudentEndGameData.Experience,
@@ -114,25 +117,19 @@ namespace Backend.Analysis_module.SessionModule
                 Vision = request.StudentEndGameData.Vision,
                 Speed = request.StudentEndGameData.Speed
             };
-            Context.AnalysisResults.Add(analysisResult);
-            Context.SaveChanges();
 
-            var result = new SessionRecord
+            var sessionRecord = new SessionRecord
             {
-                AnalysisResult = new AnalysisResult(),
-                Session = new Session(),
-                GameplayData = new GameplayData()
+                AnalysisResult = analysisResult,
+                Session = _userSession,
+                GameplayData = gameplayData
             };
-            // try
-            // {
-            //     Context.SessionRecords.Add(result);
-            //     Context.SaveChanges();
-            // }
-            // catch (Exception e)
-            // {
-            //     Console.WriteLine(e);
-            //     throw;
-            // }
+
+            if (!IsTestUser())
+            {
+                Context.SessionRecords.Add(sessionRecord);
+                Context.SaveChanges();
+            }
 
             SetRequestTime();
 
