@@ -34,22 +34,25 @@
             </div>
         </div>
         <div v-for="group in classes" :key="group.classID">
-            <div class="collection with-header">
-                <div class="collection-header">
+            <ul class="collection with-header">
+                <li class="collection-header">
                     <h3>{{group.friendlyName}}</h3>
-                </div>
+                </li>
                 <div v-for="student in group.students" :key="student.studentID">
-                    <a class="collection-item black-text">
-                        {{student.firstName}} {{student.lastName}} {{student.email}}
-
-                        <!--<a href="#!" @click="deleteScenario(scenario.scenarioID)" class="secondary-content grey-link hovered-red"><i class="material-icons">delete</i></a>
-                    <a href="#!" @click="copyScenario(scenario.scenarioID)" class="secondary-content grey-link hovered-turquoise"><i class="material-icons">content_copy</i></a>
-                    <a href="#!" class="secondary-content grey-link hovered-blue"><i class="material-icons">ios_share</i></a>
-                    <a href="#!" class="secondary-content grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
-                    <a :href="'/scenario?id=' + scenario.scenarioID" class="secondary-content grey-link hovered-orange"><i class="material-icons">edit</i></a>
-                    <a :href="'/scenario?id=' + scenario.scenarioID" class="secondary-content grey-link hovered-green"><i class="material-icons">search</i></a>-->
-                    </a>
+                    <li v-if="student.studentID" class="collection-item avatar black-text" :id="'studentEntry'+student.studentID">
+                    <i class="circle green">{{student.firstName[0]+student.lastName[0]}}</i>
+                    <span class="title">{{student.firstName}} {{student.lastName}}</span>
+                    <p>{{student.email}}</p>
+                    <div class="secondary-content">
+                        <span class="badge green lighten-3 left grey-text text-darken-3">4 waiting</span>
+                        <span class="badge orange lighten-3 left grey-text text-darken-3">4 finished</span>
+                        <a href="#!" @click="editStudent(student.studentID)" class="grey-link hovered-orange" style="margin-left:7px;"><i class="material-icons">edit</i></a>
+                        <a href="#!" class="grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
+                        <a href="#!" @click="deleteStudent(student.studentID)" class="grey-link hovered-red"><i class="material-icons">delete</i></a>
+                    </div>
+                </li>
                 </div>
+                
                 <!--<div v-if="!topic.scenarios.length">
                 <div class="collection-item">
                     No scenarios assigned!
@@ -58,7 +61,7 @@
                     </div>
                 </div>
             </div>-->
-            </div>
+            </ul>
         </div>
         <div id="modal1" class="modal bottom-sheet" style="max-height: 100% !important; height: fit-content; overflow-y: auto; ">
             <div class="modal-content">
@@ -66,15 +69,27 @@
                     <h4 id="modalHeader">Student editing</h4>
                     <form style="margin-bottom: 15px; margin-top: 15px; ">
                         <div class="input-field" style="display: inline-block; margin-right: 20px; min-width: 200px">
-                            <select id="assignedGroup" class="black-text" disabled>
-                                <!--<option value="0"><span class="black-text">True/false</span></option>
-                            <option value="1"><span class="black-text">Single/multiple choice</span></option>
-                            <option value="2"><span class="black-text">Open</span></option>-->
+                            <select id="assignedGroup" class="black-text">
                             </select>
                             <label>Assigned to class</label>
                         </div>
                     </form>
                     <form id="studentForm" @submit="studentOnSubmit">
+                        <div class="row" style="margin-bottom: 0px">
+                            <div class="input-field col s4">
+                                <input id="editedStudentFirstName" type="text" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
+                                <label class="grey-text">First name</label>
+                            </div>
+                            <div class="input-field col s4">
+                                <input id="editedStudentLastName" type="text" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
+                                <label class="grey-text">Last name</label>
+                            </div>
+                            <div class="input-field col s4">
+                                <input id="editedStudentEmail" type="email" class="validate" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
+                                <label for="editedStudentEmail">Email</label>
+                            </div>
+                        </div>
+                        <button id="submitButton" class="right btn waves-effect waves-light orange" type="submit" name="submit"></button>
                     </form>
                 </div>
             </div>
@@ -135,7 +150,16 @@
             },
             async studentOnSubmit(event) {
                 event.preventDefault()
-                let editedStudent = this.classes[0].students.find(s => s.studentID === this.editedStudentID)
+                let found = false
+                let editedStudent = {}
+                for (const group of this.classes) {
+                    for (const s of group.students)
+                        if (s.studentID === this.editedStudentID) {
+                            found = true
+                            editedStudent = s
+                        }
+                    if (found) break
+                }
 
                 this.$store.state.loadingData = true
                 editedStudent.firstName = document.getElementById("editedStudentFirstName").value
@@ -146,10 +170,11 @@
 
                 if (editedStudent.studentID) {
                     await this.$store
-                        .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/students", data: editedStudent })
+                        .dispatch("authorizedPUT_PromiseWithHeaders", { url: `api/students?classID=${document.getElementById("assignedGroup").value}`, data: editedStudent })
                         .then((data) => {
                             if (data.status == 200) {
-                                M.toast({ html: "<div class='black-text'>Student was created</div>", classes: "green lighten-3" })
+                                M.toast({ html: "<div class='black-text'>Student was modified</div>", classes: "green lighten-3" })
+                                this.reload()
                             }
                         })
                         .catch((err) => {
@@ -159,21 +184,21 @@
                 }
                 else {
                     await this.$store
-                        .dispatch("authorizedPOST_PromiseWithHeaders", { url: `/api/students`, data: editedStudent })
+                        .dispatch("authorizedPOST_PromiseWithHeaders", { url: `api/students?classID=${document.getElementById("assignedGroup").value}`, data: editedStudent })
                         .then((resp) => {
                             if (resp.status == 201) {
                                 M.toast({ html: "<div class='black-text'>Student was modified</div>", classes: "green lighten-3" })
+                                this.reload()
                                 this.editedStudentID = resp.data
                             }
                         })
                         .catch((err) => {
                             M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
+                            this.reload()
                         })
-                    this.reload()
                 }
-
                 this.$store.state.loadingData = false
-                document.getElementById(`studentCard${this.editedStudentID}`).scrollIntoView({
+                document.getElementById(`studentEntry${this.editedStudentID}`).scrollIntoView({
                     behavior: 'smooth'
                 });
 
@@ -201,36 +226,32 @@
             editStudent(id) {
                 document.getElementById("modalHeader").innerText = id ? "Student editing" : "Create a student"
                 this.editedStudentID = id
-                const studentForm = document.getElementById("studentForm")
                 const instance = M.Modal.getInstance(document.getElementById("modal1"))
-                let student = this.classes[0].students.find(s => s.studentID === id)
-                studentForm.innerHTML = `
-                    <div class="row" style="margin-bottom: 0px">
-                        <div class="input-field col s4">
-                            <input id="editedStudentFirstName" type="text" class="materialize-textarea" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;"></textarea>
-                            <label class="grey-text">First name</label>
-                        </div>
-                        <div class="input-field col s4">
-                            <input id="editedStudentLastName" type="text class="materialize-textarea" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;"></textarea>
-                            <label class="grey-text">Last name</label>
-                        </div>
-                        <div class="input-field col s4">
-                            <input id="editedStudentEmail" type="text class="materialize-textarea" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;"></textarea>
-                            <label class="grey-text">Email</label>
-                        </div>
-                    </div>`
+                let found = false
+                let student = {}
+                let assignedGroup = 0
+                for (const group of this.classes) {
+                    for (const s of group.students)
+                        if (s.studentID === id) {
+                            found = true
+                            student = s
+                            assignedGroup = group.classID
+                        }
+                    if (found) break
+                }
                 document.getElementById("editedStudentFirstName").value = student.firstName
                 document.getElementById("editedStudentLastName").value = student.lastName
                 document.getElementById("editedStudentEmail").value = student.email
-
-                const button = document.createElement("button")
-                button.id = "submitButton"
-                button.classList.add("right", "btn", "waves-effect", "waves-light", "orange")
-                button.type = "submit"
-                button.name = "submit"
-                button.textContent = id ? "Update" : "Create"
-                studentForm.appendChild(button)
-
+                document.getElementById("submitButton").textContent = id ? "Update" : "Create"
+                let groupsSelector = document.getElementById("assignedGroup")
+                groupsSelector.innerHTML=""
+                for (const group of this.classes) {
+                    let opt = document.createElement("option")
+                    opt.value = group.classID
+                    opt.innerHTML = group.friendlyName
+                    groupsSelector.appendChild(opt)
+                }
+                if (student.studentID) document.getElementById("assignedGroup").value = assignedGroup
                 M.FormSelect.init(document.querySelectorAll('select'));
                 M.updateTextFields();
                 instance.open()
@@ -242,7 +263,20 @@
                 console.log(this.classes[0])
                 this.classes[0].students.push(this.getEmptyStudent())
                 this.editStudent(0)
-            }
+            },
+            deleteStudent(id) {
+                this.$store.state.loadingData = true
+                this.$store
+                    .dispatch("authorizedDELETE_PromiseWithHeaders", { url: `/api/students?id=${id}` })
+                    .then((data) => {
+                        if (data.status == 200) {
+                            M.toast({ html: "<div class='black-text'>Chosen student was deleted!</div>", classes: "green lighten-3" })
+                            this.reload()
+                        }
+                    })
+                    .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
+                this.$store.state.loadingData = false
+            },
         }
     }
 </script>
@@ -285,6 +319,7 @@
     }
     .collection .collection-item {
         border: none;
+        min-height: fit-content;
     }
 
     input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
@@ -294,5 +329,10 @@
     .select-wrapper.valid > input.select-dropdown, input:not([type]).valid, input:not([type]):focus.valid, input[type=text]:not(.browser-default).valid, input[type=text]:not(.browser-default):focus.valid, input[type=password]:not(.browser-default).valid, input[type=password]:not(.browser-default):focus.valid, input[type=email]:not(.browser-default).valid, input[type=email]:not(.browser-default):focus.valid, input[type=url]:not(.browser-default).valid, input[type=url]:not(.browser-default):focus.valid, input[type=time]:not(.browser-default).valid, input[type=time]:not(.browser-default):focus.valid, input[type=date]:not(.browser-default).valid, input[type=date]:not(.browser-default):focus.valid, input[type=datetime]:not(.browser-default).valid, input[type=datetime]:not(.browser-default):focus.valid, input[type=datetime-local]:not(.browser-default).valid, input[type=datetime-local]:not(.browser-default):focus.valid, input[type=tel]:not(.browser-default).valid, input[type=tel]:not(.browser-default):focus.valid, input[type=number]:not(.browser-default).valid, input[type=number]:not(.browser-default):focus.valid, input[type=search]:not(.browser-default).valid, input[type=search]:not(.browser-default):focus.valid, textarea.materialize-textarea.valid, textarea.materialize-textarea:focus.valid {
         border-bottom: 1px solid orange;
         box-shadow: 0 1px 0 0 orange;
+    }
+    .badge{
+        font-weight: normal;
+        margin-left: 7px;
+        margin-right: 7px;
     }
 </style>
