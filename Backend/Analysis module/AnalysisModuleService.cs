@@ -33,7 +33,7 @@ namespace Backend.Analysis_module
             SessionModuleService sessionModule;
             if (request.Email.ToLower() == "test" && request.Code.ToLower() == "test")
             {
-                RemoveUser("test",  "test");
+                RemoveUser("test", "test");
 
                 sessionModule = _sessionFactory.Create(request.Email, 1, request.Code, id);
             }
@@ -104,7 +104,7 @@ namespace Backend.Analysis_module
 
             if (user.EndGame(request))
             {
-
+                RemoveUser(user);
             }
 
             return new Empty();
@@ -125,7 +125,6 @@ namespace Backend.Analysis_module
 
         private void RemoveUser(string email, string code)
         {
-
             var itemToRemove = _sessionModules.FirstOrDefault(x =>
                 x.StudentData.Email == email && x.StudentData.Code == code);
             if (itemToRemove != null)

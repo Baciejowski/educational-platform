@@ -102,10 +102,11 @@ namespace Backend.Analysis_module.SessionModule
 
         public bool EndGame(EndGameRequest request)
         {
-            var session = new Session();
+            Session session;
             if (!IsTestUser())
                 session = Context.Sessions.Include(s => s.Student).FirstOrDefault(x =>
                     x.Student.StudentID == StudentData.StudentId && x.Code == StudentData.Code);
+            else session = Context.Scenarios.Include(x=>x.Sessions).FirstOrDefault(x => x.Name == "TestRectangles").Sessions.First();
 
             var analysisResult = _adaptivityModuleService.GetData(request.ScenarioEnded);
             var gameplayData = new GameplayData
@@ -113,9 +114,9 @@ namespace Backend.Analysis_module.SessionModule
                 Experience = request.StudentEndGameData.Experience,
                 Money = request.StudentEndGameData.Money,
                 GameplayTime = request.GameplayTime,
-                Light = request.StudentEndGameData.Skills[0],
-                Vision = request.StudentEndGameData.Skills[1],
-                Speed = request.StudentEndGameData.Skills[2]
+                Light = 0,
+                Vision = 0,
+                Speed = 0
             };
 
             var result = new SessionRecord
@@ -124,6 +125,17 @@ namespace Backend.Analysis_module.SessionModule
                 Session = session,
                 GameplayData = gameplayData
             };
+            try
+            {
+
+                Context.SessionRecords.Add(result);
+                Context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             SetRequestTime();
 
             return true;
@@ -149,11 +161,11 @@ namespace Backend.Analysis_module.SessionModule
 
         private int GetQuestionAmount(int questionImportanceIndex)
         {
-            return _availableQuestions[questionImportanceIndex]
+            var type = _availableQuestions[questionImportanceIndex];
+            return type
                 .GroupBy(x => x.Difficulty)
-                .Select(group => group.Count())
-                .OrderByDescending(x => x)
-                .First();
+                .OrderBy(x => x.Count())
+                .First().Count();
         }
 
         private AnsweredQuestion StudentResponseAdapter(StudentAnswerRequest request)
@@ -291,7 +303,7 @@ namespace Backend.Analysis_module.SessionModule
                 var data = question.Split(";");
                 var correctAnswer = Convert.ToInt32(data.Last());
                 var type = j % 3;
-                var difficulty = (byte)Random.Next(0, 6);
+                var difficulty = (byte)(j % 2 + 1);
                 var newQuestion = new Question
                 {
                     Content = data[0],
