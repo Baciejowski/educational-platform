@@ -11,7 +11,7 @@
                         <a href="https://yarde.github.io/"> Join the game<i class="material-icons">sports_esports</i> </a>
                     </li>
                     <li>
-                        <a href="#">Teacher zone<i class="material-icons">work</i></a>
+                        <a href="/teacher">Teacher zone<i class="material-icons">work</i></a>
                     </li>
                     <li>
                         <a @click="login" v-if="!$auth.isAuthenticated && !$auth.loading">Register/Log in<i class="material-icons">person_add</i></a>
@@ -41,7 +41,7 @@
                 <a href="https://yarde.github.io/">Join the game<i class="material-icons">sports_esports</i></a>
             </li>
             <li>
-                <a href="#">Teacher zone<i class="material-icons">work</i></a>
+                <a href="/teacher">Teacher zone<i class="material-icons">work</i></a>
             </li>
             <li>
                 <a @click="login" v-if="!$auth.isAuthenticated && !$auth.loading">Register/Log in<i class="material-icons">person_add</i></a>

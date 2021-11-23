@@ -136,7 +136,7 @@ export default {
             }
 
             this.$store
-                .dispatch("authorizedPOST_Promise", { url: "/api/classes", data })
+                .dispatch("authorizedPOST_Promise", { url: "/api/classes/invitations", data })
                 .catch(() => console.log)
                 .then(() => {
                     this.selectedClass = null
