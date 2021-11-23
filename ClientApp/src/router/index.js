@@ -7,6 +7,8 @@ import ClassManagement from "@/views/ClassManagement.vue"
 import CreateScenario from "@/views/CreateScenario.vue"
 import Counter from "@/views/Counter.vue";
 import TopicsManagement from "@/views/TopicsManagement.vue"
+import ViewScenario from "@/views/ViewScenario.vue"
+import PageNotFound from "@/views/PageNotFound.vue"
 
 Vue.use(VueRouter)
 
@@ -23,9 +25,15 @@ const routes = [
         beforeEnter: authGuard
     },
     {
-        path: "/topics-management",
-        name: "topics-management",
+        path: "/topics",
+        name: "topics",
         component: TopicsManagement,
+        beforeEnter: authGuard
+    },
+    {
+        path: "/scenario",
+        name: "scenario",
+        component: ViewScenario,
         beforeEnter: authGuard
     },
     {
@@ -44,6 +52,10 @@ const routes = [
         path: "/Counter",
         name: "Counter",
         component: Counter,
+    },
+    {
+        path: "*",
+        component: PageNotFound
     }
 ]
 
