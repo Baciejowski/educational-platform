@@ -11,6 +11,7 @@ import ViewScenario from "@/views/ViewScenario.vue"
 import PageNotFound from "@/views/PageNotFound.vue"
 import StudentsManagement from "@/views/StudentsManagement.vue"
 import AiView from "@/views/AiView.vue"
+import TeacherView from "@/views/TeacherView.vue"
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,12 @@ const routes = [
         path: "/profile",
         name: "profile",
         component: Profile,
+        beforeEnter: authGuard
+    },
+    {
+        path: "/teacher",
+        name: "teacher panel",
+        component: TeacherView,
         beforeEnter: authGuard
     },
     {
