@@ -2,7 +2,7 @@
     <div class="container">
         <div class="section">
             <h1 v-if="!scenario || Object.keys(scenario).length === 0 " style="display: inline-block;">Loading...</h1>
-            <h1 v-if="scenario && Object.keys(scenario).length > 0 " style="display: inline-block;">{{scenario.Name}}</h1>
+            <h1 v-if="scenario && Object.keys(scenario).length > 0 " style="display: inline-block;">Artificial Inteligence proposals for {{scenario.Name}}</h1>
             <div v-if="isLoading" class="preloader-wrapper small active right">
                 <div class="spinner-layer spinner-yellow-only">
                     <div class="circle-clipper left">
@@ -16,81 +16,62 @@
             </div>
             <div class="divider orange" style="margin-bottom:10px" />
             <div v-if="scenario && Object.keys(scenario).length > 0 ">
-                <div style="display: inline;">
-                    <a class="waves-effect waves-light btn orange" style="margin-bottom: 10px" @click="add()">Add Question</a>
-                </div>
-                <div style="display: inline;">
-                    <a :class="'right waves-effect waves-light btn orange'+(aiProposals ? '':' disabled')" style="margin-left: 10px; margin-bottom: 10px" :href="'/AiProposals?id='+scenario.ScenarioID">
-                        AI proposals <span v-if="aiProposals" class="new badge white grey-text text-darken-4" style="font-weight:600;top:1px">{{aiProposals}}</span>
-                    </a>
-                </div>
-                <div v-if="scenario.Url" style="display: inline;">
-                    <a class="right waves-effect waves-light btn orange" :href="scenario.Url" target="_blank">Reference materials</a>
-                </div>
-                <form v-if="scenario.Questions.length">
-                    <div class="input-field">
-                        <input id="search" placeholder="search" type="search" v-model="search" required autocomplete="off" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
-                        <i v-if="search" @click="clearSearch()" class="material-icons black-text">close</i>
-                    </div>
-                </form>
-                <div v-if="obligatoryQ.length" class="section">
-                    <h3><i class="material-icons">tips_and_updates</i></h3><h5>Obligatory questions</h5>
-                    <div v-for="question in obligatoryQ" :key="question.QuestionID">
-                        <div class="card white z-depth-0" style="border:1px solid; border-color:darkorange;" :id="'questionCard'+question.QuestionID">
-                            <div class="card-content">
-                                <div class="card-title" style="text-align: left">
-                                    <span class="right orange-text" style="display: inline; margin-left:10px;">{{difficultyRepresentation(question.Difficulty)}}</span>
-                                    <span class="black-text" style="display: inline;">{{question.Content}}</span>
-                                </div>
-                                <div v-if="question.Hint" class="black-text">Hint: {{question.Hint}}</div>
-                                <div v-for="answer in question.ABCDAnswers" :key="answer.AnswerID">
-                                    <div v-if="answer.Correct" class="black-text">
-                                        &check; {{answer.Content}}
-                                        <a v-if="answer.Argumentation" class="black-text">({{answer.Argumentation}})</a>
-                                    </div>
-                                    <div v-if="!answer.Correct" class="black-text">
-                                        &cross; {{answer.Content}}
-                                        <a v-if="answer.Argumentation" class="black-text">({{answer.Argumentation}})</a>
-                                    </div>
-                                </div>
-                                <div v-if="question.BooleanAnswer!=null" class="black-text">{{question.BooleanAnswer}}</div>
+                <div v-if="proposedQ.length" class="section">
+                    <h3><i class="material-icons">settings_suggest</i></h3><h5>Generated questions</h5>
+                    <div v-for="question in proposedQ" :key="question.QuestionID" class="card white z-depth-0" style="border:1px solid; border-color:darkorange;" :id="'questionCard'+question.QuestionID">
+                        <div class="card-content">
+                            <div class="card-title" style="text-align: left">
+                                <span class="right orange-text" style="display: inline; margin-left:10px;">{{difficultyRepresentation(question.Difficulty)}}</span>
+                                <span class="black-text" style="display: inline;">{{question.Content}}</span>
                             </div>
-                            <div class="card-action">
-                                <a v-if="(question.QuestionType==1)" @click="edit(question.QuestionID)">Edit</a>
-                                <a @click="deleteQuestion(question.QuestionID)">Remove</a>
+                            <div v-for="answer in question.ABCDAnswers" :key="answer.AnswerID">
+                                <div v-if="answer.Correct" class="black-text">
+                                    &check; {{answer.Content}}
+                                </div>
+                                <div v-if="!answer.Correct" class="black-text">
+                                    &cross; {{answer.Content}}
+                                </div>
                             </div>
+                            <div v-if="question.BooleanAnswer!=null" class="black-text">{{question.BooleanAnswer}}</div>
+                        </div>
+                        <div class="card-action">
+                            <a @click="edit(question.QuestionID)">Detale & Publish</a>
+                            <a @click="deleteQuestion(question.QuestionID)">Dismiss</a>
                         </div>
                     </div>
                 </div>
-                <div v-for="lvl in [1,2,3,4,5]" :key="lvl">
-                    <div v-if="questions(lvl).length" class="section">
-                        <h3>{{sectionHeaderIcon(lvl)}}</h3>
-                        <h5>{{sectionHeaderText(lvl)}} questions</h5>
-                        <div v-for="question in questions(lvl)" :key="question.QuestionID">
-                            <div class="card white z-depth-0" style="border:1px solid; border-color:darkorange;" :id="'questionCard'+question.QuestionID">
-                                <div class="card-content">
-                                    <div class="card-title" style="text-align: left">
-                                        <span v-if="question.IsImportant" class="right black-text orange material-icons" style="display: inline; margin-left:10px;">priority_high</span>
-                                        <span class="black-text" style="display: inline;">{{question.Content}}</span>
-                                    </div>
-                                    <div v-if="question.Hint" class="black-text">Hint: {{question.Hint}}</div>
-                                    <div v-for="answer in question.ABCDAnswers" :key="answer.AnswerID">
-                                        <div v-if="answer.Correct" class="black-text">
-                                            &check; {{answer.Content}}
-                                            <a v-if="answer.Argumentation" class="black-text">({{answer.Argumentation}})</a>
-                                        </div>
-                                        <div v-if="!answer.Correct" class="black-text">
-                                            &cross; {{answer.Content}}
-                                            <a v-if="answer.Argumentation" class="black-text">({{answer.Argumentation}})</a>
-                                        </div>
-                                    </div>
-                                    <div v-if="question.BooleanAnswer!=null" class="black-text">&check; {{question.BooleanAnswer}}</div>
+                <div v-if="modifiedDifficultyQ.length" class="section">
+                    <h3><i class="material-icons">verified</i></h3><h5>Proposed difficulty changes</h5>
+                    <div v-for="question in modifiedDifficultyQ" :key="question.QuestionID" class="card white z-depth-0" style="border:1px solid; border-color:darkorange;" :id="'questionCard'+question.QuestionID">
+                        <div class="card-content">
+                            <div class="card-title" style="text-align: left; display: flex; justify-content: space-between;">
+                                <div class="left">
+                                    <span class="black-text">{{question.Content}}</span>
                                 </div>
-                                <div class="card-action">
-                                    <a v-if="(question.QuestionType==1)" @click="edit(question.QuestionID)">Edit</a>
-                                    <a @click="deleteQuestion(question.QuestionID)">Remove</a>
+                                <div class="right">
+                                    <span class="orange-text right" style="margin-left:10px;">
+                                        {{difficultyRepresentation(question.Difficulty)}}&#10174;{{difficultyRepresentation(question.AiDifficulty)}}
+                                    </span>
+                                    <br />
+                                    <span v-if="question.IsImportant" class="black-text orange material-icons right" style="margin-left:10px;">priority_high</span>
                                 </div>
                             </div>
+                            <div v-if="question.Hint" class="black-text">Hint: {{question.Hint}}</div>
+                            <div v-for="answer in question.ABCDAnswers" :key="answer.AnswerID">
+                                <div v-if="answer.Correct" class="black-text">
+                                    &check; {{answer.Content}}
+                                    <a v-if="answer.Argumentation" class="black-text">({{answer.Argumentation}})</a>
+                                </div>
+                                <div v-if="!answer.Correct" class="black-text">
+                                    &cross; {{answer.Content}}
+                                    <a v-if="answer.Argumentation" class="black-text">({{answer.Argumentation}})</a>
+                                </div>
+                            </div>
+                            <div v-if="question.BooleanAnswer!=null" class="black-text">&check; {{question.BooleanAnswer}}</div>
+                        </div>
+                        <div class="card-action">
+                            <a @click="updateDifficulty(question.QuestionID)">Update</a>
+                            <a @click="dismissModification(question.QuestionID)">Dismiss</a>
                         </div>
                     </div>
                 </div>
@@ -99,7 +80,7 @@
         <div id="modal1" class="modal bottom-sheet" style="max-height: 100% !important; height: fit-content; overflow-y: auto; ">
             <div class="modal-content">
                 <div class="container">
-                    <h4 id="modalHeader">Question editing</h4>
+                    <h4 id="modalHeader">Detale and publish question</h4>
                     <b-form style="margin-bottom: 15px; margin-top: 15px; ">
                         <div class="input-field" style="display: inline-block; margin-right: 20px; min-width: 200px">
                             <select id="questionType" class="black-text" disabled>
@@ -138,8 +119,7 @@
                 editedQuestionID: 0,
                 difficulty: 0,
                 answersToKeep: [],
-                addedAnswers: 0,
-                search: ""
+                addedAnswers: 0
             }
         },
         computed: {
@@ -149,11 +129,11 @@
             isLoading() {
                 return this.$store.state.loadingData
             },
-            obligatoryQ() {
-                return this.scenario.Questions.filter(q => q.QuestionID && q.IsObligatory === true && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a=>a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
+            proposedQ() {
+                return this.scenario.Questions.filter(q => q.QuestionID && !q.Difficulty)
             },
-            aiProposals() {
-                return this.scenario.Questions.filter(q => !q.Difficulty || (q.AiDifficulty && q.AiDifficulty != q.Difficulty)).length
+            modifiedDifficultyQ() {
+                return this.scenario.Questions.filter(q => q.QuestionID && q.AiDifficulty && q.Difficulty != q.AiDifficulty)
             }
         },
         created() {
@@ -175,7 +155,7 @@
             }
             else
                 window.location.href = '/404'
-            
+
         },
         mounted() {
             M.Modal.init(document.querySelectorAll('.modal'));
@@ -193,10 +173,8 @@
                     IsImportant: false,
                     IsObligatory: false,
                     BooleanAnswer: null,
-                    ABCDAnswers: []}
-            },
-            clearSearch() {
-                this.search = ""
+                    ABCDAnswers: []
+                }
             },
             sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
@@ -286,24 +264,14 @@
                 button.textContent = "Update"
                 questionForm.appendChild(button)
             },
-            questions(lvl) {
-                return this.scenario.Questions.filter(q => q.QuestionID && !q.IsObligatory && q.Difficulty === lvl && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a => a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
-            },
-            sectionHeaderIcon(lvl) {
-                return "\u2605".repeat(lvl)
-            },
-            sectionHeaderText(lvl) {
-                const arr = ["Very easy", "Easy", "Average", "Difficult", "Very difficult"]
-                return arr[lvl-1]
-            },
             difficultyRepresentation(lvl) {
-                return "\u2605".repeat(lvl)+"\u2606".repeat(5-lvl)
+                return "\u2605".repeat(lvl) + "\u2606".repeat(5 - lvl)
             },
             async onSubmit(event) {
                 event.preventDefault()
                 let editedQuestion = this.scenario.Questions.find(q => q.QuestionID === this.editedQuestionID)
-                
-                    //check if at least one answer is correct
+
+                //check if at least one answer is correct
                 if (document.getElementById("questionType").selectedIndex) {
                     let correctAnswerExists = false
                     if (editedQuestion.QuestionID) {
@@ -320,7 +288,6 @@
                             break
                         }
                     }
-                    console.log(correctAnswerExists)
                     if (!correctAnswerExists) {
                         M.toast({ html: "<div class='black-text'>At least one answer must be correct!<br/></div>", classes: "red lighten-3" })
                         return
@@ -332,22 +299,20 @@
                 editedQuestion.Content = document.getElementById("editedQuestionContent").value
                 editedQuestion.Hint = document.getElementById("editedQuestionHint").value
                 editedQuestion.QuestionType = document.getElementById("questionType").selectedIndex
-                //editedQuestion.BooleanAnswer = 
+                //editedQuestion.BooleanAnswer =
                 editedQuestion.IsImportant = document.getElementById("questionImportance").checked
                 editedQuestion.IsObligatory = document.getElementById("questionObligatory").checked
                 this.answersToKeep = []
 
-                if (editedQuestion.QuestionID) {
-                    for (const a of editedQuestion.ABCDAnswers) {
-                        if (document.getElementById(`correctAnswer${a.AnswerID}`)) {
-                            a.Correct = document.getElementById(`correctAnswer${a.AnswerID}`).checked
-                            a.Content = document.getElementById(`Answer${a.AnswerID}`).value
-                            a.Argumentation = document.getElementById(`Argumentation${a.AnswerID}`).value
-                            this.answersToKeep.push(a.AnswerID)
-                        }
+                for (const a of editedQuestion.ABCDAnswers) {
+                    if (document.getElementById(`correctAnswer${a.AnswerID}`)) {
+                        a.Correct = document.getElementById(`correctAnswer${a.AnswerID}`).checked
+                        a.Content = document.getElementById(`Answer${a.AnswerID}`).value
+                        a.Argumentation = document.getElementById(`Argumentation${a.AnswerID}`).value
+                        this.answersToKeep.push(a.AnswerID)
                     }
-                    editedQuestion.ABCDAnswers = editedQuestion.ABCDAnswers.filter(a => this.answersToKeep.includes(a.AnswerID))
                 }
+                editedQuestion.ABCDAnswers = editedQuestion.ABCDAnswers.filter(a => this.answersToKeep.includes(a.AnswerID))
 
                 for (let i = 0; i < this.addedAnswers; i++) {
                     if (document.getElementById(`correctAnswer+${i}`)) {
@@ -362,58 +327,33 @@
                 }
                 M.Modal.getInstance(document.getElementById("modal1")).close()
 
-                if (editedQuestion.QuestionID) {
-                    await this.$store
-                        .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/questions", data: editedQuestion })
-                        .then((data) => {
-                            if (data.status == 200) {
-                                M.toast({ html: "<div class='black-text'>Question was modified</div>", classes: "green lighten-3" })
-                            }
-                        })
-                        .catch((err) => {
-                            M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
-                            this.$store.dispatch({
-                                type: 'getScenarioByID',
-                                id: (new URL(window.location.href)).searchParams.get("id")
-                            })
-                        })
-                }
-                else {
-                    await this.$store
-                        .dispatch("authorizedPOST_PromiseWithHeaders", { url: `/api/questions?scenarioID=${this.scenario.ScenarioID}`, data: editedQuestion })
-                        .then((resp) => {
-                            if (resp.status == 201) {
-                                M.toast({ html: "<div class='black-text'>Question was modified</div>", classes: "green lighten-3" })
-                                this.editedQuestionID = resp.data
-                            }
-                        })
-                        .catch((err) => {
-                            M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
-                        })
-                    await this.$store.dispatch({
-                        type: 'getScenarioByID',
-                        id: (new URL(window.location.href)).searchParams.get("id")
+                await this.$store
+                    .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/questions", data: editedQuestion })
+                    .then((data) => {
+                        if (data.status == 200) {
+                            M.toast({ html: "<div class='black-text'>Question was published</div>", classes: "green lighten-3" })
+                        }
                     })
-                }
+                    .catch((err) => {
+                        M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
+                    })
+                await this.$store.dispatch({
+                    type: 'getScenarioByID',
+                    id: (new URL(window.location.href)).searchParams.get("id")
+                })
 
                 this.$store.state.loadingData = false
-                document.getElementById(`questionCard${this.editedQuestionID}`).scrollIntoView({
-                    behavior: 'smooth'
-                });
 
             },
             edit(id) {
-                document.getElementById("modalHeader").innerText = id ? "Question editing" : "Create question"
                 this.addedAnswers = 0
                 this.editedQuestionID = id
                 const questionForm = document.getElementById("questionForm")
                 const instance = M.Modal.getInstance(document.getElementById("modal1"))
                 let question = this.scenario.Questions.find(q => q.QuestionID === id)
                 this.difficulty = question.Difficulty
-                document.getElementById("questionImportance").checked = question.IsImportant
-                if (question.IsImportant) document.getElementById("questionObligatory").disabled = true
-                document.getElementById("questionObligatory").checked = question.IsObligatory
-                if (question.IsObligatory) document.getElementById("questionImportance").disabled = true
+                document.getElementById("questionImportance").checked = false
+                document.getElementById("questionObligatory").checked = false
                 document.getElementById("questionType").selectedIndex = question.QuestionType
                 questionForm.innerHTML = `
                     <div class="row" style="margin-bottom: 0px">
@@ -470,18 +410,56 @@
                 button.classList.add("right", "btn", "waves-effect", "waves-light", "orange")
                 button.type = "submit"
                 button.name = "submit"
-                button.textContent = id ? "Update" : "Create"
+                button.textContent = "Publish"
                 questionForm.appendChild(button)
 
                 M.FormSelect.init(document.querySelectorAll('select'));
                 M.updateTextFields();
                 instance.open()
             },
-            add() {
-                this.scenario.Questions = this.scenario.Questions.filter(q => q.QuestionID)
-                this.scenario.Questions.push(this.getEmptyQuestion())
-                this.edit(0)
-            }
+            updateDifficulty(id) {
+                let editedQuestion = this.scenario.Questions.find(q => q.QuestionID === id)
+                editedQuestion.Difficulty = editedQuestion.AiDifficulty
+                this.$store
+                    .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/questions", data: editedQuestion })
+                    .then((data) => {
+                        if (data.status == 200) {
+                            M.toast({ html: "<div class='black-text'>Question was modified</div>", classes: "green lighten-3" })
+                        }
+                    })
+                    .catch((err) => {
+                        M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
+                        this.$store.dispatch({
+                            type: 'getScenarioByID',
+                        })
+                    })
+                this.$store.dispatch({
+                    type: 'getScenarioByID',
+                    id: (new URL(window.location.href)).searchParams.get("id")
+                })
+            },
+            dismissModification(id) {
+                let editedQuestion = this.scenario.Questions.find(q => q.QuestionID === id)
+                editedQuestion.AiDifficulty = editedQuestion.Difficulty
+                this.$store
+                    .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/questions", data: editedQuestion })
+                    .then((data) => {
+                        if (data.status == 200) {
+                            M.toast({ html: "<div class='black-text'>Question modification was dismissed</div>", classes: "green lighten-3" })
+                        }
+                    })
+                    .catch((err) => {
+                        M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
+                        this.$store.dispatch({
+                            type: 'getScenarioByID',
+                        })
+                    })
+                this.$store.dispatch({
+                    type: 'getScenarioByID',
+                    id: (new URL(window.location.href)).searchParams.get("id")
+                })
+            },
+
         }
     }
 </script>
