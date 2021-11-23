@@ -31,6 +31,11 @@ namespace Backend.Analysis_module
         {
             var id = GenerateGameId();
             SessionModuleService sessionModule;
+            var studentData = new StartGameResponse.Types.StudentData
+            {
+                Experience = 0,
+                Money = 0
+            };
             if (request.Email.ToLower() == "test" && request.Code.ToLower() == "test")
             {
                 RemoveUser("test", "test");
@@ -53,6 +58,16 @@ namespace Backend.Analysis_module
                     userSession = sessions.First(x => x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
                                                       x.Student.Email.Equals(request.Email,
                                                           StringComparison.OrdinalIgnoreCase));
+                    var sessionRecords = Context.SessionRecords
+                        .Include(x => x.GameplayData)
+                        .Include(x => x.Session)
+                        .ThenInclude(x => x.Student);
+                    var lastGameplay = sessionRecords
+                        .Where(x => x.Session.Student.StudentID == userSession.Student.StudentID)
+                        .OrderBy(x => x.SessionRecordID)
+                        .LastOrDefault()
+                        ?.GameplayData;
+                    if (lastGameplay != null) studentData.Experience = lastGameplay.Experience;
                 }
                 catch
                 {
@@ -83,11 +98,7 @@ namespace Backend.Analysis_module
                 QuestionsNumber = { sessionModule.GetQuestionsAmount() },
                 Error = false,
                 MazeSetting = new StartGameResponse.Types.MazeSetting(),
-                StudentData = new StartGameResponse.Types.StudentData
-                {
-                    Experience = 0,
-                    Money = 0
-                } // TO DO  - pobieranie statow ucznia
+                StudentData = studentData
             };
         }
 

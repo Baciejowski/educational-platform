@@ -21,7 +21,9 @@ const state = {
         name: "",
         topic: "",
         teacherTopics: []
-    }
+    },
+    urlPrefix: { local: "http://localhost:5000", dev: "https://zpi2021.westeurope.cloudapp.azure.com:5001" },
+    local: false
 }
 
 const getters = {
@@ -35,6 +37,9 @@ const getters = {
     },
     getAuthToken: (state) => () => {
         return state.auth.getTokenSilently()
+    },
+    getPrefix: (state) => () => {
+        return state.local ? state.urlPrefix.local : state.urlPrefix.dev
     }
 }
 
@@ -42,7 +47,7 @@ const actions = {
     authorizedGET_Promise({ getters }, url) {
         return getters.getAuthToken().then((token) =>
             axios
-                .get(url, {
+                .get(getters.getPrefix() + url, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -52,28 +57,26 @@ const actions = {
     },
     authorizedGET_PromiseWithHeaders({ getters }, url) {
         return getters.getAuthToken().then((token) =>
-            axios
-                .get(url, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
+            axios.get(getters.getPrefix() + url, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
         )
     },
     authorizedHEAD_PromiseWithHeaders({ getters }, { url }) {
         return getters.getAuthToken().then((token) =>
-            axios
-                .head(url, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
+            axios.head(getters.getPrefix() + url, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
         )
     },
     authorizedPOST_Promise({ getters }, { url, data }) {
         return getters.getAuthToken().then((token) =>
             axios
-                .post(url, data, {
+                .post(getters.getPrefix() + url, data, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -83,44 +86,40 @@ const actions = {
     },
     authorizedPOST_PromiseWithHeaders({ getters }, { url, data }) {
         return getters.getAuthToken().then((token) =>
-            axios
-                .post(url, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
+            axios.post(getters.getPrefix() + url, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
         )
     },
     authorizedPUT_PromiseWithHeaders({ getters }, { url, data }) {
         return getters.getAuthToken().then((token) =>
-            axios
-                .put(url, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
+            axios.put(getters.getPrefix() + url, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
         )
     },
     authorizedCOPY_PromiseWithHeaders({ getters }, { _url }) {
         return getters.getAuthToken().then((token) =>
-            axios(
-            {
+            axios({
                 method: "COPY",
-                url: _url,
+                url: getters.getPrefix() + _url,
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-                })
+            })
         )
     },
     authorizedDELETE_PromiseWithHeaders({ getters }, { url }) {
         return getters.getAuthToken().then((token) =>
-            axios
-                .delete(url, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
+            axios.delete(getters.getPrefix() + url, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
         )
     },
     getTeacherData({ state, dispatch }) {

@@ -8,28 +8,31 @@ namespace Backend.Analysis_module.AdaptivityModule
     public class AdaptivityModuleService
     {
         public double DifficultyLevel { get; set; }
+        public bool AiCategorization { get; set; }
+        public bool RandomTest { get; set; }
+
         private readonly Random _random = new Random();
         private List<AnsweredQuestion> _answeredQuestionsModels = new List<AnsweredQuestion>();
-        private readonly bool _randomTest = false;
-        private readonly bool _randomCategorization = false;
         private readonly int _testLimit;
         private readonly float _prevRank = 0;
 
         public AdaptivityModuleService(int testLimit)
         {
             _testLimit = testLimit;
+            AiCategorization = false;
+            RandomTest = false;
         }
 
         public AdaptivityModuleService(bool randomTest, int testLimit) : this(testLimit)
         {
-            _randomTest = randomTest;
+            RandomTest = randomTest;
             //TO DO: get prev rank
         }
 
-        public AdaptivityModuleService(bool randomTest, bool randomCategorization, int testLimit) : this(testLimit)
+        public AdaptivityModuleService(bool randomTest, bool aiCategorization, int testLimit) : this(testLimit)
         {
-            _randomTest = randomTest;
-            _randomCategorization = randomCategorization;
+            RandomTest = randomTest;
+            AiCategorization = aiCategorization;
             //TO DO: get prev rank
         }
 
@@ -49,7 +52,7 @@ namespace Backend.Analysis_module.AdaptivityModule
 
         public void CalculateLvl()
         {
-            if (_randomTest || _answeredQuestionsModels.Count < _testLimit)
+            if (RandomTest || _answeredQuestionsModels.Count < _testLimit)
                 DifficultyLevel = -1;
             else
             {
@@ -76,7 +79,8 @@ namespace Backend.Analysis_module.AdaptivityModule
         private static float CalculateCorrectness(AnsweredQuestion question)
         {
             var correctCount = question.Question.ABCDAnswers.Count(x => x.Correct);
-            var answers = question.Question.ABCDAnswers.Where(x => question.AnsweredAnswers.Contains(x.AnswerID)).ToList();
+            var answers = question.Question.ABCDAnswers.Where(x => question.AnsweredAnswers.Contains(x.AnswerID))
+                .ToList();
             return answers.Where(answer => !answer.Correct)
                 .Aggregate(1.0f, (current, answer) => current - 1f / correctCount);
         }
