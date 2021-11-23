@@ -74,6 +74,12 @@
                                     <span>Random test</span>
                                 </label>
                             </div>
+                            <div class="input-field col s4 l2">
+                                <label style="margin-right: 20px">
+                                    <input type="checkbox" id="aiCategorization" />
+                                    <span>AI Categorization</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="row" style="margin-bottom: 0px">
                             <div class="input-field col s6 l3">
@@ -182,6 +188,7 @@
                     topicId: this.sharedTopicID,
                     scenarioId: this.sharedScenarioID,
                     randomTest: document.getElementById('randomized').checked,
+                    aiCategorization: document.getElementById('aiCategorization').checked,
                     startGame: starts.toISOString(),
                     endGame: ends.toISOString()
                 }

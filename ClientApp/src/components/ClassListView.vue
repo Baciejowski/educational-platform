@@ -54,6 +54,10 @@
                                 <b-form-radio v-model="randomTest" name="test" :value="false">False</b-form-radio>
                                 <b-form-radio v-model="randomTest" name="test" :value="true">True</b-form-radio>
                             </b-form-group>
+                            <b-form-group label="Ai Categorization">
+                                <b-form-radio v-model="aiCategorization" name="ai" :value="false">False</b-form-radio>
+                                <b-form-radio v-model="aiCategorization" name="ai" :value="true">True</b-form-radio>
+                            </b-form-group>
 
                             <label :for="'select-topic' + item.classID">Topic</label>
                             <b-form-select :name="'select-topic' + item.classID" v-model="selectedTopic" :options="getTopics()"></b-form-select>
@@ -93,7 +97,8 @@ export default {
             endGame: null,
             selectedTopic: null,
             selectedScenario: null,
-            randomTest: false
+            randomTest: false,
+            aiCategorization: false
         }
     },
     computed: {
@@ -132,7 +137,8 @@ export default {
                 scenarioId: this.selectedScenario,
                 startGame: new Date(this.startGame).toISOString(),
                 endGame: new Date(this.endGame).toISOString(),
-                randomTest: this.randomTest
+                randomTest: this.randomTest,
+                aiCategorization: this.aiCategorization
             }
 
             this.$store
@@ -145,6 +151,7 @@ export default {
                     this.selectedTopic = null
                     this.selectedScenario = null
                     this.randomTest = false
+                    this.aiCategorization = false
                     alert("Invitations created succesful")
                 })
         }

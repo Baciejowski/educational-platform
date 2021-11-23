@@ -63,6 +63,7 @@ namespace Backend.Services.EmailProvider
                 .Replace("[code]", request.Code)
                 .Replace("[topic]", request.Topic)
                 .Replace("[scenario]", request.Scenario)
+                .Replace("[url]", request.Url)
                 .Replace("[start]", request.StartDate)
                 .Replace("[end]", request.EndDate);
             var email = new MimeMessage();

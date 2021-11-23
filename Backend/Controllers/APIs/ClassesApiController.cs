@@ -81,7 +81,7 @@ namespace Backend.Controllers.APIs
             return Ok();
         }
 
-        [Route("api/classes/invitations")]
+        [Route("/api/classes/invitations")]
         [HttpPost]
         [Authorize]
         public OkResult Post(ClassesGameInvitationViewModel payload)

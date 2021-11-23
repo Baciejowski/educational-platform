@@ -47,6 +47,7 @@ namespace Backend.Services.ClassManagement
                     Code = code,
                     Topic = topicItem.TopicName,
                     Scenario = scenarioItem.Name,
+                    Url = scenarioItem.Url,
                     StartDate = classesGameInvitationViewModel.StartGame.ToString("yyyy-MM-dd HH:mm"),
                     EndDate = classesGameInvitationViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
                 };
@@ -60,6 +61,7 @@ namespace Backend.Services.ClassManagement
                     StartGame = classesGameInvitationViewModel.StartGame,
                     EndGame = classesGameInvitationViewModel.EndGame,
                     RandomTest = classesGameInvitationViewModel.RandomTest,
+                    AiCategorization = classesGameInvitationViewModel.AiCategorization,
                     Code = code
                 }); 
             }
