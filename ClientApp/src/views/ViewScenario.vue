@@ -153,7 +153,7 @@
                 return this.scenario.Questions.filter(q => q.QuestionID && q.IsObligatory === true && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a=>a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
             },
             aiProposals() {
-                return this.scenario.Questions.filter(q => !q.Difficulty || (q.AiDifficulty && q.AiDifficulty != q.Difficulty)).length
+                return this.scenario.Questions.filter(q => !q.Difficulty || (q.AiDifficulty && Math.abs(q.AiDifficulty) != q.Difficulty)).length
             }
         },
         created() {

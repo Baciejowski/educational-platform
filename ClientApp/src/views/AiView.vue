@@ -264,7 +264,8 @@
                 button.textContent = "Update"
                 questionForm.appendChild(button)
             },
-            difficultyRepresentation(lvl) {
+            difficultyRepresentation(_lvl) {
+                const lvl = Math.abs(_lvl)
                 return "\u2605".repeat(lvl) + "\u2606".repeat(5 - lvl)
             },
             async onSubmit(event) {
@@ -419,7 +420,7 @@
             },
             updateDifficulty(id) {
                 let editedQuestion = this.scenario.Questions.find(q => q.QuestionID === id)
-                editedQuestion.Difficulty = editedQuestion.AiDifficulty
+                editedQuestion.AiDifficulty = Math.abs(editedQuestion.AiDifficulty)
                 this.$store
                     .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/questions", data: editedQuestion })
                     .then((data) => {
@@ -440,7 +441,7 @@
             },
             dismissModification(id) {
                 let editedQuestion = this.scenario.Questions.find(q => q.QuestionID === id)
-                editedQuestion.AiDifficulty = editedQuestion.Difficulty
+                editedQuestion.AiDifficulty = null
                 this.$store
                     .dispatch("authorizedPUT_PromiseWithHeaders", { url: "/api/questions", data: editedQuestion })
                     .then((data) => {
