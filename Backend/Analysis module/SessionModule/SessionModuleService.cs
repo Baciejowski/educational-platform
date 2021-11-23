@@ -164,6 +164,12 @@ namespace Backend.Analysis_module.SessionModule
             if (_userSession.RandomTest)
                 return type.Count;
 
+            if (_adaptivityModuleService.AiCategorization)
+                return type
+                    .GroupBy(x => Math.Abs(x.AiDifficulty ?? 1))
+                    .OrderBy(x => x.Count())
+                    .First().Count();
+
             return type
                 .GroupBy(x => x.Difficulty)
                 .OrderBy(x => x.Count())
@@ -243,8 +249,15 @@ namespace Backend.Analysis_module.SessionModule
         private Question GetRankedQuestionOfType(int questionIndex)
         {
             var nextQuestionDifficulty = _adaptivityModuleService.GetNextQuestionDifficulty();
-            var filteredQuestions = _availableQuestions[questionIndex]
-                .Where(x => x.Difficulty == nextQuestionDifficulty).ToList();
+
+            List<Question> filteredQuestions;
+            if (_adaptivityModuleService.AiCategorization)
+                filteredQuestions = _availableQuestions[questionIndex]
+                    .Where(x => Math.Abs(x.AiDifficulty ?? 1) == nextQuestionDifficulty).ToList();
+            else
+                filteredQuestions = _availableQuestions[questionIndex]
+                    .Where(x => x.Difficulty == nextQuestionDifficulty).ToList();
+
             var index = Random.Next(filteredQuestions.Count);
             return filteredQuestions.ElementAt(index);
         }

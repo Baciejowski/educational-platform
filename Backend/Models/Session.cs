@@ -13,7 +13,7 @@ namespace Backend.Models
         public DateTime EndGame { get; set; }
         public string Code { get; set; }
         public bool RandomTest { get; set; }
-        public bool RandomCategorization { get; set; }
+        public bool AiCategorization { get; set; }
         public int Attempts { get; set; }
 
         [JsonIgnore]
