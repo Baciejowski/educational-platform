@@ -1,5 +1,5 @@
 <template>
-    <div class="p-5">
+    <div class="px-5" style="margin-top: 20px">
         <h1>Create new scenario</h1>
         <div class="pt-2 px-3">
             <b-form-group label="Name">

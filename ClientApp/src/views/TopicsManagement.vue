@@ -41,9 +41,9 @@
                         {{scenario.name}}
                         <a href="#!" @click="deleteScenario(scenario.scenarioID)" class="secondary-content grey-link hovered-red"><i class="material-icons">delete</i></a>
                         <a href="#!" @click="copyScenario(scenario.scenarioID)" class="secondary-content grey-link hovered-turquoise"><i class="material-icons">content_copy</i></a>
-                        <a href="#!" class="secondary-content grey-link hovered-blue"><i class="material-icons">ios_share</i></a>
+                        <a href="#!" @click="share(scenario.scenarioID,topic.topicID)" class="secondary-content grey-link hovered-blue"><i class="material-icons">ios_share</i></a>
                         <a href="#!" class="secondary-content grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
-                        <a href="#!" class="secondary-content grey-link hovered-orange"><i class="material-icons">edit</i></a>
+                        <a :href="'/scenario?id=' + scenario.scenarioID" class="secondary-content grey-link hovered-orange"><i class="material-icons">edit</i></a>
                         <a :href="'/scenario?id=' + scenario.scenarioID" class="secondary-content grey-link hovered-green"><i class="material-icons">search</i></a>
                     </a>
                 </div>
@@ -54,6 +54,47 @@
                             <button class="center-align waves-effect waves-light btn-small orange grey-text text-darken-4" @click="deleteTopic(topic.topicID)">Remove topic</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div id="modal1" class="modal bottom-sheet" style="max-height: 100% !important; height: fit-content; overflow-y: auto; ">
+            <div class="modal-content">
+                <div class="container">
+                    <h4>Assign game to the class</h4>
+                    <form id="inviteForm" @submit="inviteOnSubmit" style="margin-left:16px;">
+                        <div class="row" style="margin-bottom: 0px">
+                            <div class="input-field col s8 l10">
+                                <select id="assignedGroup" class="black-text">
+                                </select>
+                                <label>Class</label>
+                            </div>
+                            <div class="input-field col s4 l2">
+                                <label style="margin-right: 20px">
+                                    <input type="checkbox" id="randomized" />
+                                    <span>Random test</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 0px">
+                            <div class="input-field col s6 l3">
+                                <input id="startDate" type="text" class="datepicker" required style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
+                                <label class="grey-text">Start date</label>
+                            </div>
+                            <div class="input-field col s6 l3">
+                                <input id="startTime" type="text" class="timepicker" required style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
+                                <label class="grey-text">Start time</label>
+                            </div>
+                            <div class="input-field col s6 l3">
+                                <input id="endDate" type="text" class="datepicker" required style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
+                                <label class="grey-text">End date</label>
+                            </div>
+                            <div class="input-field col s6 l3">
+                                <input id="endTime" type="text" class="timepicker" required style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
+                                <label class="grey-text">End time</label>
+                            </div>
+                        </div>
+                        <button class="right btn waves-effect waves-light orange" type="submit" name="submit">Send invitations</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -74,7 +115,41 @@
         created() {
             this.$store.dispatch("getTopicsWithScenarios")
         },
+        data() {
+            return {
+                sharedScenarioID: 0,
+                sharedTopicID: 0
+            }
+        },
+        mounted() {
+            M.Modal.init(document.querySelectorAll('.modal'))
+        },
         methods: {
+            loadClasses() {
+                this.$store.state.loadingData = true
+                this.$store
+                    .dispatch("authorizedGET_PromiseWithHeaders", "/api/classes?skipStudents=true")
+                    .then((data) => {
+                        if (data.status == 200) {
+                            let groupsSelector = document.getElementById("assignedGroup")
+                            groupsSelector.innerHTML = ""
+                            for (const group of data.data.sort(function (a, b) {
+                                if (a.friendlyName < b.friendlyName) { return -1; }
+                                if (a.friendlyName > b.friendlyName) { return 1; }
+                                return 0;
+                            })) {
+                                let opt = document.createElement("option")
+                                opt.value = group.classID
+                                opt.innerHTML = group.friendlyName
+                                groupsSelector.appendChild(opt)
+                            }
+                            M.FormSelect.init(document.querySelectorAll('select'));
+                        }
+                    })
+                    .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
+                this.$store.state.loadingData = false
+            },
+                
             onSubmit(event) {
                 event.preventDefault()
                 const topic = document.getElementById("topic").value
@@ -92,6 +167,44 @@
                 }
                 else if (topic.length == 0) M.toast({ html: "<div class='black-text'>Topic name is obligatory!</div>", classes: "red lighten-3" })
                 else M.toast({ html: "<div class='black-text'>Topic name is too long!</div>", classes: "red lighten-3" })
+            },
+            inviteOnSubmit(event) {
+                event.preventDefault()
+                this.$store.state.loadingData = true
+                let starts = new Date(M.Datepicker.getInstance(document.getElementById('startDate')).date.getTime())
+                let ends = new Date(M.Datepicker.getInstance(document.getElementById('endDate')).date.getTime())
+                starts.setHours(Number(M.Timepicker.getInstance(document.getElementById('startTime')).time.substring(0, 2)))
+                starts.setMinutes(Number(M.Timepicker.getInstance(document.getElementById('startTime')).time.substring(3)))
+                ends.setHours(Number(M.Timepicker.getInstance(document.getElementById('endTime')).time.substring(0, 2)))
+                ends.setMinutes(Number(M.Timepicker.getInstance(document.getElementById('endTime')).time.substring(3)))
+                let invitation = {
+                    classId: Number(document.getElementById('assignedGroup').value),
+                    topicId: this.sharedTopicID,
+                    scenarioId: this.sharedScenarioID,
+                    randomTest: document.getElementById('randomized').checked,
+                    startGame: starts.toISOString(),
+                    endGame: ends.toISOString()
+                }
+                this.$store
+                    .dispatch("authorizedPOST_PromiseWithHeaders", { url: "/api/classes/invitations", data: invitation })
+                    .then((data) => {
+                        if (data.status == 200) {
+                            M.Modal.getInstance(document.getElementById("modal1")).close()
+                            M.toast({ html: "<div class='black-text'>Invitations were send</div>", classes: "green lighten-3" })
+                        }
+                    })
+                    .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
+                this.$store.state.loadingData = false
+            },
+            share(id,topicID) {
+                const instance = M.Modal.getInstance(document.getElementById("modal1"))
+                this.loadClasses()
+                this.sharedScenarioID = id
+                this.sharedTopicID = topicID
+                document.getElementById("randomized").checked = false
+                M.Datepicker.init(document.querySelectorAll('.datepicker'), { format: 'dd.mm.yyyy' })
+                M.Timepicker.init(document.querySelectorAll('.timepicker'), { twelveHour: false })
+                instance.open()
             },
             deleteTopic(id) {
                 this.$store
@@ -177,5 +290,8 @@
     .select-wrapper.valid > input.select-dropdown, input:not([type]).valid, input:not([type]):focus.valid, input[type=text]:not(.browser-default).valid, input[type=text]:not(.browser-default):focus.valid, input[type=password]:not(.browser-default).valid, input[type=password]:not(.browser-default):focus.valid, input[type=email]:not(.browser-default).valid, input[type=email]:not(.browser-default):focus.valid, input[type=url]:not(.browser-default).valid, input[type=url]:not(.browser-default):focus.valid, input[type=time]:not(.browser-default).valid, input[type=time]:not(.browser-default):focus.valid, input[type=date]:not(.browser-default).valid, input[type=date]:not(.browser-default):focus.valid, input[type=datetime]:not(.browser-default).valid, input[type=datetime]:not(.browser-default):focus.valid, input[type=datetime-local]:not(.browser-default).valid, input[type=datetime-local]:not(.browser-default):focus.valid, input[type=tel]:not(.browser-default).valid, input[type=tel]:not(.browser-default):focus.valid, input[type=number]:not(.browser-default).valid, input[type=number]:not(.browser-default):focus.valid, input[type=search]:not(.browser-default).valid, input[type=search]:not(.browser-default):focus.valid, textarea.materialize-textarea.valid, textarea.materialize-textarea:focus.valid {
         border-bottom: 1px solid orange;
         box-shadow: 0 1px 0 0 orange;
+    }
+    .timepicker-digital-display {
+        background-color: #ff9800;
     }
 </style>
