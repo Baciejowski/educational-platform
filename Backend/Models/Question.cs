@@ -26,6 +26,9 @@ namespace Backend.Models
         public virtual ICollection<Scenario> Scenarios { get; set; }
 
         [JsonIgnore]
+        public virtual ICollection<AnsweredQuestion> AnsweredQuestion { get; set; }
+
+        [JsonIgnore]
         public string AIRespresentation
         {
             get
