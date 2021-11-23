@@ -40,24 +40,25 @@ namespace Gameplay {
             "ZS5BbnN3ZXISQQoOcXVlc3Rpb25SZXdhcmQYBCABKAsyKS5HYW1lcGxheS5R",
             "dWVzdGlvblJlc3BvbnNlLlF1ZXN0aW9uUmV3YXJkGjMKDlF1ZXN0aW9uUmV3",
             "YXJkEhIKCmV4cGVyaWVuY2UYASABKAUSDQoFbW9uZXkYAiABKAUaPQoGQW5z",
-            "d2VyEhEKCWFuc3dlcnNJRBgBIAEoDRIPCgdjb250ZW50GAIgASgJEg8KB2Nv",
-            "cnJlY3QYAyABKAgihQEKFFN0dWRlbnRBbnN3ZXJSZXF1ZXN0EhMKC3Nlc3Np",
+            "d2VyEhEKCWFuc3dlcnNJRBgBIAEoBRIPCgdjb250ZW50GAIgASgJEg8KB2Nv",
+            "cnJlY3QYAyABKAgioQEKFFN0dWRlbnRBbnN3ZXJSZXF1ZXN0EhMKC3Nlc3Np",
             "b25Db2RlGAEgASgJEi8KDHF1ZXN0aW9uVHlwZRgCIAEoDjIZLkdhbWVwbGF5",
-            "LlF1ZXN0aW9uVHJpZ2dlchIRCglhbnN3ZXJzSUQYAyADKA0SFAoMdGltZVRv",
-            "QW5zd2VyGAQgASgNIuQBCg5FbmRHYW1lUmVxdWVzdBITCgtzZXNzaW9uQ29k",
-            "ZRgBIAEoCRIVCg1zY2VuYXJpb0VuZGVkGAIgASgIEhQKDGdhbWVwbGF5VGlt",
-            "ZRgEIAEoDRJHChJzdHVkZW50RW5kR2FtZURhdGEYBSABKAsyKy5HYW1lcGxh",
-            "eS5FbmRHYW1lUmVxdWVzdC5TdHVkZW50RW5kR2FtZURhdGEaRwoSU3R1ZGVu",
-            "dEVuZEdhbWVEYXRhEhIKCmV4cGVyaWVuY2UYASABKAUSDQoFbW9uZXkYAiAB",
-            "KAUSDgoGc2tpbGxzGAMgAygBIgcKBUVtcHR5KjEKD1F1ZXN0aW9uVHJpZ2dl",
-            "chIHCgNLRVkQABIJCgVFTkVNWRABEgoKBk9CSkVDVBACMq8CChBHYW1lcGxh",
-            "eU1lc3NhZ2VzEkoKD1N0YXJ0TmV3U2Vzc2lvbhIaLkdhbWVwbGF5LlN0YXJ0",
-            "R2FtZVJlcXVlc3QaGy5HYW1lcGxheS5TdGFydEdhbWVSZXNwb25zZRJMChNQ",
-            "cmVwYXJlTmV4dFF1ZXN0aW9uEhkuR2FtZXBsYXkuUXVlc3Rpb25SZXF1ZXN0",
-            "GhouR2FtZXBsYXkuUXVlc3Rpb25SZXNwb25zZRJIChVVcGRhdGVTdHVkZW50",
-            "c0Fuc3dlcnMSHi5HYW1lcGxheS5TdHVkZW50QW5zd2VyUmVxdWVzdBoPLkdh",
-            "bWVwbGF5LkVtcHR5EjcKCkZpbmlzaEdhbWUSGC5HYW1lcGxheS5FbmRHYW1l",
-            "UmVxdWVzdBoPLkdhbWVwbGF5LkVtcHR5YgZwcm90bzM="));
+            "LlF1ZXN0aW9uVHJpZ2dlchIRCglhbnN3ZXJzSUQYAyADKAUSFAoMdGltZVRv",
+            "QW5zd2VyGAQgASgFEhoKEnF1ZXN0aW9uQ29ycmVjdG5lcxgFIAEoAiKCAgoO",
+            "RW5kR2FtZVJlcXVlc3QSEwoLc2Vzc2lvbkNvZGUYASABKAkSFQoNc2NlbmFy",
+            "aW9FbmRlZBgCIAEoCBIUCgxnYW1lcGxheVRpbWUYBCABKAUSRwoSc3R1ZGVu",
+            "dEVuZEdhbWVEYXRhGAUgASgLMisuR2FtZXBsYXkuRW5kR2FtZVJlcXVlc3Qu",
+            "U3R1ZGVudEVuZEdhbWVEYXRhGmUKElN0dWRlbnRFbmRHYW1lRGF0YRISCgpl",
+            "eHBlcmllbmNlGAEgASgFEg0KBW1vbmV5GAIgASgFEg0KBWxpZ2h0GAMgASgC",
+            "Eg4KBnZpc2lvbhgEIAEoAhINCgVzcGVlZBgFIAEoAiIHCgVFbXB0eSoxCg9R",
+            "dWVzdGlvblRyaWdnZXISBwoDS0VZEAASCQoFRU5FTVkQARIKCgZPQkpFQ1QQ",
+            "AjKvAgoQR2FtZXBsYXlNZXNzYWdlcxJKCg9TdGFydE5ld1Nlc3Npb24SGi5H",
+            "YW1lcGxheS5TdGFydEdhbWVSZXF1ZXN0GhsuR2FtZXBsYXkuU3RhcnRHYW1l",
+            "UmVzcG9uc2USTAoTUHJlcGFyZU5leHRRdWVzdGlvbhIZLkdhbWVwbGF5LlF1",
+            "ZXN0aW9uUmVxdWVzdBoaLkdhbWVwbGF5LlF1ZXN0aW9uUmVzcG9uc2USSAoV",
+            "VXBkYXRlU3R1ZGVudHNBbnN3ZXJzEh4uR2FtZXBsYXkuU3R1ZGVudEFuc3dl",
+            "clJlcXVlc3QaDy5HYW1lcGxheS5FbXB0eRI3CgpGaW5pc2hHYW1lEhguR2Ft",
+            "ZXBsYXkuRW5kR2FtZVJlcXVlc3QaDy5HYW1lcGxheS5FbXB0eWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Gameplay.QuestionTrigger), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -67,8 +68,8 @@ namespace Gameplay {
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionRequest), global::Gameplay.QuestionRequest.Parser, new[]{ "SessionCode", "QuestionType" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionResponse), global::Gameplay.QuestionResponse.Parser, new[]{ "SessionCode", "Content", "Answers", "QuestionReward" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionResponse.Types.QuestionReward), global::Gameplay.QuestionResponse.Types.QuestionReward.Parser, new[]{ "Experience", "Money" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.QuestionResponse.Types.Answer), global::Gameplay.QuestionResponse.Types.Answer.Parser, new[]{ "AnswersID", "Content", "Correct" }, null, null, null, null)}),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.StudentAnswerRequest), global::Gameplay.StudentAnswerRequest.Parser, new[]{ "SessionCode", "QuestionType", "AnswersID", "TimeToAnswer" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.EndGameRequest), global::Gameplay.EndGameRequest.Parser, new[]{ "SessionCode", "ScenarioEnded", "GameplayTime", "StudentEndGameData" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.EndGameRequest.Types.StudentEndGameData), global::Gameplay.EndGameRequest.Types.StudentEndGameData.Parser, new[]{ "Experience", "Money", "Skills" }, null, null, null, null)}),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.StudentAnswerRequest), global::Gameplay.StudentAnswerRequest.Parser, new[]{ "SessionCode", "QuestionType", "AnswersID", "TimeToAnswer", "QuestionCorrectnes" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.EndGameRequest), global::Gameplay.EndGameRequest.Parser, new[]{ "SessionCode", "ScenarioEnded", "GameplayTime", "StudentEndGameData" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.EndGameRequest.Types.StudentEndGameData), global::Gameplay.EndGameRequest.Types.StudentEndGameData.Parser, new[]{ "Experience", "Money", "Light", "Vision", "Speed" }, null, null, null, null)}),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gameplay.Empty), global::Gameplay.Empty.Parser, null, null, null, null, null)
           }));
     }
@@ -1955,10 +1956,10 @@ namespace Gameplay {
 
         /// <summary>Field number for the "answersID" field.</summary>
         public const int AnswersIDFieldNumber = 1;
-        private uint answersID_;
+        private int answersID_;
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-        public uint AnswersID {
+        public int AnswersID {
           get { return answersID_; }
           set {
             answersID_ = value;
@@ -2037,7 +2038,7 @@ namespace Gameplay {
         #else
           if (AnswersID != 0) {
             output.WriteRawTag(8);
-            output.WriteUInt32(AnswersID);
+            output.WriteInt32(AnswersID);
           }
           if (Content.Length != 0) {
             output.WriteRawTag(18);
@@ -2059,7 +2060,7 @@ namespace Gameplay {
         void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
           if (AnswersID != 0) {
             output.WriteRawTag(8);
-            output.WriteUInt32(AnswersID);
+            output.WriteInt32(AnswersID);
           }
           if (Content.Length != 0) {
             output.WriteRawTag(18);
@@ -2080,7 +2081,7 @@ namespace Gameplay {
         public int CalculateSize() {
           int size = 0;
           if (AnswersID != 0) {
-            size += 1 + pb::CodedOutputStream.ComputeUInt32Size(AnswersID);
+            size += 1 + pb::CodedOutputStream.ComputeInt32Size(AnswersID);
           }
           if (Content.Length != 0) {
             size += 1 + pb::CodedOutputStream.ComputeStringSize(Content);
@@ -2125,7 +2126,7 @@ namespace Gameplay {
                 _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
                 break;
               case 8: {
-                AnswersID = input.ReadUInt32();
+                AnswersID = input.ReadInt32();
                 break;
               }
               case 18: {
@@ -2152,7 +2153,7 @@ namespace Gameplay {
                 _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
                 break;
               case 8: {
-                AnswersID = input.ReadUInt32();
+                AnswersID = input.ReadInt32();
                 break;
               }
               case 18: {
@@ -2213,6 +2214,7 @@ namespace Gameplay {
       questionType_ = other.questionType_;
       answersID_ = other.answersID_.Clone();
       timeToAnswer_ = other.timeToAnswer_;
+      questionCorrectnes_ = other.questionCorrectnes_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -2248,24 +2250,36 @@ namespace Gameplay {
 
     /// <summary>Field number for the "answersID" field.</summary>
     public const int AnswersIDFieldNumber = 3;
-    private static readonly pb::FieldCodec<uint> _repeated_answersID_codec
-        = pb::FieldCodec.ForUInt32(26);
-    private readonly pbc::RepeatedField<uint> answersID_ = new pbc::RepeatedField<uint>();
+    private static readonly pb::FieldCodec<int> _repeated_answersID_codec
+        = pb::FieldCodec.ForInt32(26);
+    private readonly pbc::RepeatedField<int> answersID_ = new pbc::RepeatedField<int>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<uint> AnswersID {
+    public pbc::RepeatedField<int> AnswersID {
       get { return answersID_; }
     }
 
     /// <summary>Field number for the "timeToAnswer" field.</summary>
     public const int TimeToAnswerFieldNumber = 4;
-    private uint timeToAnswer_;
+    private int timeToAnswer_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public uint TimeToAnswer {
+    public int TimeToAnswer {
       get { return timeToAnswer_; }
       set {
         timeToAnswer_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "questionCorrectnes" field.</summary>
+    public const int QuestionCorrectnesFieldNumber = 5;
+    private float questionCorrectnes_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float QuestionCorrectnes {
+      get { return questionCorrectnes_; }
+      set {
+        questionCorrectnes_ = value;
       }
     }
 
@@ -2288,6 +2302,7 @@ namespace Gameplay {
       if (QuestionType != other.QuestionType) return false;
       if(!answersID_.Equals(other.answersID_)) return false;
       if (TimeToAnswer != other.TimeToAnswer) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(QuestionCorrectnes, other.QuestionCorrectnes)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2299,6 +2314,7 @@ namespace Gameplay {
       if (QuestionType != global::Gameplay.QuestionTrigger.Key) hash ^= QuestionType.GetHashCode();
       hash ^= answersID_.GetHashCode();
       if (TimeToAnswer != 0) hash ^= TimeToAnswer.GetHashCode();
+      if (QuestionCorrectnes != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(QuestionCorrectnes);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2328,7 +2344,11 @@ namespace Gameplay {
       answersID_.WriteTo(output, _repeated_answersID_codec);
       if (TimeToAnswer != 0) {
         output.WriteRawTag(32);
-        output.WriteUInt32(TimeToAnswer);
+        output.WriteInt32(TimeToAnswer);
+      }
+      if (QuestionCorrectnes != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(QuestionCorrectnes);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -2351,7 +2371,11 @@ namespace Gameplay {
       answersID_.WriteTo(ref output, _repeated_answersID_codec);
       if (TimeToAnswer != 0) {
         output.WriteRawTag(32);
-        output.WriteUInt32(TimeToAnswer);
+        output.WriteInt32(TimeToAnswer);
+      }
+      if (QuestionCorrectnes != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(QuestionCorrectnes);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -2371,7 +2395,10 @@ namespace Gameplay {
       }
       size += answersID_.CalculateSize(_repeated_answersID_codec);
       if (TimeToAnswer != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(TimeToAnswer);
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(TimeToAnswer);
+      }
+      if (QuestionCorrectnes != 0F) {
+        size += 1 + 4;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2394,6 +2421,9 @@ namespace Gameplay {
       answersID_.Add(other.answersID_);
       if (other.TimeToAnswer != 0) {
         TimeToAnswer = other.TimeToAnswer;
+      }
+      if (other.QuestionCorrectnes != 0F) {
+        QuestionCorrectnes = other.QuestionCorrectnes;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2424,7 +2454,11 @@ namespace Gameplay {
             break;
           }
           case 32: {
-            TimeToAnswer = input.ReadUInt32();
+            TimeToAnswer = input.ReadInt32();
+            break;
+          }
+          case 45: {
+            QuestionCorrectnes = input.ReadFloat();
             break;
           }
         }
@@ -2456,7 +2490,11 @@ namespace Gameplay {
             break;
           }
           case 32: {
-            TimeToAnswer = input.ReadUInt32();
+            TimeToAnswer = input.ReadInt32();
+            break;
+          }
+          case 45: {
+            QuestionCorrectnes = input.ReadFloat();
             break;
           }
         }
@@ -2539,10 +2577,10 @@ namespace Gameplay {
 
     /// <summary>Field number for the "gameplayTime" field.</summary>
     public const int GameplayTimeFieldNumber = 4;
-    private uint gameplayTime_;
+    private int gameplayTime_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public uint GameplayTime {
+    public int GameplayTime {
       get { return gameplayTime_; }
       set {
         gameplayTime_ = value;
@@ -2619,7 +2657,7 @@ namespace Gameplay {
       }
       if (GameplayTime != 0) {
         output.WriteRawTag(32);
-        output.WriteUInt32(GameplayTime);
+        output.WriteInt32(GameplayTime);
       }
       if (studentEndGameData_ != null) {
         output.WriteRawTag(42);
@@ -2645,7 +2683,7 @@ namespace Gameplay {
       }
       if (GameplayTime != 0) {
         output.WriteRawTag(32);
-        output.WriteUInt32(GameplayTime);
+        output.WriteInt32(GameplayTime);
       }
       if (studentEndGameData_ != null) {
         output.WriteRawTag(42);
@@ -2668,7 +2706,7 @@ namespace Gameplay {
         size += 1 + 1;
       }
       if (GameplayTime != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(GameplayTime);
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(GameplayTime);
       }
       if (studentEndGameData_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(StudentEndGameData);
@@ -2724,7 +2762,7 @@ namespace Gameplay {
             break;
           }
           case 32: {
-            GameplayTime = input.ReadUInt32();
+            GameplayTime = input.ReadInt32();
             break;
           }
           case 42: {
@@ -2758,7 +2796,7 @@ namespace Gameplay {
             break;
           }
           case 32: {
-            GameplayTime = input.ReadUInt32();
+            GameplayTime = input.ReadInt32();
             break;
           }
           case 42: {
@@ -2814,7 +2852,9 @@ namespace Gameplay {
         public StudentEndGameData(StudentEndGameData other) : this() {
           experience_ = other.experience_;
           money_ = other.money_;
-          skills_ = other.skills_.Clone();
+          light_ = other.light_;
+          vision_ = other.vision_;
+          speed_ = other.speed_;
           _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
         }
 
@@ -2848,15 +2888,40 @@ namespace Gameplay {
           }
         }
 
-        /// <summary>Field number for the "skills" field.</summary>
-        public const int SkillsFieldNumber = 3;
-        private static readonly pb::FieldCodec<double> _repeated_skills_codec
-            = pb::FieldCodec.ForDouble(26);
-        private readonly pbc::RepeatedField<double> skills_ = new pbc::RepeatedField<double>();
+        /// <summary>Field number for the "light" field.</summary>
+        public const int LightFieldNumber = 3;
+        private float light_;
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-        public pbc::RepeatedField<double> Skills {
-          get { return skills_; }
+        public float Light {
+          get { return light_; }
+          set {
+            light_ = value;
+          }
+        }
+
+        /// <summary>Field number for the "vision" field.</summary>
+        public const int VisionFieldNumber = 4;
+        private float vision_;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public float Vision {
+          get { return vision_; }
+          set {
+            vision_ = value;
+          }
+        }
+
+        /// <summary>Field number for the "speed" field.</summary>
+        public const int SpeedFieldNumber = 5;
+        private float speed_;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public float Speed {
+          get { return speed_; }
+          set {
+            speed_ = value;
+          }
         }
 
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2876,7 +2941,9 @@ namespace Gameplay {
           }
           if (Experience != other.Experience) return false;
           if (Money != other.Money) return false;
-          if(!skills_.Equals(other.skills_)) return false;
+          if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Light, other.Light)) return false;
+          if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Vision, other.Vision)) return false;
+          if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Speed, other.Speed)) return false;
           return Equals(_unknownFields, other._unknownFields);
         }
 
@@ -2886,7 +2953,9 @@ namespace Gameplay {
           int hash = 1;
           if (Experience != 0) hash ^= Experience.GetHashCode();
           if (Money != 0) hash ^= Money.GetHashCode();
-          hash ^= skills_.GetHashCode();
+          if (Light != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Light);
+          if (Vision != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Vision);
+          if (Speed != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Speed);
           if (_unknownFields != null) {
             hash ^= _unknownFields.GetHashCode();
           }
@@ -2913,7 +2982,18 @@ namespace Gameplay {
             output.WriteRawTag(16);
             output.WriteInt32(Money);
           }
-          skills_.WriteTo(output, _repeated_skills_codec);
+          if (Light != 0F) {
+            output.WriteRawTag(29);
+            output.WriteFloat(Light);
+          }
+          if (Vision != 0F) {
+            output.WriteRawTag(37);
+            output.WriteFloat(Vision);
+          }
+          if (Speed != 0F) {
+            output.WriteRawTag(45);
+            output.WriteFloat(Speed);
+          }
           if (_unknownFields != null) {
             _unknownFields.WriteTo(output);
           }
@@ -2932,7 +3012,18 @@ namespace Gameplay {
             output.WriteRawTag(16);
             output.WriteInt32(Money);
           }
-          skills_.WriteTo(ref output, _repeated_skills_codec);
+          if (Light != 0F) {
+            output.WriteRawTag(29);
+            output.WriteFloat(Light);
+          }
+          if (Vision != 0F) {
+            output.WriteRawTag(37);
+            output.WriteFloat(Vision);
+          }
+          if (Speed != 0F) {
+            output.WriteRawTag(45);
+            output.WriteFloat(Speed);
+          }
           if (_unknownFields != null) {
             _unknownFields.WriteTo(ref output);
           }
@@ -2949,7 +3040,15 @@ namespace Gameplay {
           if (Money != 0) {
             size += 1 + pb::CodedOutputStream.ComputeInt32Size(Money);
           }
-          size += skills_.CalculateSize(_repeated_skills_codec);
+          if (Light != 0F) {
+            size += 1 + 4;
+          }
+          if (Vision != 0F) {
+            size += 1 + 4;
+          }
+          if (Speed != 0F) {
+            size += 1 + 4;
+          }
           if (_unknownFields != null) {
             size += _unknownFields.CalculateSize();
           }
@@ -2968,7 +3067,15 @@ namespace Gameplay {
           if (other.Money != 0) {
             Money = other.Money;
           }
-          skills_.Add(other.skills_);
+          if (other.Light != 0F) {
+            Light = other.Light;
+          }
+          if (other.Vision != 0F) {
+            Vision = other.Vision;
+          }
+          if (other.Speed != 0F) {
+            Speed = other.Speed;
+          }
           _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
         }
 
@@ -2992,9 +3099,16 @@ namespace Gameplay {
                 Money = input.ReadInt32();
                 break;
               }
-              case 26:
-              case 25: {
-                skills_.AddEntriesFrom(input, _repeated_skills_codec);
+              case 29: {
+                Light = input.ReadFloat();
+                break;
+              }
+              case 37: {
+                Vision = input.ReadFloat();
+                break;
+              }
+              case 45: {
+                Speed = input.ReadFloat();
                 break;
               }
             }
@@ -3020,9 +3134,16 @@ namespace Gameplay {
                 Money = input.ReadInt32();
                 break;
               }
-              case 26:
-              case 25: {
-                skills_.AddEntriesFrom(ref input, _repeated_skills_codec);
+              case 29: {
+                Light = input.ReadFloat();
+                break;
+              }
+              case 37: {
+                Vision = input.ReadFloat();
+                break;
+              }
+              case 45: {
+                Speed = input.ReadFloat();
                 break;
               }
             }

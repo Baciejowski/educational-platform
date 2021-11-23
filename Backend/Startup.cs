@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Security.Claims;
 using Backend.Analysis_module;
+using Backend.Analysis_module.SessionModule;
 using Backend.Auth;
 using Backend.Services;
 using Backend.Services.ClassManagement;
@@ -48,7 +49,7 @@ namespace Backend
             void AddDatabase()
             {
                 var connectionString = Configuration["DbContextSettings:ConnectionString"];
-                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString),
+                services.AddDbContext<DataContext>(opts => opts.EnableSensitiveDataLogging().EnableDetailedErrors().UseNpgsql(connectionString),
                     ServiceLifetime.Singleton);
             }
 
@@ -100,6 +101,7 @@ namespace Backend
             services.AddScoped<IClassManagementService, ClassManagementService>();
             services.AddScoped<IScenarioManagementService, ScenarioManagementService>();
             services.AddScoped<ITeacherManagementService, TeacherManagementService>();
+            services.AddSingleton<ISessionFactory, SessionFactory>();
             services.AddSingleton<IAnalysisModuleService, AnalysisModuleService>();
         }
 

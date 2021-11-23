@@ -10,6 +10,7 @@ namespace Backend
             : base(options)
         {
         }
+
         public Teacher ResolveOrCreateUser(System.Security.Claims.ClaimsPrincipal user)
         {
             if (user.Identity.Name == null || user.Identity.Name.Length == 0) return null;
@@ -26,25 +27,33 @@ namespace Backend
                 {
                     return null;
                 }
+
                 teacher = Teachers.FirstOrDefault(t => t.AuthName.Equals(user.Identity.Name));
             }
+
             return teacher;
         }
+
+        public DbSet<AnalysisResult> AnalysisResults { get; set; }
         public DbSet<Answer> Answers { get; set; }
+        public DbSet<AnsweredQuestion> AnsweredQuestions { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Game> Games { get; set; }
+        public DbSet<GameplayData> GameplayData { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Scenario> Scenarios { get; set; }
+        public DbSet<Session> Sessions { get; set; }
+        public DbSet<SessionRecord> SessionRecords { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Topic> Topics { get; set; }
-        public DbSet<Session> Sessions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //answers-question
             modelBuilder.Entity<Answer>()
-                 .HasOne<Question>(a => a.Question)
-                 .WithMany(q => q.ABCDAnswers);
+                .HasOne<Question>(a => a.Question)
+                .WithMany(q => q.ABCDAnswers);
             //students-class
             modelBuilder.Entity<Student>()
                 .HasOne<Class>(s => s.Class)
@@ -81,6 +90,29 @@ namespace Backend
             modelBuilder.Entity<Session>()
                 .HasOne<Scenario>(session => session.Scenario)
                 .WithMany(scenario => scenario.Sessions);
+            //sessions-sessionRecords
+            modelBuilder.Entity<SessionRecord>()
+                .HasOne<Session>(sessionRecords => sessionRecords.Session)
+                .WithOne(session => session.SessionRecord)
+                .HasForeignKey<SessionRecord>(p => p.SessionRecordID);
+            //sessions-analysisResult
+            modelBuilder.Entity<SessionRecord>()
+                .HasOne<AnalysisResult>(sessionRecords => sessionRecords.AnalysisResult)
+                .WithOne(analysisResult => analysisResult.SessionRecord)
+                .HasForeignKey<SessionRecord>(p => p.SessionRecordID);
+            //sessions-gameplayData
+            modelBuilder.Entity<SessionRecord>()
+                .HasOne<GameplayData>(sessionRecords => sessionRecords.GameplayData)
+                .WithOne(gameplayData => gameplayData.SessionRecord)
+                .HasForeignKey<SessionRecord>(p => p.SessionRecordID);
+            //analysisResult-answeredQuestions
+            modelBuilder.Entity<AnsweredQuestion>()
+                .HasOne<AnalysisResult>(answeredQuestions => answeredQuestions.AnalysisResult)
+                .WithMany(analysisResult => analysisResult.AnsweredQuestions);
+            //answeredQuestions-question
+            modelBuilder.Entity<AnsweredQuestion>()
+                .HasOne<Question>(answeredQuestions => answeredQuestions.Question)
+                .WithMany(question => question.AnsweredQuestion);
         }
     }
 }

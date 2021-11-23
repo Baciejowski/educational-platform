@@ -19,6 +19,7 @@ namespace Backend.Models
         public bool? BooleanAnswer { get; set; }
         public bool IsImportant { get; set; }
         public bool IsObligatory { get; set; }
+        public int? AiDifficulty { get; set; }
         public virtual ICollection<Answer> ABCDAnswers { get; set; }
 
         [JsonIgnore]
