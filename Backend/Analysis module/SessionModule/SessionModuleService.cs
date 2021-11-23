@@ -222,6 +222,7 @@ namespace Backend.Analysis_module.SessionModule
             var scenario = IsTestUser() ? MockScenario() : _userSession.Scenario.Questions;
             foreach (var question in scenario)
             {
+                if (question.QuestionType != Question.TypeEnum.ABCD) continue;
                 if (question.IsObligatory)
                     result[0].Add(question);
                 else if (question.IsImportant)
@@ -310,7 +311,8 @@ namespace Backend.Analysis_module.SessionModule
                     IsObligatory = type == 0,
                     IsImportant = type == 1,
                     Difficulty = difficulty,
-                    ABCDAnswers = new List<Answer>()
+                    ABCDAnswers = new List<Answer>(),
+                    QuestionType = Question.TypeEnum.ABCD
                 };
                 for (var i = 1; i < data.Length - 1; i++)
                 {
