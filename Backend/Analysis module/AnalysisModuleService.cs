@@ -39,19 +39,37 @@ namespace Backend.Analysis_module
             }
             else
             {
-                var userSession = Context.Sessions
-                    .Include(s => s.Student)
-                    .Include(s => s.Scenario)
-                    .ThenInclude(scenario => scenario.Questions)
-                    .Include(s => s.Topic)
-                    .FirstOrDefault(x =>
-                        x.Code == request.Code.ToLower() && x.Student.Email == request.Email.ToLower());
+                Session userSession;
+                try
+                {
+                    var sessions = Context.Sessions
+                        .Include(s => s.Student)
+                        .Include(s => s.Scenario)
+                        // .Include(s => s.Scenario)
+                        // .ThenInclude(scenario => scenario.Topic)
+                        .ThenInclude(scenario => scenario.Questions)
+                        .ThenInclude(questions => questions.ABCDAnswers).ToList();
+
+                    userSession = sessions.First(x => x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
+                                                      x.Student.Email.Equals(request.Email,
+                                                          StringComparison.OrdinalIgnoreCase));
+                }
+                catch
+                {
+                    return new StartGameResponse
+                    {
+                        Error = true,
+                        ErrorMsg = "Wrong credentials."
+                    };
+                }
 
                 var error = CheckUserConditions(userSession);
                 if (error != null)
                     return error;
 
-                userSession.Attempts++;
+                //TO DO odkomentować przed testami na uzytkownikach
+                // userSession.Attempts++;
+                // Context.SaveChanges();
 
                 sessionModule =
                     _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
@@ -79,7 +97,7 @@ namespace Backend.Analysis_module
 
             var question = user.GetQuestion((QuestionImportanceType)request.QuestionType);
 
-            var answers = grpcQuestionResponseAnswersAdapter((List<Answer>)question.ABCDAnswers);
+            var answers = grpcQuestionResponseAnswersAdapter(question.ABCDAnswers);
             var result = new QuestionResponse()
             {
                 SessionCode = request.SessionCode,
@@ -140,17 +158,19 @@ namespace Backend.Analysis_module
 
 
         private IEnumerable<QuestionResponse.Types.Answer> grpcQuestionResponseAnswersAdapter(
-            IReadOnlyList<Answer> answers)
+            ICollection<Answer> answers)
         {
             var result = new QuestionResponse.Types.Answer[answers.Count];
-            for (var i = 0; i < answers.Count; i++)
+            var i = 0;
+            foreach (var answer in answers)
             {
                 result[i] = new QuestionResponse.Types.Answer
                 {
-                    AnswersID = answers[i].AnswerID,
-                    Content = answers[i].Content,
-                    Correct = answers[i].Correct
+                    AnswersID = answer.AnswerID,
+                    Content = answer.Content,
+                    Correct = answer.Correct
                 };
+                i++;
             }
 
             return result;

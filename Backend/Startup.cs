@@ -49,7 +49,7 @@ namespace Backend
             void AddDatabase()
             {
                 var connectionString = Configuration["DbContextSettings:ConnectionString"];
-                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString),
+                services.AddDbContext<DataContext>(opts => opts.EnableSensitiveDataLogging().EnableDetailedErrors().UseNpgsql(connectionString),
                     ServiceLifetime.Singleton);
             }
 

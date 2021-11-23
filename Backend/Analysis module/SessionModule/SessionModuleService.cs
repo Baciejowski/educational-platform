@@ -88,7 +88,11 @@ namespace Backend.Analysis_module.SessionModule
 
             var answeredQuestion = StudentResponseAdapter(request);
             _adaptivityModuleService.AddQuestionToAnalysis(answeredQuestion);
-            FindNextQuestion(answeredQuestion.QuestionImportanceType);
+
+            var questionIndex = (int)answeredQuestion.QuestionImportanceType;
+            RemoveQuestion(questionIndex);
+            FindNextQuestion(questionIndex);
+
             SetRequestTime();
         }
 
@@ -157,6 +161,9 @@ namespace Backend.Analysis_module.SessionModule
         private int GetQuestionAmount(int questionImportanceIndex)
         {
             var type = _availableQuestions[questionImportanceIndex];
+            if (_userSession.RandomTest)
+                return type.Count;
+
             return type
                 .GroupBy(x => x.Difficulty)
                 .OrderBy(x => x.Count())
@@ -241,10 +248,8 @@ namespace Backend.Analysis_module.SessionModule
             return filteredQuestions.ElementAt(index);
         }
 
-        private void FindNextQuestion(QuestionImportanceType questionImportanceType)
+        private void FindNextQuestion(int questionIndex)
         {
-            var questionIndex = (int)questionImportanceType;
-            RemoveQuestion(questionIndex);
             _readyQuestions[questionIndex] =
                 _adaptivityModuleService.DifficultyLevel < 0
                     ? GetRandomQuestionOfType(questionIndex)
