@@ -242,8 +242,10 @@ namespace Backend.Analysis_module.SessionModule
 
         private Question GetRandomQuestionOfType(int questionIndex)
         {
+            if (_availableQuestions[questionIndex].Count <= 0) return null;
             var index = Random.Next(_availableQuestions[questionIndex].Count);
-            return _availableQuestions[questionIndex].ElementAt(index);
+            return _availableQuestions[questionIndex].ElementAt(index) ;
+
         }
 
         private Question GetRankedQuestionOfType(int questionIndex)
