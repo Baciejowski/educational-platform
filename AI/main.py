@@ -1,5 +1,5 @@
 from evaluation.evaluator import *
-from inference.qg_prediction import QuestionGenerator
+#from inference.qg_prediction import QuestionGenerator
 import os
 from API import models
 import uvicorn
