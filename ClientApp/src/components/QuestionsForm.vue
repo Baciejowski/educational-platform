@@ -112,9 +112,9 @@
                 <b-button type="reset" variant="danger">Reset</b-button>
             </div>
         </b-form>
-        <b-card class="mt-3 text-white" header="Form Data Result">
+<!--        <b-card class="mt-3 text-white" header="Form Data Result">
             <pre class="m-0 text-white">{{ sendData }}</pre>
-        </b-card>
+        </b-card>-->
     </div>
 </template>
 
