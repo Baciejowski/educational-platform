@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using System.Security.Claims;
 using Backend.Analysis_module;
 using Backend.Analysis_module.SessionModule;
@@ -29,6 +28,7 @@ namespace Backend
         {
             public static bool RunVue = false;
         }
+
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -47,8 +47,8 @@ namespace Backend
             void AddDatabase()
             {
                 var connectionString = Configuration["DbContextSettings:ConnectionString"];
-                services.AddDbContext<DataContext>(opts => opts.EnableSensitiveDataLogging().EnableDetailedErrors().UseNpgsql(connectionString),
-                    ServiceLifetime.Singleton);
+                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString),
+                    ServiceLifetime.Transient);
             }
 
             void AddHttpServices()
@@ -56,11 +56,11 @@ namespace Backend
                 services.AddCors(options =>
                 {
                     options.AddPolicy(name: "default",
-                                      //builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
-                                      builder => builder.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        //.AllowCredentials()
-                        .AllowAnyMethod());
+                        //builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
+                        builder => builder.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            //.AllowCredentials()
+                            .AllowAnyMethod());
                 });
                 services.AddControllers();
                 if (Flags.RunVue)
@@ -80,15 +80,16 @@ namespace Backend
                 {
                     NameClaimType = ClaimTypes.NameIdentifier
                 };
-            }); 
+            });
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("read:messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain)));
+                options.AddPolicy("read:messages",
+                    policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain)));
             });
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
-            
-            
+
+
             AddDatabase();
             services.AddGrpc();
             AddHttpServices();
@@ -112,8 +113,8 @@ namespace Backend
                     app.UseDeveloperExceptionPage();
 
                 app.UseRouting();
-                
-        app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
+
+                app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 
                 if (Flags.RunVue)
                     app.UseSpaStaticFiles();

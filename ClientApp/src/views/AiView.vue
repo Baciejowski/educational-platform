@@ -264,7 +264,8 @@
                 button.textContent = "Update"
                 questionForm.appendChild(button)
             },
-            difficultyRepresentation(lvl) {
+            difficultyRepresentation(_lvl) {
+                const lvl = Math.abs(_lvl)
                 return "\u2605".repeat(lvl) + "\u2606".repeat(5 - lvl)
             },
             async onSubmit(event) {
