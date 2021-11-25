@@ -8,13 +8,15 @@ namespace Backend.Controllers.GameAPIs
     [ApiController]
     public class StartGame : Controller
     {
+        private readonly DataContext _context;
         private readonly ILogger<StartGame> _logger;
         private readonly IAnalysisModuleService _analysisModuleService;
 
-        public StartGame(ILogger<StartGame> logger, IAnalysisModuleService analysisModuleService)
+        public StartGame(ILogger<StartGame> logger, IAnalysisModuleService analysisModuleService, DataContext context)
         {
             _logger = logger;
             _analysisModuleService = analysisModuleService;
+            _context = context;
         }
 
         [HttpPost]
@@ -22,7 +24,7 @@ namespace Backend.Controllers.GameAPIs
         public IActionResult PostStartGame()
         {
             var msg = ProtoReader.Convert<StartGameRequest>(Request);
-            var response = _analysisModuleService.StartNewSession(msg);
+            var response = _analysisModuleService.StartNewSession(msg, _context);
             return ProtoResponse.FromMsg(response);
         }
 

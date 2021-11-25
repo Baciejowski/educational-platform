@@ -11,13 +11,11 @@ namespace Backend.Analysis_module
 {
     public class AnalysisModuleService : IAnalysisModuleService
     {
-        protected readonly DataContext Context;
         private readonly ISessionFactory _sessionFactory;
         private List<SessionModuleService> _sessionModules = new List<SessionModuleService>();
 
-        public AnalysisModuleService(DataContext context, ISessionFactory sessionFactory)
+        public AnalysisModuleService(ISessionFactory sessionFactory)
         {
-            Context = context;
             _sessionFactory = sessionFactory;
 
             var startTimeSpan = TimeSpan.Zero;
@@ -27,7 +25,7 @@ namespace Backend.Analysis_module
                 periodTimeSpan);
         }
 
-        public StartGameResponse StartNewSession(StartGameRequest request)
+        public StartGameResponse StartNewSession(StartGameRequest request, DataContext Context)
         {
             var id = GenerateGameId();
             SessionModuleService sessionModule;
@@ -40,7 +38,7 @@ namespace Backend.Analysis_module
             {
                 RemoveUser("test", "test");
 
-                sessionModule = _sessionFactory.Create(request.Email, 1, request.Code, id);
+                sessionModule = _sessionFactory.Create(request.Email, 1, request.Code, id, Context);
             }
             else
             {
@@ -88,7 +86,7 @@ namespace Backend.Analysis_module
 
                 sessionModule =
                     _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
-                        userSession);
+                        userSession, Context);
             }
 
             _sessionModules.Add(sessionModule);
