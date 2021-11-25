@@ -42,6 +42,7 @@ namespace Backend.Services.ScenarioManagement
             {
                 foreach (var question in questionSet)
                 {
+                    if (question.Content == null) continue;
                     if (question.Difficulty == 6) continue;
                     var answers = new List<Answer>();
                     foreach (var answer in question.Answers)
