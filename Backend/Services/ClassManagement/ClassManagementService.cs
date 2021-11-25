@@ -52,7 +52,6 @@ namespace Backend.Services.ClassManagement
                     EndDate = classesGameInvitationViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
                 };
 
-                await _mailService.SendGameInvitationRequestAsync(request);
 
                 Context.Sessions.Add(new Session
                 {
@@ -63,10 +62,10 @@ namespace Backend.Services.ClassManagement
                     RandomTest = classesGameInvitationViewModel.RandomTest,
                     AiCategorization = classesGameInvitationViewModel.AiCategorization,
                     Code = code
-                }); 
+                });
+                _ = _mailService.SendGameInvitationRequestAsync(request);
             }
-
-            await Context.SaveChangesAsync();
+            Context.SaveChanges();
         }
     }
 }
