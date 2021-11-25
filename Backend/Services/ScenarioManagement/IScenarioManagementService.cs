@@ -6,6 +6,6 @@ namespace Backend.Services.ScenarioManagement
 {
     public interface IScenarioManagementService
     {
-        void CreateScenarioFromForm(ScenarioViewModel payload, Teacher teacher);
+        int CreateScenarioFromForm(ScenarioViewModel payload, Teacher teacher);
     }
 }

@@ -39,7 +39,7 @@
                         <div class="card white z-depth-0" style="border:1px solid; border-color:darkorange;" :id="'questionCard'+question.QuestionID">
                             <div class="card-content">
                                 <div class="card-title" style="text-align: left">
-                                    <span class="right orange-text" style="display: inline; margin-left:10px;">{{difficultyRepresentation(question.Difficulty)}}</span>
+                                    <span class="right orange-text" style="display: inline; margin-left:10px;">{{difficultyRepresentation((question.AiDifficulty&&question.AiDifficulty>0)?question.AiDifficulty:question.Difficulty)}}</span>
                                     <span class="black-text" style="display: inline;">{{question.Content}}</span>
                                 </div>
                                 <div v-if="question.Hint" class="black-text">Hint: {{question.Hint}}</div>
@@ -153,7 +153,7 @@
                 return this.scenario.Questions.filter(q => q.QuestionID && q.IsObligatory === true && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a=>a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
             },
             aiProposals() {
-                return this.scenario.Questions.filter(q => !q.Difficulty || (q.AiDifficulty && q.AiDifficulty != q.Difficulty)).length
+                return this.scenario.Questions.filter(q => !q.Difficulty || (q.AiDifficulty && q.AiDifficulty<0 && Math.abs(q.AiDifficulty) != q.Difficulty)).length
             }
         },
         created() {
@@ -193,7 +193,9 @@
                     IsImportant: false,
                     IsObligatory: false,
                     BooleanAnswer: null,
-                    ABCDAnswers: []}
+                    ABCDAnswers: [],
+                    AiDifficulty: null
+                }
             },
             clearSearch() {
                 this.search = ""
@@ -287,7 +289,7 @@
                 questionForm.appendChild(button)
             },
             questions(lvl) {
-                return this.scenario.Questions.filter(q => q.QuestionID && !q.IsObligatory && q.Difficulty === lvl && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a => a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
+                return this.scenario.Questions.filter(q => q.QuestionID && !q.IsObligatory && ((q.AiDifficulty && q.AiDifficulty > 0) ? q.AiDifficulty : q.Difficulty) === lvl && (!this.search || (q.Content.toLowerCase().includes(this.search.toLowerCase()) || q.ABCDAnswers.filter(a => a.Content.toLowerCase().includes(this.search.toLowerCase())).length)))
             },
             sectionHeaderIcon(lvl) {
                 return "\u2605".repeat(lvl)
@@ -328,7 +330,11 @@
                 }
 
                 this.$store.state.loadingData = true
-                editedQuestion.Difficulty = this.difficulty
+
+                if (editedQuestion.QuestionID && ((editedQuestion.AiDifficulty && editedQuestion.AiDifficulty > 0) ? editedQuestion.AiDifficulty : editedQuestion.Difficulty) != this.difficulty) {
+                    editedQuestion.Difficulty = this.difficulty
+                    editedQuestion.AiDifficulty = null
+                }
                 editedQuestion.Content = document.getElementById("editedQuestionContent").value
                 editedQuestion.Hint = document.getElementById("editedQuestionHint").value
                 editedQuestion.QuestionType = document.getElementById("questionType").selectedIndex
@@ -409,7 +415,7 @@
                 const questionForm = document.getElementById("questionForm")
                 const instance = M.Modal.getInstance(document.getElementById("modal1"))
                 let question = this.scenario.Questions.find(q => q.QuestionID === id)
-                this.difficulty = question.Difficulty
+                this.difficulty = (question.AiDifficulty && question.AiDifficulty > 0) ? question.AiDifficulty : question.Difficulty
                 document.getElementById("questionImportance").checked = question.IsImportant
                 if (question.IsImportant) document.getElementById("questionObligatory").disabled = true
                 document.getElementById("questionObligatory").checked = question.IsObligatory

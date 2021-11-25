@@ -28,7 +28,6 @@ namespace Backend
         private static class Flags
         {
             public static bool RunVue = false;
-            public static bool RunAI = false;
         }
         public IConfiguration Configuration { get; }
 
@@ -37,7 +36,6 @@ namespace Backend
             void LoadFlags()
             {
                 Flags.RunVue = Configuration.GetSection("Flags")["RunVue"].Equals("True");
-                Flags.RunAI = Configuration.GetSection("Flags")["RunAI"].Equals("True");
             }
 
             Configuration = configuration;
@@ -134,19 +132,6 @@ namespace Backend
                 });
             }
 
-            void RunAI()
-            {
-                Process p = new Process();
-                p.StartInfo = new ProcessStartInfo(Configuration.GetSection("Variables")["AIScriptLocation"])
-                {
-                    RedirectStandardOutput = false,
-                    UseShellExecute = true,
-                    CreateNoWindow = false
-                };
-                p.Start();
-                logger.LogInformation("AI script started");
-            }
-
             void RunVue()
             {
                 app.UseSpa(spa =>
@@ -167,7 +152,6 @@ namespace Backend
             app.UseAuthentication();
             AddHttpServices();
             AddEndpoints();
-            if (Flags.RunAI) RunAI();
             if (Flags.RunVue) RunVue();
         }
     }

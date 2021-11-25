@@ -111,6 +111,8 @@ namespace Backend.Controllers.Api
 
                 if (original.Difficulty != question.Difficulty)
                     original.Difficulty = question.Difficulty;
+                if (original.AiDifficulty != question.AiDifficulty)
+                    original.AiDifficulty = question.AiDifficulty;
                 if (!string.Equals(original.Content, question.Content))
                     original.Content = question.Content;
                 if (!string.Equals(original.Hint, question.Hint))

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Backend.Controllers.APIs;
 using Backend.Controllers.APIs.Models;
 using Backend.Models;
+using Backend.Services;
 
 namespace Backend.Services.ScenarioManagement
 {
@@ -15,7 +17,7 @@ namespace Backend.Services.ScenarioManagement
             _context = context;
         }
 
-        public void CreateScenarioFromForm(ScenarioViewModel formData, Teacher teacher)
+        public int CreateScenarioFromForm(ScenarioViewModel formData, Teacher teacher)
         {
             var topic = teacher.Topics.FirstOrDefault(topic => topic.TopicName == formData.Topic);
             if (topic == null)
@@ -26,7 +28,7 @@ namespace Backend.Services.ScenarioManagement
 
             var checkScenario = _context.Scenarios.FirstOrDefault(x => x.Name == formData.Name);
             var checkTopic = _context.Topics.FirstOrDefault(x => x.TopicID == topic.TopicID);
-            if (checkScenario != null && checkTopic != null) return;
+            if (checkScenario != null && checkTopic != null) return 0;
 
             var scenario = new Scenario
             {
@@ -40,6 +42,7 @@ namespace Backend.Services.ScenarioManagement
             {
                 foreach (var question in questionSet)
                 {
+                    if (question.Difficulty == 6) continue;
                     var answers = new List<Answer>();
                     foreach (var answer in question.Answers)
                     {
@@ -67,6 +70,9 @@ namespace Backend.Services.ScenarioManagement
 
             _context.Scenarios.Add(scenario);
             _context.SaveChanges();
+            //Task.Run(() => CommunicationWithAI.UpdateProposedDifficulty(_context, scenario));
+            CommunicationWithAI.UpdateProposedDifficulty(_context, scenario);
+            return scenario.ScenarioID;
         }
     }
 }
