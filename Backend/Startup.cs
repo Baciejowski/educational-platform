@@ -47,8 +47,7 @@ namespace Backend
             void AddDatabase()
             {
                 var connectionString = Configuration["DbContextSettings:ConnectionString"];
-                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString),
-                    ServiceLifetime.Transient);
+                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString));
             }
 
             void AddHttpServices()
