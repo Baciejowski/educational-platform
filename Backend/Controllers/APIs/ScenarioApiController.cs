@@ -38,13 +38,13 @@ namespace Backend.Controllers.APIs
         
         [HttpPost]
         [Authorize]
-        public OkResult Post(ScenarioViewModel payload)
+        public IActionResult Post(ScenarioViewModel payload)
         {
             var currentUser = HttpContext.User;
             var teacher = _teacherManagementService.GetTeacher(currentUser.Identity.Name);
-            _scenarioManagementService.CreateScenarioFromForm(payload, teacher);
-
-            return Ok();
+            int result = _scenarioManagementService.CreateScenarioFromForm(payload, teacher);
+            if (result > 0) return StatusCode(200, result);
+            return BadRequest();
         }
     }
 }

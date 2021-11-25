@@ -9,7 +9,7 @@ sample_path = r"C:\Users\HP.LAPTOP-QI9IOVLF\OneDrive\Pulpit\sample.txt"
 
 
 def run():
-    uvicorn.run(models.app, host="0.0.0.0", port=8000)
+    uvicorn.run(models.app, host="0.0.0.0", port=3000)
 
 
 if __name__ == '__main__':
