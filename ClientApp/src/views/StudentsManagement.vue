@@ -55,7 +55,7 @@
                     <span class="badge orange lighten-3 left grey-text text-darken-3">{{student.sessions.filter(s=> s.Attempts).length}} finished</span>
                     <a @click="editStudent(student.studentID)" class="grey-link hovered-orange" style="margin-left:7px;"><i class="material-icons">edit</i></a>
                     <a class="grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
-                    <a href="#!" @click="deleteStudent(student.studentID)" class="grey-link hovered-red"><i class="material-icons">delete</i></a>
+                    <a @click="deleteStudent(student.studentID)" class="grey-link hovered-red"><i class="material-icons">delete</i></a>
                 </div>
             </li>
             <li v-if="!group.students.length" class="collection-item avatar black-text">
@@ -103,7 +103,7 @@
                         <div class="row" style="margin-bottom: 0px">
                             <div class="input-field col s12">
                                 <input id="editedClassFriendlyName" type="text" required autocomplete="off" style="border-bottom: 1px solid #9e9e9e; box-shadow: none;">
-                                <label class="grey-text">First name</label>
+                                <label class="grey-text">Friendly name</label>
                             </div>
                         </div>
                         <button id="submitButtonClass" class="right btn waves-effect waves-light orange" type="submit" name="submit"></button>

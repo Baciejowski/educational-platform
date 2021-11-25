@@ -153,9 +153,9 @@
           </div>
         </div>
       </div>
-
-      <div class="container">
-        <img src="../assets/Gif.gif" style="height: 100%; width: 100%; object-fit: contain"/>
+        <br/>
+      <!--<div class="container">
+        <img src="../assets/Gif.gif" style="height: 100%; width: 100%; object-fit: contain"/>-->
         <!--<div class="auto-resizable-iframe">
           <div>
             <iframe
@@ -167,7 +167,7 @@
             ></iframe>
           </div>
         </div>-->
-      </div>
+      <!--</div>-->
     </main>
 
     <footer>
