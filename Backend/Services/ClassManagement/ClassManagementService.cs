@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Backend.Controllers.APIs;
 using Backend.Controllers.APIs.Models;
 using Backend.Models;
 using Backend.Services.EmailProvider;
@@ -23,7 +22,7 @@ namespace Backend.Services.ClassManagement
         }
 
 
-        public async void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel, string authName)
+        public void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel, string authName)
         {
             var teacher = _teacherManagementService.GetTeacher(authName);
             var classItem = teacher.Classes

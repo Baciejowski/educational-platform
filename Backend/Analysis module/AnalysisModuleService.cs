@@ -81,8 +81,8 @@ namespace Backend.Analysis_module
                     return error;
 
                 //TO DO odkomentować przed testami na uzytkownikach
-                // userSession.Attempts++;
-                // Context.SaveChanges();
+                userSession.Attempts++;
+                Context.SaveChanges();
 
                 sessionModule =
                     _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
