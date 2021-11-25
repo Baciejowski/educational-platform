@@ -10,6 +10,9 @@ import Navbar from "@/components/Navbar.vue"
 export default {
     name: "app",
     created() {
+        if (!this.$store.state.local && location.protocol !== 'https:') {
+            location.replace(`https:${location.href.substring(location.protocol.length)}`);
+        }
         this.$store.commit("setAuth", this.$auth)
     },
     components: {
