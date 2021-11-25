@@ -51,8 +51,8 @@
                 <span class="title">{{student.lastName}} {{student.firstName}}</span>
                 <p>{{student.email}}</p>
                 <div class="secondary-content">
-                    <span class="badge green lighten-3 left grey-text text-darken-3">4 waiting</span>
-                    <span class="badge orange lighten-3 left grey-text text-darken-3">4 finished</span>
+                    <span class="badge green lighten-3 left grey-text text-darken-3">{{student.sessions.filter(s=> !s.Attempts).length}} waiting</span>
+                    <span class="badge orange lighten-3 left grey-text text-darken-3">{{student.sessions.filter(s=> s.Attempts).length}} finished</span>
                     <a @click="editStudent(student.studentID)" class="grey-link hovered-orange" style="margin-left:7px;"><i class="material-icons">edit</i></a>
                     <a class="grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
                     <a href="#!" @click="deleteStudent(student.studentID)" class="grey-link hovered-red"><i class="material-icons">delete</i></a>
@@ -208,7 +208,7 @@
 
                 if (editedStudent.studentID) {
                     this.$store
-                        .dispatch("authorizedPUT_PromiseWithHeaders", { url: `api/students?classID=${document.getElementById("assignedGroup").value}`, data: editedStudent })
+                        .dispatch("authorizedPUT_PromiseWithHeaders", { url: `/api/students?classID=${document.getElementById("assignedGroup").value}`, data: editedStudent })
                         .then((data) => {
                             if (data.status == 200) {
                                 M.toast({ html: "<div class='black-text'>Student was modified</div>", classes: "green lighten-3" })
@@ -222,7 +222,7 @@
                 }
                 else {
                     this.$store
-                        .dispatch("authorizedPOST_PromiseWithHeaders", { url: `api/students?classID=${document.getElementById("assignedGroup").value}`, data: editedStudent })
+                        .dispatch("authorizedPOST_PromiseWithHeaders", { url: `/api/students?classID=${document.getElementById("assignedGroup").value}`, data: editedStudent })
                         .then((resp) => {
                             if (resp.status == 201) {
                                 M.toast({ html: "<div class='black-text'>Student was created</div>", classes: "green lighten-3" })
