@@ -24,14 +24,19 @@ namespace Backend.Controllers.APIs
 
         [HttpGet]
         [Authorize]
-        public IActionResult Get(bool skipStudents)
+        public IActionResult Get(bool skipStudents, bool skipSessions)
         {
             Teacher teacher = _dataContext.ResolveOrCreateUser(HttpContext.User);
             if (teacher == null) return Unauthorized();
             _dataContext.Entry(teacher).Collection(t => t.Classes).Load();
             if(!skipStudents)
                 foreach (Class group in teacher.Classes)
+                { 
                     _dataContext.Entry(group).Collection(c => c.Students).Load();
+                    if (!skipSessions)
+                        foreach (Student studnet in group.Students)
+                            _dataContext.Entry(studnet).Collection(s => s.Sessions).Load();
+                }
 
             return new ObjectResult(teacher.Classes);
         }

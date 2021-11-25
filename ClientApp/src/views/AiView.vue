@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="right">
                                     <span class="orange-text right" style="margin-left:10px;">
-                                        {{difficultyRepresentation(question.Difficulty)}}&#10174;{{difficultyRepresentation(question.AiDifficulty)}}
+                                        {{difficultyRepresentation(question.Difficulty)}}&#10174;{{difficultyRepresentation(Math.abs(question.AiDifficulty))}}
                                     </span>
                                     <br />
                                     <span v-if="question.IsImportant" class="black-text orange material-icons right" style="margin-left:10px;">priority_high</span>
@@ -133,7 +133,7 @@
                 return this.scenario.Questions.filter(q => q.QuestionID && !q.Difficulty)
             },
             modifiedDifficultyQ() {
-                return this.scenario.Questions.filter(q => q.QuestionID && q.AiDifficulty && q.Difficulty != q.AiDifficulty)
+                return this.scenario.Questions.filter(q => q.QuestionID && q.AiDifficulty && q.AiDifficulty < 0 && Math.abs(q.AiDifficulty) != q.Difficulty)
             }
         },
         created() {
@@ -426,18 +426,19 @@
                     .then((data) => {
                         if (data.status == 200) {
                             M.toast({ html: "<div class='black-text'>Question was modified</div>", classes: "green lighten-3" })
+                            this.$store.dispatch({
+                                type: 'getScenarioByID',
+                                id: (new URL(window.location.href)).searchParams.get("id")
+                            })
                         }
                     })
                     .catch((err) => {
                         M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
                         this.$store.dispatch({
                             type: 'getScenarioByID',
+                            id: (new URL(window.location.href)).searchParams.get("id")
                         })
                     })
-                this.$store.dispatch({
-                    type: 'getScenarioByID',
-                    id: (new URL(window.location.href)).searchParams.get("id")
-                })
             },
             dismissModification(id) {
                 let editedQuestion = this.scenario.Questions.find(q => q.QuestionID === id)
@@ -447,18 +448,19 @@
                     .then((data) => {
                         if (data.status == 200) {
                             M.toast({ html: "<div class='black-text'>Question modification was dismissed</div>", classes: "green lighten-3" })
+                            this.$store.dispatch({
+                                type: 'getScenarioByID',
+                                id: (new URL(window.location.href)).searchParams.get("id")
+                            })
                         }
                     })
                     .catch((err) => {
                         M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
                         this.$store.dispatch({
                             type: 'getScenarioByID',
+                            id: (new URL(window.location.href)).searchParams.get("id")
                         })
                     })
-                this.$store.dispatch({
-                    type: 'getScenarioByID',
-                    id: (new URL(window.location.href)).searchParams.get("id")
-                })
             },
 
         }

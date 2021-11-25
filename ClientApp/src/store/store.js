@@ -23,7 +23,7 @@ const state = {
         teacherTopics: []
     },
     urlPrefix: { local: "http://localhost:5000", dev: "https://zpi2021.westeurope.cloudapp.azure.com:5001" },
-    local: false
+    local: true
 }
 
 const getters = {

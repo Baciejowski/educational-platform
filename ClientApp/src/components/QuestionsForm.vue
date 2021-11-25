@@ -112,9 +112,9 @@
                 <b-button type="reset" variant="danger">Reset</b-button>
             </div>
         </b-form>
-        <b-card class="mt-3 text-white" header="Form Data Result">
+<!--        <b-card class="mt-3 text-white" header="Form Data Result">
             <pre class="m-0 text-white">{{ sendData }}</pre>
-        </b-card>
+        </b-card>-->
     </div>
 </template>
 
@@ -179,24 +179,24 @@
             },
             onSubmit(event) {
                 event.preventDefault()
-                axios.post("/api/scenarios/media", this.files, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }).then((resp) => {
-                    if (resp.status == 200) {
-                        M.toast({ html: "<div class='black-text'>Files were uploaded</div>", classes: "green lighten-3" })
-                    }
-                }).catch((err) => {
-                    M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
-                });
                 const { name, topic } = this.$store.state.createScenario
                 if (name && topic) {
                     this.$store
-                        .dispatch("authorizedPOST_Promise", { url: "/api/create-scenario", data: this.sendData })
-                        .then(() => {
-                            this.resetData()
-                            alert("Scenario created!")
+                        .dispatch("authorizedPOST_PromiseWithHeaders", { url: "/api/create-scenario", data: this.sendData })
+                        .then((resp) => {
+                            if (resp.status == 200) {
+                                axios.post("/api/scenarios/media", this.files, {
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data'
+                                    }
+                                }).then((resp2) => {
+                                    if (resp2.status == 200) {
+                                        window.location.href = `${this.$store.getters.getPrefix()}/scenario?id=${resp.data}`;
+                                    }
+                                }).catch((err) => {
+                                    M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
+                                });
+                            }
                         })
                         .catch(() => console.log)
                 }
