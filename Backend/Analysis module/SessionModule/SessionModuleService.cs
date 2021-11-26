@@ -11,10 +11,9 @@ namespace Backend.Analysis_module.SessionModule
 {
     public class SessionModuleService
     {
-        protected readonly DataContext Context;
         public StudentData StudentData { get; set; }
 
-        private readonly Session _userSession;
+        private Session _userSession;
         private Question[] _readyQuestions;
         private List<Question>[] _availableQuestions;
         private AdaptivityModuleService _adaptivityModuleService;
@@ -26,9 +25,8 @@ namespace Backend.Analysis_module.SessionModule
 
 
         public SessionModuleService(string studentEmail, int studentId, string code, string sessionId,
-            DataContext context)
+            DataContext Context)
         {
-            Context = context;
             StudentData = new StudentData
             {
                 Email = studentEmail.ToLower(),
@@ -40,13 +38,13 @@ namespace Backend.Analysis_module.SessionModule
             _readyQuestions = SetInitialQuestions();
             _adaptivityModuleService = new AdaptivityModuleService(TestLimit());
             _startDate = DateTime.Now;
-            _userSession = Context.Scenarios.Include(x => x.Sessions).FirstOrDefault(x => x.Name == "TestRectangles")
-                ?.Sessions.First();
+            _userSession =
+                Context.Sessions.FirstOrDefault(x => String.Equals(x.Code, code, StringComparison.OrdinalIgnoreCase));
             SetRequestTime();
         }
 
         public SessionModuleService(string studentEmail, int studentId, string code, string sessionId,
-            Session userSession, DataContext context)
+            Session userSession)
         {
             StudentData = new StudentData
             {
@@ -56,7 +54,6 @@ namespace Backend.Analysis_module.SessionModule
                 SessionId = sessionId
             };
             _userSession = userSession;
-            Context = context;
 
 
             _availableQuestions = GetQuestionsFromScenario();
@@ -106,32 +103,24 @@ namespace Backend.Analysis_module.SessionModule
             }; //To Do  - oblicza
         }
 
-        public bool EndGame(EndGameRequest request)
+        public bool EndGame(EndGameRequest request, DataContext Context)
         {
-            var analysisResult = _adaptivityModuleService.GetData(request.ScenarioEnded);
-            // if(IsTestUser())
-            //     analysisResult.AnsweredQuestions.ForEach(x=>x.Question = null);
+            _userSession = _adaptivityModuleService.GetData(request.ScenarioEnded, _userSession);
+            Context.Entry(_userSession).Reload();
 
-            var gameplayData = new GameplayData
-            {
-                Experience = request.StudentEndGameData.Experience,
-                Money = request.StudentEndGameData.Money,
-                GameplayTime = request.GameplayTime,
-                Light = request.StudentEndGameData.Light,
-                Vision = request.StudentEndGameData.Vision,
-                Speed = request.StudentEndGameData.Speed
-            };
 
-            var sessionRecord = new SessionRecord
-            {
-                AnalysisResult = analysisResult,
-                Session = _userSession,
-                GameplayData = gameplayData
-            };
+            _userSession.Experience = request.StudentEndGameData.Experience;
+            _userSession.Money = request.StudentEndGameData.Money;
+            _userSession.GameplayTime = request.GameplayTime;
+            _userSession.Light = request.StudentEndGameData.Light;
+            _userSession.Vision = request.StudentEndGameData.Vision;
+            _userSession.Speed = request.StudentEndGameData.Speed;
+
 
             if (!IsTestUser())
             {
-                Context.SessionRecords.Add(sessionRecord);
+                _userSession.AnsweredQuestions.ForEach(x=> Context.Add(x)); ;
+                Context.Update(_userSession);
                 Context.SaveChanges();
             }
 
@@ -140,7 +129,7 @@ namespace Backend.Analysis_module.SessionModule
             return true;
         }
 
-        public bool IsAbandoned()
+        public bool IsAbandoned(DataContext Context)
         {
             var afkTime = (DateTime.Now - _lastRequest).TotalMinutes;
 
@@ -154,14 +143,14 @@ namespace Backend.Analysis_module.SessionModule
                 StudentEndGameData = new EndGameRequest.Types.StudentEndGameData
                     { Experience = 0, Money = 0 }
             };
-            EndGame(result);
+            EndGame(result, Context);
             return true;
         }
 
         private int GetQuestionAmount(int questionImportanceIndex)
         {
             var type = _availableQuestions[questionImportanceIndex];
-            if (_userSession.RandomTest)
+            if (_userSession.RandomTest || questionImportanceIndex == 0)
                 return type.Count;
 
             if (_adaptivityModuleService.AiCategorization)
@@ -185,9 +174,12 @@ namespace Backend.Analysis_module.SessionModule
             return new AnsweredQuestion
             {
                 QuestionImportanceType = type,
-                Question = question,
+                // Question = question,
                 AnsweredAnswers = request.AnswersID.ToList(),
-                TimeToAnswer = request.TimeToAnswer
+                TimeToAnswer = request.TimeToAnswer,
+                Difficulty = question.Difficulty,
+                Correctness = _adaptivityModuleService.CalculateCorrectness(request, question),
+                QuestionIdRef = question.QuestionID
             };
         }
 
@@ -244,8 +236,7 @@ namespace Backend.Analysis_module.SessionModule
         {
             if (_availableQuestions[questionIndex].Count <= 0) return null;
             var index = Random.Next(_availableQuestions[questionIndex].Count);
-            return _availableQuestions[questionIndex].ElementAt(index) ;
-
+            return _availableQuestions[questionIndex].ElementAt(index);
         }
 
         private Question GetRankedQuestionOfType(int questionIndex)
@@ -267,7 +258,7 @@ namespace Backend.Analysis_module.SessionModule
         private void FindNextQuestion(int questionIndex)
         {
             _readyQuestions[questionIndex] =
-                _adaptivityModuleService.DifficultyLevel < 0
+                _adaptivityModuleService.DifficultyLevel < 0 || questionIndex == 0
                     ? GetRandomQuestionOfType(questionIndex)
                     : GetRankedQuestionOfType(questionIndex);
         }

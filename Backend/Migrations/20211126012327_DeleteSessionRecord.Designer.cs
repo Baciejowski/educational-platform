@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Backend;
@@ -10,9 +11,10 @@ using Backend;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20211126012327_DeleteSessionRecord")]
+    partial class DeleteSessionRecord
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,16 +61,10 @@ namespace Backend.Migrations
                     b.Property<float>("Correctness")
                         .HasColumnType("real");
 
-                    b.Property<byte>("Difficulty")
-                        .HasColumnType("smallint");
-
-                    b.Property<int>("QuestionIdRef")
+                    b.Property<int?>("QuestionID")
                         .HasColumnType("integer");
 
                     b.Property<int>("QuestionImportanceType")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SessionID")
                         .HasColumnType("integer");
 
                     b.Property<int>("TimeToAnswer")
@@ -76,7 +72,7 @@ namespace Backend.Migrations
 
                     b.HasKey("AnsweredQuestionID");
 
-                    b.HasIndex("SessionID");
+                    b.HasIndex("QuestionID");
 
                     b.ToTable("AnsweredQuestions");
                 });
@@ -336,11 +332,11 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.AnsweredQuestion", b =>
                 {
-                    b.HasOne("Backend.Models.Session", "Session")
-                        .WithMany("AnsweredQuestions")
-                        .HasForeignKey("SessionID");
+                    b.HasOne("Backend.Models.Question", "Question")
+                        .WithMany("AnsweredQuestion")
+                        .HasForeignKey("QuestionID");
 
-                    b.Navigation("Session");
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("Backend.Models.Class", b =>
@@ -432,6 +428,8 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Question", b =>
                 {
                     b.Navigation("ABCDAnswers");
+
+                    b.Navigation("AnsweredQuestion");
                 });
 
             modelBuilder.Entity("Backend.Models.Scenario", b =>
@@ -439,11 +437,6 @@ namespace Backend.Migrations
                     b.Navigation("Games");
 
                     b.Navigation("Sessions");
-                });
-
-            modelBuilder.Entity("Backend.Models.Session", b =>
-                {
-                    b.Navigation("AnsweredQuestions");
                 });
 
             modelBuilder.Entity("Backend.Models.Student", b =>

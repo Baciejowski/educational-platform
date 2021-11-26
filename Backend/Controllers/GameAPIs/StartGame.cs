@@ -67,8 +67,8 @@ namespace Backend.Controllers.GameAPIs
             var msg = ProtoReader.Convert<EndGameRequest>(Request);
             try
             {
-                var response = _analysisModuleService.EndGame(msg);
-                return ProtoResponse.FromMsg(response);
+            var response = _analysisModuleService.EndGame(msg, _context);
+            return ProtoResponse.FromMsg(response);
             }
             catch
             {

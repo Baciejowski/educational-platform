@@ -3,16 +3,17 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Backend;
 
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20211126012430_SessionAnsweredQuestionsRelation")]
+    partial class SessionAnsweredQuestionsRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,10 +60,7 @@ namespace Backend.Migrations
                     b.Property<float>("Correctness")
                         .HasColumnType("real");
 
-                    b.Property<byte>("Difficulty")
-                        .HasColumnType("smallint");
-
-                    b.Property<int>("QuestionIdRef")
+                    b.Property<int?>("QuestionID")
                         .HasColumnType("integer");
 
                     b.Property<int>("QuestionImportanceType")
@@ -75,6 +73,8 @@ namespace Backend.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("AnsweredQuestionID");
+
+                    b.HasIndex("QuestionID");
 
                     b.HasIndex("SessionID");
 
@@ -336,9 +336,15 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.AnsweredQuestion", b =>
                 {
+                    b.HasOne("Backend.Models.Question", "Question")
+                        .WithMany("AnsweredQuestion")
+                        .HasForeignKey("QuestionID");
+
                     b.HasOne("Backend.Models.Session", "Session")
                         .WithMany("AnsweredQuestions")
                         .HasForeignKey("SessionID");
+
+                    b.Navigation("Question");
 
                     b.Navigation("Session");
                 });
@@ -432,6 +438,8 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Question", b =>
                 {
                     b.Navigation("ABCDAnswers");
+
+                    b.Navigation("AnsweredQuestion");
                 });
 
             modelBuilder.Entity("Backend.Models.Scenario", b =>

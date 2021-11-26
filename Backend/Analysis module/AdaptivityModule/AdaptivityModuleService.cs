@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Backend.Models;
+using Gameplay;
 
 namespace Backend.Analysis_module.AdaptivityModule
 {
@@ -61,7 +62,7 @@ namespace Backend.Analysis_module.AdaptivityModule
                 for (var i = 0; i < _answeredQuestionsModels.Count; i++)
                 {
                     value += (i + 1) * _answeredQuestionsModels[i].Correctness *
-                             _answeredQuestionsModels[i].Question.Difficulty;
+                             _answeredQuestionsModels[i].Difficulty;
                     divider += (i + 1);
                 }
 
@@ -71,29 +72,26 @@ namespace Backend.Analysis_module.AdaptivityModule
 
         public void AddQuestionToAnalysis(AnsweredQuestion question)
         {
-            question.Correctness = CalculateCorrectness(question);
             _answeredQuestionsModels.Add(question);
             CalculateLvl();
         }
 
-        private static float CalculateCorrectness(AnsweredQuestion question)
+        public float CalculateCorrectness(StudentAnswerRequest request, Question question)
         {
-            var correctCount = question.Question.ABCDAnswers.Count(x => x.Correct);
-            var answers = question.Question.ABCDAnswers.Where(x => question.AnsweredAnswers.Contains(x.AnswerID))
+            var correctCount = question.ABCDAnswers.Count(x => x.Correct);
+            var answers = question.ABCDAnswers.Where(x => request.AnswersID.Contains(x.AnswerID))
                 .ToList();
             return answers.Where(answer => !answer.Correct)
                 .Aggregate(1.0f, (current, answer) => current - 1f / correctCount);
         }
 
-        public AnalysisResult GetData(bool scenarioEnded)
+        public Session GetData(bool scenarioEnded, Session session)
         {
-            return new AnalysisResult
-            {
-                DifficultyLevel = DifficultyLevel,
-                AnsweredQuestions = _answeredQuestionsModels,
-                ScenarioEnded = scenarioEnded,
-                EndDate = DateTime.Now
-            };
+            session.DifficultyLevel = DifficultyLevel;
+            session.AnsweredQuestions = _answeredQuestionsModels;
+            session.ScenarioEnded = scenarioEnded;
+            session.EndDate = DateTime.Now;
+            return session;
         }
     }
 }

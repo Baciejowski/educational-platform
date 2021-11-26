@@ -56,7 +56,7 @@ namespace Backend.Services
 
         public override Task<Empty> FinishGame(EndGameRequest request, ServerCallContext context)
         {
-            return Task.FromResult(_analysisModuleService.EndGame(request));
+            return Task.FromResult(_analysisModuleService.EndGame(request, _context));
         }
     }
 }

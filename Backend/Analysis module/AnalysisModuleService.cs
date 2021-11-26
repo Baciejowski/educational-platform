@@ -13,20 +13,23 @@ namespace Backend.Analysis_module
     {
         private readonly ISessionFactory _sessionFactory;
         private List<SessionModuleService> _sessionModules = new List<SessionModuleService>();
+        private System.Threading.Timer timer;
 
         public AnalysisModuleService(ISessionFactory sessionFactory)
         {
             _sessionFactory = sessionFactory;
-
-            var startTimeSpan = TimeSpan.Zero;
-            var periodTimeSpan = TimeSpan.FromMinutes(15);
-
-            var timer = new System.Threading.Timer((e) => FindAbandonedScenarios(), null, startTimeSpan,
-                periodTimeSpan);
         }
 
         public StartGameResponse StartNewSession(StartGameRequest request, DataContext Context)
         {
+            if (timer == null)
+            {
+                var startTimeSpan = TimeSpan.Zero;
+                var periodTimeSpan = TimeSpan.FromMinutes(15);
+                timer = new System.Threading.Timer((e) => FindAbandonedScenarios(Context), null, startTimeSpan,
+                    periodTimeSpan);
+            }
+
             var id = GenerateGameId();
             SessionModuleService sessionModule;
             var studentData = new StartGameResponse.Types.StudentData
@@ -56,16 +59,6 @@ namespace Backend.Analysis_module
                     userSession = sessions.First(x => x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
                                                       x.Student.Email.Equals(request.Email,
                                                           StringComparison.OrdinalIgnoreCase));
-                    var sessionRecords = Context.SessionRecords
-                        .Include(x => x.GameplayData)
-                        .Include(x => x.Session)
-                        .ThenInclude(x => x.Student);
-                    var lastGameplay = sessionRecords
-                        .Where(x => x.Session.Student.StudentID == userSession.Student.StudentID)
-                        .OrderBy(x => x.SessionRecordID)
-                        .LastOrDefault()
-                        ?.GameplayData;
-                    if (lastGameplay != null) studentData.Experience = lastGameplay.Experience;
                 }
                 catch
                 {
@@ -74,6 +67,18 @@ namespace Backend.Analysis_module
                         Error = true,
                         ErrorMsg = "Wrong credentials."
                     };
+                }
+
+                try
+                {
+                    var lastGameplay = Context.Sessions.Include(s => s.Student).LastOrDefault(x =>
+                        x.Student.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) && x.Experience > 0);
+                    if (lastGameplay != null)
+                        studentData.Experience = lastGameplay.Experience;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
                 }
 
                 var error = CheckUserConditions(userSession);
@@ -125,11 +130,11 @@ namespace Backend.Analysis_module
             return new Empty();
         }
 
-        public Empty EndGame(EndGameRequest request)
+        public Empty EndGame(EndGameRequest request, DataContext Context)
         {
             var user = GetUser(request.SessionCode);
 
-            if (user.EndGame(request))
+            if (user.EndGame(request, Context))
             {
                 RemoveUser(user);
             }
@@ -137,9 +142,9 @@ namespace Backend.Analysis_module
             return new Empty();
         }
 
-        private void FindAbandonedScenarios()
+        private void FindAbandonedScenarios(DataContext Context)
         {
-            foreach (var SessionModule in _sessionModules.Where(SessionModule => SessionModule.IsAbandoned()))
+            foreach (var SessionModule in _sessionModules.Where(SessionModule => SessionModule.IsAbandoned(Context)))
             {
                 RemoveUser(SessionModule);
             }
