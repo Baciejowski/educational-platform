@@ -51,8 +51,9 @@
                 <span class="title">{{student.lastName}} {{student.firstName}}</span>
                 <p>{{student.email}}</p>
                 <div class="secondary-content">
-                    <span class="badge green lighten-3 left grey-text text-darken-3">{{student.sessions.filter(s=> !s.Attempts).length}} waiting</span>
-                    <span class="badge orange lighten-3 left grey-text text-darken-3">{{student.sessions.filter(s=> s.Attempts).length}} finished</span>
+                    <span v-if="countWaiting(student)" class="badge green lighten-3 left grey-text text-darken-3">{{countWaiting(student)}} waiting</span>
+                    <span v-if="countPending(student)" class="badge yellow lighten-3 left grey-text text-darken-3">{{countPending(student)}} pending</span>
+                    <span v-if="countFinished(student)" class="badge orange lighten-3 left grey-text text-darken-3">{{countFinished(student)}} finished</span>
                     <a @click="editStudent(student.studentID)" class="grey-link hovered-orange" style="margin-left:7px;"><i class="material-icons">edit</i></a>
                     <a class="grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
                     <a @click="deleteStudent(student.studentID)" class="grey-link hovered-red"><i class="material-icons">delete</i></a>
@@ -64,12 +65,12 @@
                 <p>Add student using buttons located on the top of the page</p>
             </li>
         </ul>
-        <div id="modal1" class="modal bottom-sheet" style="max-height: 100% !important; height: fit-content; overflow-y: auto; ">
+        <div id="modal1" class="modal bottom-sheet" style="max-height: 100% !important; height: fit-content; overflow-y: auto; overflow: visible;">
             <div class="modal-content">
                 <div class="container">
                     <h4 id="modalHeader">Student editing</h4>
-                    <form style="margin-bottom: 15px; margin-top: 15px; ">
-                        <div class="input-field" style="display: inline-block; margin-right: 20px; min-width: 200px">
+                    <form style="margin-bottom: 15px; margin-top: 15px; overflow: visible;">
+                        <div class="input-field" style="display: inline-block; margin-right: 20px; min-width: 200px;">
                             <select id="assignedGroup" class="black-text">
                             </select>
                             <label>Assigned to class</label>
@@ -165,6 +166,15 @@
             M.Modal.init(document.querySelectorAll('.modal'))
         },
         methods: {
+            countPending(student) {
+                return student.sessions.filter(s => s.attempts && !s.gameplayTime).length
+            },
+            countWaiting(student) {
+                return student.sessions.filter(s => !s.attempts).length
+            },
+            countFinished(student) {
+                return student.sessions.filter(s => s.attempts && s.gameplayTime).length
+            },
             getEmptyStudent() {
                 return {
                     studentID: 0,
