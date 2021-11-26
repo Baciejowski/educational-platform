@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Backend.Analysis_module.Models;
 using Backend.Models;
+using Gameplay;
 
 namespace Backend.Analysis_module.AdaptivityModule
 {
@@ -10,17 +12,18 @@ namespace Backend.Analysis_module.AdaptivityModule
         public double DifficultyLevel { get; set; }
         public bool AiCategorization { get; set; }
         public bool RandomTest { get; set; }
+        public double PrevDifficulty { get; set; }
 
         private readonly Random _random = new Random();
         private List<AnsweredQuestion> _answeredQuestionsModels = new List<AnsweredQuestion>();
         private readonly int _testLimit;
-        private readonly float _prevRank = 0;
 
         public AdaptivityModuleService(int testLimit)
         {
             _testLimit = testLimit;
             AiCategorization = false;
             RandomTest = false;
+            PrevDifficulty = 0;
         }
 
         public AdaptivityModuleService(bool randomTest, int testLimit) : this(testLimit)
@@ -56,38 +59,37 @@ namespace Backend.Analysis_module.AdaptivityModule
                 DifficultyLevel = -1;
             else
             {
-                var value = _prevRank;
+                var value = PrevDifficulty;
                 var divider = 1;
                 for (var i = 0; i < _answeredQuestionsModels.Count; i++)
                 {
                     value += (i + 1) * _answeredQuestionsModels[i].Correctness *
-                             _answeredQuestionsModels[i].Question.Difficulty;
+                             _answeredQuestionsModels[i].Difficulty;
                     divider += (i + 1);
                 }
 
-                DifficultyLevel = Math.Max(value / (float)divider, 1);
+                DifficultyLevel = Math.Round(Math.Max(value / (float)divider, 1) * 1000) / 1000;
             }
         }
 
         public void AddQuestionToAnalysis(AnsweredQuestion question)
         {
-            question.Correctness = CalculateCorrectness(question);
             _answeredQuestionsModels.Add(question);
             CalculateLvl();
         }
 
-        private static float CalculateCorrectness(AnsweredQuestion question)
+        public float CalculateCorrectness(StudentAnswerRequest request, Question question)
         {
-            var correctCount = question.Question.ABCDAnswers.Count(x => x.Correct);
-            var answers = question.Question.ABCDAnswers.Where(x => question.AnsweredAnswers.Contains(x.AnswerID))
+            var correctCount = question.ABCDAnswers.Count(x => x.Correct);
+            var answers = question.ABCDAnswers.Where(x => request.AnswersID.Contains(x.AnswerID))
                 .ToList();
             return answers.Where(answer => !answer.Correct)
                 .Aggregate(1.0f, (current, answer) => current - 1f / correctCount);
         }
 
-        public AnalysisResult GetData(bool scenarioEnded)
+        public AnalysisResultsModel GetData(bool scenarioEnded)
         {
-            return new AnalysisResult
+            return new AnalysisResultsModel
             {
                 DifficultyLevel = DifficultyLevel,
                 AnsweredQuestions = _answeredQuestionsModels,

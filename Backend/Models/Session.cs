@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -27,10 +28,22 @@ namespace Backend.Models
         [JsonIgnore]
         public Topic Topic => Scenario.Topic;
 
-        [JsonIgnore]
-        public virtual SessionRecord SessionRecord { get; set; }
 
-        [ForeignKey("SessionRecord")]
-        public int SessionRecordID { get; set; }
+        //analysis result 
+        public double DifficultyLevel { get; set; }
+        public List<AnsweredQuestion> AnsweredQuestions { get; set; }
+        public bool ScenarioEnded { get; set; }
+        public DateTime EndDate { get; set; }
+
+        //GameplayData
+
+        public int Experience { get; set; }
+        public int Money { get; set; }
+
+        public int GameplayTime { get; set; }
+        public float Light { get; set; }
+        public float Vision { get; set; }
+        public float Speed { get; set; }
+
     }
 }

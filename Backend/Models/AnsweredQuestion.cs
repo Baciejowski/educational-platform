@@ -9,11 +9,14 @@ namespace Backend.Models
         public int AnsweredQuestionID { get; set; }
         public QuestionImportanceType QuestionImportanceType { get; set; }
         public List<int> AnsweredAnswers { get; set; }
-        public Question Question { get; set; }
+        // public Question Question { get; set; }
+        public byte Difficulty { get; set; }
         public int TimeToAnswer { get; set; }
         public float Correctness { get; set; }
 
         [JsonIgnore]
-        public virtual AnalysisResult AnalysisResult { get; set; }
+        public virtual Session Session { get; set; }
+
+        public int QuestionIdRef { get; set; }
     }
 }
