@@ -12,6 +12,7 @@ namespace Backend.Analysis_module.SessionModule
     public class SessionModuleService
     {
         public StudentData StudentData { get; set; }
+        public double? PrevDifficulty { get; set; }
 
         private Session _userSession;
         private Question[] _readyQuestions;
@@ -59,7 +60,7 @@ namespace Backend.Analysis_module.SessionModule
             _availableQuestions = GetQuestionsFromScenario();
             _readyQuestions = SetInitialQuestions();
             _adaptivityModuleService =
-                new AdaptivityModuleService(_userSession.RandomTest, TestLimit());
+                new AdaptivityModuleService(_userSession.RandomTest, 3);
             _startDate = DateTime.Now;
             SetRequestTime();
         }
@@ -105,10 +106,14 @@ namespace Backend.Analysis_module.SessionModule
 
         public bool EndGame(EndGameRequest request, DataContext Context)
         {
-            _userSession = _adaptivityModuleService.GetData(request.ScenarioEnded, _userSession);
+            var dto = _adaptivityModuleService.GetData(request.ScenarioEnded);
             Context.Entry(_userSession).Reload();
 
 
+            _userSession.DifficultyLevel = dto.DifficultyLevel;
+            _userSession.AnsweredQuestions = dto.AnsweredQuestions;
+            _userSession.ScenarioEnded = dto.ScenarioEnded;
+            _userSession.EndDate = dto.EndDate;
             _userSession.Experience = request.StudentEndGameData.Experience;
             _userSession.Money = request.StudentEndGameData.Money;
             _userSession.GameplayTime = request.GameplayTime;
@@ -119,7 +124,8 @@ namespace Backend.Analysis_module.SessionModule
 
             if (!IsTestUser())
             {
-                _userSession.AnsweredQuestions.ForEach(x=> Context.Add(x)); ;
+                _userSession.AnsweredQuestions.ForEach(x => Context.Add(x));
+                ;
                 Context.Update(_userSession);
                 Context.SaveChanges();
             }
@@ -145,6 +151,11 @@ namespace Backend.Analysis_module.SessionModule
             };
             EndGame(result, Context);
             return true;
+        }
+
+        public void SetPrevDifficulty(double? prevDifficulty)
+        {
+            if (prevDifficulty != null) _adaptivityModuleService.PrevDifficulty = (double)prevDifficulty;
         }
 
         private int GetQuestionAmount(int questionImportanceIndex)

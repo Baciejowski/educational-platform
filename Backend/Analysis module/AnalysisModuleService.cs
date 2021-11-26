@@ -69,12 +69,18 @@ namespace Backend.Analysis_module
                     };
                 }
 
+                double? prevDifficulty = null;
                 try
                 {
-                    var lastGameplay = Context.Sessions.Include(s => s.Student).LastOrDefault(x =>
-                        x.Student.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) && x.Experience > 0);
-                    if (lastGameplay != null)
+                    var gameplay = Context.Sessions
+                        .Include(s => s.Student).Where(x =>
+                            x.Student.StudentID == userSession.Student.StudentID && x.Attempts > 0).ToList();
+                    if (gameplay != null)
+                    {
+                        var lastGameplay = gameplay.Last();
                         studentData.Experience = lastGameplay.Experience;
+                        prevDifficulty = lastGameplay.DifficultyLevel;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -92,6 +98,10 @@ namespace Backend.Analysis_module
                 sessionModule =
                     _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
                         userSession, Context);
+                if (prevDifficulty != null)
+                {
+                    sessionModule.SetPrevDifficulty( prevDifficulty);
+                }
             }
 
             _sessionModules.Add(sessionModule);
