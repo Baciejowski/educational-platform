@@ -12,6 +12,7 @@ import PageNotFound from "@/views/PageNotFound.vue"
 import StudentsManagement from "@/views/StudentsManagement.vue"
 import AiView from "@/views/AiView.vue"
 import TeacherView from "@/views/TeacherView.vue"
+import Report from "@/views/Report.vue"
 
 Vue.use(VueRouter)
 
@@ -68,6 +69,11 @@ const routes = [
         name: "create-scenario",
         component: CreateScenario,
         beforeEnter: authGuard
+    },
+    {
+        path: "/report",
+        name: "Report",
+        component: Report,
     },
     {
         path: "/Counter",
