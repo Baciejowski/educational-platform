@@ -29,7 +29,7 @@ namespace Backend.Analysis_module
             optionsBuilder.UseNpgsql(connectionString);
         }
 
-        public StartGameResponse StartNewSession(StartGameRequest request, DataContext Context)
+        public StartGameResponse StartNewSession(StartGameRequest request)
         {
             if (timer == null)
             {
@@ -50,7 +50,7 @@ namespace Backend.Analysis_module
             {
                 RemoveUser("test", "test");
 
-                sessionModule = _sessionFactory.Create(request.Email, 1, request.Code, id, Context);
+                sessionModule = _sessionFactory.Create(request.Email, 1, request.Code, id);
             }
             else
             {
@@ -113,7 +113,7 @@ namespace Backend.Analysis_module
 
                 sessionModule =
                     _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
-                        userSession, Context);
+                        userSession);
                 if (prevDifficulty != null)
                 {
                     sessionModule.SetPrevDifficulty(prevDifficulty);
@@ -156,7 +156,7 @@ namespace Backend.Analysis_module
             return new Empty();
         }
 
-        public Empty EndGame(EndGameRequest request, DataContext Context)
+        public Empty EndGame(EndGameRequest request)
         {
             var user = GetUser(request.SessionCode);
 

@@ -24,7 +24,7 @@ namespace Backend.Controllers.GameAPIs
         public IActionResult PostStartGame()
         {
             var msg = ProtoReader.Convert<StartGameRequest>(Request);
-            var response = _analysisModuleService.StartNewSession(msg, _context);
+            var response = _analysisModuleService.StartNewSession(msg);
             return ProtoResponse.FromMsg(response);
         }
 
@@ -67,7 +67,7 @@ namespace Backend.Controllers.GameAPIs
             var msg = ProtoReader.Convert<EndGameRequest>(Request);
             // try
             // {
-            var response = _analysisModuleService.EndGame(msg, _context);
+            var response = _analysisModuleService.EndGame(msg);
             return ProtoResponse.FromMsg(response);
             // }
             // catch

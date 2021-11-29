@@ -37,8 +37,7 @@ namespace Backend.Analysis_module.SessionModule
             optionsBuilder = new DbContextOptionsBuilder<DataContext>();
             optionsBuilder.UseNpgsql(connectionString);
         }
-        public SessionModuleService(string studentEmail, int studentId, string code, string sessionId,
-            DataContext Context)
+        public SessionModuleService(string studentEmail, int studentId, string code, string sessionId)
         {
             StudentData = new StudentData
             {

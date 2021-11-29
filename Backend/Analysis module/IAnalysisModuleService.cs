@@ -4,9 +4,9 @@ namespace Backend.Analysis_module
 {
     public interface IAnalysisModuleService
     {
-        StartGameResponse StartNewSession(StartGameRequest request, DataContext Context);
+        StartGameResponse StartNewSession(StartGameRequest request);
         QuestionResponse PrepareNextQuestion(QuestionRequest request);
         Empty UpdateStudentsAnswers(StudentAnswerRequest request);
-        Empty EndGame(EndGameRequest request, DataContext Context);
+        Empty EndGame(EndGameRequest request);
     }
 }
