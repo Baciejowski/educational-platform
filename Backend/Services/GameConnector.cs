@@ -41,7 +41,7 @@ namespace Backend.Services
 
         public override Task<StartGameResponse> StartNewSession(StartGameRequest request, ServerCallContext context)
         {
-            return Task.FromResult(_analysisModuleService.StartNewSession(request, _context));
+            return Task.FromResult(_analysisModuleService.StartNewSession(request));
         }
 
         public override Task<QuestionResponse> PrepareNextQuestion(QuestionRequest request, ServerCallContext context)
@@ -56,7 +56,7 @@ namespace Backend.Services
 
         public override Task<Empty> FinishGame(EndGameRequest request, ServerCallContext context)
         {
-            return Task.FromResult(_analysisModuleService.EndGame(request, _context));
+            return Task.FromResult(_analysisModuleService.EndGame(request));
         }
     }
 }
