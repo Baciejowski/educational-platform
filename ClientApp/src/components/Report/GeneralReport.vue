@@ -18,6 +18,8 @@
         <D3BarChart :config="bar_multiple_config" :datum="correctness_data" title="Question correctness"></D3BarChart>
         
         <line-chart :data="data_test" title="avg time per scenario" xtitle="Scenario" ytitle="Time"></line-chart>
+
+        <line-chart :data="timePerSkills" title=" time per skills set" xtitle="Scenario" ytitle="Time/No Question"></line-chart>
     </div>
 </template>
 
@@ -29,6 +31,15 @@ export default {
         D3PieChart,
         D3BarChart,
         D3LineChart
+    },
+    created() {
+        this.$store.dispatch("getGeneralData")
+    },
+    computed: {
+        timePerSkills() { 
+            console.log( Array.from(this.$store.state.generalReport))
+            return  Array.from(this.$store.state.generalReport)
+        }
     },
     data() {
         return {

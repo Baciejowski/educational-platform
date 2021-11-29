@@ -28,7 +28,7 @@ namespace Backend.Services.Report
             var data = _context.Sessions
                 .Include(x => x.Scenario)
                 .ThenInclude(x => x.Questions)
-                .Where(x => x.Attempts > 0 && x.ScenarioEnded);
+                .Where(x => x.Attempts > 0 && x.ScenarioEnded).ToList();
             foreach (var session in data)
             {
                 var questionAmount = 0;
@@ -37,10 +37,10 @@ namespace Backend.Services.Report
                 {
                     var type = i switch
                     {
-                        0 => questions.Where(x => x.IsObligatory && x.QuestionType != Question.TypeEnum.ABCD).ToList(),
-                        1 => questions.Where(x => x.IsImportant && x.QuestionType != Question.TypeEnum.ABCD).ToList(),
+                        0 => questions.Where(x => x.IsObligatory && x.QuestionType == Question.TypeEnum.ABCD).ToList(),
+                        1 => questions.Where(x => x.IsImportant && x.QuestionType == Question.TypeEnum.ABCD).ToList(),
                         2 => questions.Where(x =>
-                                !x.IsObligatory && !x.IsImportant && x.QuestionType != Question.TypeEnum.ABCD)
+                                !x.IsObligatory && !x.IsImportant && x.QuestionType == Question.TypeEnum.ABCD)
                             .ToList()
                     };
                     if (session.RandomTest || i == 0)

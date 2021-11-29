@@ -23,7 +23,8 @@ const state = {
         teacherTopics: []
     },
     urlPrefix: { local: "http://localhost:5000", dev: "https://zpi2021.westeurope.cloudapp.azure.com:5001" },
-    local: true
+    local: true,
+    generalReport: {}
 }
 
 const getters = {
@@ -155,6 +156,14 @@ const actions = {
                 state.loadingData = false
             })
             .catch((err) => (state.classesMessage = err))
+    },
+    getGeneralData({ state, dispatch }) {
+        dispatch("authorizedGET_PromiseWithHeaders","/api/report")
+            .then((res) => res.data)
+            .then((data) => {
+                state.generalReport = data
+            })
+            .catch(console.log)
     }
 }
 

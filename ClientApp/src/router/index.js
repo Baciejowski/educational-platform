@@ -74,6 +74,7 @@ const routes = [
         path: "/report",
         name: "Report",
         component: Report,
+        beforeEnter: authGuard
     },
     {
         path: "/Counter",
