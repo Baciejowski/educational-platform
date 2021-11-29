@@ -16,6 +16,8 @@
         <D3LineChart :config="line_config" :datum="difficultyDevelopment_data" title="Difficulty scalling factory"></D3LineChart>
 
         <D3BarChart :config="bar_multiple_config" :datum="correctness_data" title="Question correctness"></D3BarChart>
+        
+        <line-chart :data="data_test" title="avg time per scenario" xtitle="Scenario" ytitle="Time"></line-chart>
     </div>
 </template>
 
@@ -126,6 +128,11 @@ export default {
                 { random: 40, basic: 17, ai: 92, scenario: "Scenario 2" },
                 { random: 60, basic: 50, ai: 66, scenario: "Scenario 3" },
                 { random: 15, basic: 24, ai: 59, scenario: "Scenario 4" }
+            ],
+            data_test: [
+                { name: "No adaptivity", data: { 1: 5, 2: 4, 3: 7, 4: 6 } },
+                { name: "Basic adaptivity", data: { 1: 2, 2: 5, 3: 4, 4: 3 } },
+                { name: "Advanced adaptivity", data: { 1: 3, 2: 6, 3: 5, 4: 7 } }
             ]
         }
     }
