@@ -65,15 +65,15 @@ namespace Backend.Controllers.GameAPIs
         public IActionResult PostEndgame()
         {
             var msg = ProtoReader.Convert<EndGameRequest>(Request);
-            try
-            {
+            // try
+            // {
             var response = _analysisModuleService.EndGame(msg, _context);
             return ProtoResponse.FromMsg(response);
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            // }
+            // catch
+            // {
+            //     return BadRequest();
+            // }
         }
     }
 }
