@@ -39,6 +39,8 @@ namespace Backend.Analysis_module
                     periodTimeSpan);
             }
 
+            using var db = new DataContext(optionsBuilder.Options);
+
             var id = GenerateGameId();
             SessionModuleService sessionModule;
             var studentData = new StartGameResponse.Types.StudentData
@@ -57,21 +59,18 @@ namespace Backend.Analysis_module
                 Session userSession;
                 try
                 {
-                    using (var db = new DataContext(optionsBuilder.Options))
-                    {
-                        var sessions = db.Sessions
-                            .Include(s => s.Student)
-                            .Include(s => s.Scenario)
-                            // .Include(s => s.Scenario)
-                            // .ThenInclude(scenario => scenario.Topic)
-                            .ThenInclude(scenario => scenario.Questions)
-                            .ThenInclude(questions => questions.ABCDAnswers).ToList();
+                    var sessions = db.Sessions
+                        .Include(s => s.Student)
+                        .Include(s => s.Scenario)
+                        // .Include(s => s.Scenario)
+                        // .ThenInclude(scenario => scenario.Topic)
+                        .ThenInclude(scenario => scenario.Questions)
+                        .ThenInclude(questions => questions.ABCDAnswers).ToList();
 
-                        userSession = sessions.First(x =>
-                            x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
-                            x.Student.Email.Equals(request.Email,
-                                StringComparison.OrdinalIgnoreCase));
-                    }
+                    userSession = sessions.First(x =>
+                        x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
+                        x.Student.Email.Equals(request.Email,
+                            StringComparison.OrdinalIgnoreCase));
                 }
                 catch
                 {
@@ -85,17 +84,14 @@ namespace Backend.Analysis_module
                 double? prevDifficulty = null;
                 try
                 {
-                    using (var db = new DataContext(optionsBuilder.Options))
+                    var gameplay = db.Sessions
+                        .Include(s => s.Student).Where(x =>
+                            x.Student.StudentID == userSession.Student.StudentID && x.Attempts > 0).ToList();
+                    if (gameplay != null)
                     {
-                        var gameplay = db.Sessions
-                            .Include(s => s.Student).Where(x =>
-                                x.Student.StudentID == userSession.Student.StudentID && x.Attempts > 0).ToList();
-                        if (gameplay != null)
-                        {
-                            var lastGameplay = gameplay.Last();
-                            studentData.Experience = lastGameplay.Experience;
-                            prevDifficulty = lastGameplay.DifficultyLevel;
-                        }
+                        var lastGameplay = gameplay.Last();
+                        studentData.Experience = lastGameplay.Experience;
+                        prevDifficulty = lastGameplay.DifficultyLevel;
                     }
                 }
                 catch (Exception e)
@@ -108,8 +104,9 @@ namespace Backend.Analysis_module
                     return error;
 
                 //TO DO odkomentować przed testami na uzytkownikach
-                // userSession.Attempts++;
-                // Context.SaveChanges();
+                userSession.Attempts++;
+                db.SaveChanges();
+
 
                 sessionModule =
                     _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
