@@ -130,7 +130,7 @@ export default {
                 { random: 15, basic: 24, ai: 59, scenario: "Scenario 4" }
             ],
             data_test: [
-                { name: "No adaptivity", data: { 1: 5, 2: 4, 3: 7, 4: 6 } },
+                { name: "No adaptivity", data: [[1,5],[2,4],[3,7],[4,6]] },
                 { name: "Basic adaptivity", data: { 1: 2, 2: 5, 3: 4, 4: 3 } },
                 { name: "Advanced adaptivity", data: { 1: 3, 2: 6, 3: 5, 4: 7 } }
             ]
