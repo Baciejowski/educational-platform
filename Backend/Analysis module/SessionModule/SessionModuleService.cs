@@ -6,6 +6,7 @@ using Backend.Analysis_module.Models;
 using Backend.Models;
 using Gameplay;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Backend.Analysis_module.SessionModule
 {
@@ -23,10 +24,20 @@ namespace Backend.Analysis_module.SessionModule
         private readonly DateTime _startDate;
         private DateTime _lastRequest;
         private const int AllowedAfkTime = 30;
+        string connectionString;
+        DbContextOptionsBuilder<DataContext> optionsBuilder;
 
+        private void SetDb()
+        {
+            
+            connectionString =
+                new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("DbContextSettings")[
+                    "ConnectionString"];
 
-        public SessionModuleService(string studentEmail, int studentId, string code, string sessionId,
-            DataContext Context)
+            optionsBuilder = new DbContextOptionsBuilder<DataContext>();
+            optionsBuilder.UseNpgsql(connectionString);
+        }
+        public SessionModuleService(string studentEmail, int studentId, string code, string sessionId)
         {
             StudentData = new StudentData
             {
@@ -39,8 +50,14 @@ namespace Backend.Analysis_module.SessionModule
             _readyQuestions = SetInitialQuestions();
             _adaptivityModuleService = new AdaptivityModuleService(TestLimit());
             _startDate = DateTime.Now;
-            _userSession =
-                Context.Sessions.FirstOrDefault(x => String.Equals(x.Code, code, StringComparison.OrdinalIgnoreCase));
+
+            SetDb();
+            using (var db = new DataContext(optionsBuilder.Options))
+            {
+                _userSession =
+                    db.Sessions.FirstOrDefault(x => String.Equals(x.Code, code, StringComparison.OrdinalIgnoreCase));
+            }
+
             SetRequestTime();
         }
 
@@ -63,6 +80,7 @@ namespace Backend.Analysis_module.SessionModule
                 new AdaptivityModuleService(_userSession.RandomTest, 3);
             _startDate = DateTime.Now;
             SetRequestTime();
+            SetDb();
         }
 
         public Question GetQuestion(QuestionImportanceType questionImportanceType)
@@ -104,30 +122,34 @@ namespace Backend.Analysis_module.SessionModule
             }; //To Do  - oblicza
         }
 
-        public bool EndGame(EndGameRequest request, DataContext Context)
+        public bool EndGame(EndGameRequest request)
         {
             var dto = _adaptivityModuleService.GetData(request.ScenarioEnded);
-            Context.Entry(_userSession).Reload();
-
-
-            _userSession.DifficultyLevel = dto.DifficultyLevel;
-            _userSession.AnsweredQuestions = dto.AnsweredQuestions;
-            _userSession.ScenarioEnded = dto.ScenarioEnded;
-            _userSession.EndDate = dto.EndDate;
-            _userSession.Experience = request.StudentEndGameData.Experience;
-            _userSession.Money = request.StudentEndGameData.Money;
-            _userSession.GameplayTime = request.GameplayTime;
-            _userSession.Light = request.StudentEndGameData.Light;
-            _userSession.Vision = request.StudentEndGameData.Vision;
-            _userSession.Speed = request.StudentEndGameData.Speed;
-
-
-            if (!IsTestUser())
+            
+            using (var db = new DataContext(optionsBuilder.Options))
             {
-                _userSession.AnsweredQuestions.ForEach(x => Context.Add(x));
-                ;
-                Context.Update(_userSession);
-                Context.SaveChanges();
+                db.Entry(_userSession).Reload();
+
+
+                _userSession.DifficultyLevel = dto.DifficultyLevel;
+                _userSession.AnsweredQuestions = dto.AnsweredQuestions;
+                _userSession.ScenarioEnded = dto.ScenarioEnded;
+                _userSession.EndDate = dto.EndDate;
+                _userSession.Experience = request.StudentEndGameData.Experience;
+                _userSession.Money = request.StudentEndGameData.Money;
+                _userSession.GameplayTime = request.GameplayTime;
+                _userSession.Light = request.StudentEndGameData.Light;
+                _userSession.Vision = request.StudentEndGameData.Vision;
+                _userSession.Speed = request.StudentEndGameData.Speed;
+
+
+                if (!IsTestUser())
+                {
+                    _userSession.AnsweredQuestions.ForEach(x => db.Add(x));
+                    ;
+                    db.Update(_userSession);
+                    db.SaveChanges();
+                }
             }
 
             SetRequestTime();
@@ -135,7 +157,7 @@ namespace Backend.Analysis_module.SessionModule
             return true;
         }
 
-        public bool IsAbandoned(DataContext Context)
+        public bool IsAbandoned()
         {
             var afkTime = (DateTime.Now - _lastRequest).TotalMinutes;
 
@@ -149,7 +171,7 @@ namespace Backend.Analysis_module.SessionModule
                 StudentEndGameData = new EndGameRequest.Types.StudentEndGameData
                     { Experience = 0, Money = 0 }
             };
-            EndGame(result, Context);
+            EndGame(result);
             return true;
         }
 

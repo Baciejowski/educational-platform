@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-        <div id="modal1" class="modal bottom-sheet" style="max-height: 100% !important; height: fit-content; overflow-y: auto; ">
+        <div id="modal1" class="modal bottom-sheet" style="max-height: 100% !important; height: fit-content; overflow-y: auto; overflow: visible;">
             <div class="modal-content">
                 <div class="container">
                     <h4>Assign game to the class</h4>
@@ -139,6 +139,11 @@
                         if (data.status == 200) {
                             let groupsSelector = document.getElementById("assignedGroup")
                             groupsSelector.innerHTML = ""
+                            let startOpt = document.createElement("option")
+                            startOpt.value = ""
+                            startOpt.innerHTML = "Choose class"
+                            startOpt.disabled = true
+                            groupsSelector.appendChild(startOpt)
                             for (const group of data.data.sort(function (a, b) {
                                 if (a.friendlyName < b.friendlyName) { return -1; }
                                 if (a.friendlyName > b.friendlyName) { return 1; }
@@ -149,6 +154,7 @@
                                 opt.innerHTML = group.friendlyName
                                 groupsSelector.appendChild(opt)
                             }
+                            startOpt.selected = true
                             M.FormSelect.init(document.querySelectorAll('select'));
                         }
                     })
@@ -176,13 +182,27 @@
             },
             inviteOnSubmit(event) {
                 event.preventDefault()
-                this.$store.state.loadingData = true
                 let starts = new Date(M.Datepicker.getInstance(document.getElementById('startDate')).date.getTime())
                 let ends = new Date(M.Datepicker.getInstance(document.getElementById('endDate')).date.getTime())
-                starts.setHours(Number(M.Timepicker.getInstance(document.getElementById('startTime')).time.substring(0, 2)))
-                starts.setMinutes(Number(M.Timepicker.getInstance(document.getElementById('startTime')).time.substring(3)))
+                starts.setHours(Number(document.getElementById('startTime').value.substring(0, 2)))
+                starts.setMinutes(Number(document.getElementById('startTime').value.substring(3)))
                 ends.setHours(Number(M.Timepicker.getInstance(document.getElementById('endTime')).time.substring(0, 2)))
                 ends.setMinutes(Number(M.Timepicker.getInstance(document.getElementById('endTime')).time.substring(3)))
+                if (starts >= ends) {
+                    M.toast({ html: "<div class='black-text'>Start must be before the end</div>", classes: "red lighten-3" })
+                    return
+                }
+                let now = new Date();
+                now.setTime(now.getTime() - 1000*60*5)
+                if (starts < now) {
+                    M.toast({ html: "<div class='black-text'>Start can't be in past</div>", classes: "red lighten-3" })
+                    return
+                }
+                if (!document.getElementById('assignedGroup').value) {
+                    M.toast({ html: "<div class='black-text'>No class was chosen</div>", classes: "red lighten-3" })
+                    return
+                }
+                this.$store.state.loadingData = true
                 let invitation = {
                     classId: Number(document.getElementById('assignedGroup').value),
                     topicId: this.sharedTopicID,
@@ -209,8 +229,23 @@
                 this.sharedScenarioID = id
                 this.sharedTopicID = topicID
                 document.getElementById("randomized").checked = false
-                M.Datepicker.init(document.querySelectorAll('.datepicker'), { format: 'dd.mm.yyyy' })
-                M.Timepicker.init(document.querySelectorAll('.timepicker'), { twelveHour: false })
+                document.getElementById('aiCategorization').checked = false
+                document.getElementById('startDate').value = ""
+                document.getElementById('endDate').value = ""
+                document.getElementById('startTime').value = ""
+                document.getElementById('endTime').value = ""
+                const today = new Date()
+                today.setHours = 0
+                today.setMinutes = 0
+                today.setSeconds = 0
+                const now = new Date()
+                const initialTime = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0")
+                M.Datepicker.init(document.getElementById('startDate'), { format: 'dd.mm.yyyy', defaultDate: today, setDefaultDate: true })
+                M.Datepicker.init(document.getElementById('endDate'), { format: 'dd.mm.yyyy' })
+                document.getElementById('startTime').value = initialTime
+                M.Timepicker.init(document.getElementById('startTime'), { twelveHour: false, defaultTime: initialTime})
+                M.Timepicker.init(document.getElementById('endTime'), { twelveHour: false })
+                M.updateTextFields();
                 instance.open()
             },
             deleteTopic(id) {

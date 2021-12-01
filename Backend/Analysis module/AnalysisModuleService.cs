@@ -6,6 +6,7 @@ using Backend.Analysis_module.SessionModule;
 using Backend.Models;
 using Gameplay;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Backend.Analysis_module
 {
@@ -14,21 +15,31 @@ namespace Backend.Analysis_module
         private readonly ISessionFactory _sessionFactory;
         private List<SessionModuleService> _sessionModules = new List<SessionModuleService>();
         private System.Threading.Timer timer;
+        string connectionString;
+        DbContextOptionsBuilder<DataContext> optionsBuilder;
 
         public AnalysisModuleService(ISessionFactory sessionFactory)
         {
             _sessionFactory = sessionFactory;
+            connectionString =
+                new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("DbContextSettings")[
+                    "ConnectionString"];
+
+            optionsBuilder = new DbContextOptionsBuilder<DataContext>();
+            optionsBuilder.UseNpgsql(connectionString);
         }
 
-        public StartGameResponse StartNewSession(StartGameRequest request, DataContext Context)
+        public StartGameResponse StartNewSession(StartGameRequest request)
         {
             if (timer == null)
             {
                 var startTimeSpan = TimeSpan.Zero;
                 var periodTimeSpan = TimeSpan.FromMinutes(15);
-                timer = new System.Threading.Timer((e) => FindAbandonedScenarios(Context), null, startTimeSpan,
+                timer = new System.Threading.Timer((e) => FindAbandonedScenarios(), null, startTimeSpan,
                     periodTimeSpan);
             }
+
+            using var db = new DataContext(optionsBuilder.Options);
 
             var id = GenerateGameId();
             SessionModuleService sessionModule;
@@ -41,14 +52,14 @@ namespace Backend.Analysis_module
             {
                 RemoveUser("test", "test");
 
-                sessionModule = _sessionFactory.Create(request.Email, 1, request.Code, id, Context);
+                sessionModule = _sessionFactory.Create(request.Email, 1, request.Code, id);
             }
             else
             {
                 Session userSession;
                 try
                 {
-                    var sessions = Context.Sessions
+                    var sessions = db.Sessions
                         .Include(s => s.Student)
                         .Include(s => s.Scenario)
                         // .Include(s => s.Scenario)
@@ -56,9 +67,10 @@ namespace Backend.Analysis_module
                         .ThenInclude(scenario => scenario.Questions)
                         .ThenInclude(questions => questions.ABCDAnswers).ToList();
 
-                    userSession = sessions.First(x => x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
-                                                      x.Student.Email.Equals(request.Email,
-                                                          StringComparison.OrdinalIgnoreCase));
+                    userSession = sessions.First(x =>
+                        x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
+                        x.Student.Email.Equals(request.Email,
+                            StringComparison.OrdinalIgnoreCase));
                 }
                 catch
                 {
@@ -72,7 +84,7 @@ namespace Backend.Analysis_module
                 double? prevDifficulty = null;
                 try
                 {
-                    var gameplay = Context.Sessions
+                    var gameplay = db.Sessions
                         .Include(s => s.Student).Where(x =>
                             x.Student.StudentID == userSession.Student.StudentID && x.Attempts > 0).ToList();
                     if (gameplay != null)
@@ -93,14 +105,15 @@ namespace Backend.Analysis_module
 
                 //TO DO odkomentować przed testami na uzytkownikach
                 userSession.Attempts++;
-                Context.SaveChanges();
+                db.SaveChanges();
+
 
                 sessionModule =
                     _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
-                        userSession, Context);
+                        userSession);
                 if (prevDifficulty != null)
                 {
-                    sessionModule.SetPrevDifficulty( prevDifficulty);
+                    sessionModule.SetPrevDifficulty(prevDifficulty);
                 }
             }
 
@@ -140,11 +153,11 @@ namespace Backend.Analysis_module
             return new Empty();
         }
 
-        public Empty EndGame(EndGameRequest request, DataContext Context)
+        public Empty EndGame(EndGameRequest request)
         {
             var user = GetUser(request.SessionCode);
 
-            if (user.EndGame(request, Context))
+            if (user.EndGame(request))
             {
                 RemoveUser(user);
             }
@@ -152,9 +165,9 @@ namespace Backend.Analysis_module
             return new Empty();
         }
 
-        private void FindAbandonedScenarios(DataContext Context)
+        private void FindAbandonedScenarios()
         {
-            foreach (var SessionModule in _sessionModules.Where(SessionModule => SessionModule.IsAbandoned(Context)))
+            foreach (var SessionModule in _sessionModules.Where(SessionModule => SessionModule.IsAbandoned()))
             {
                 RemoveUser(SessionModule);
             }

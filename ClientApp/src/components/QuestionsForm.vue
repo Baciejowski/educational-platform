@@ -191,7 +191,9 @@
                                     }
                                 }).then((resp2) => {
                                     if (resp2.status == 200) {
-                                        window.location.href = `${this.$store.getters.getPrefix()}/scenario?id=${resp.data}`;
+                                        var url = new URL(`${this.$store.getters.getPrefix()}/scenario?id=${resp.data}`)
+                                        url.port=""
+                                        window.location.href = url.toString()
                                     }
                                 }).catch((err) => {
                                     M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
