@@ -17,11 +17,11 @@ namespace Backend.Controllers.APIs
 
         [HttpGet]
         [Authorize]
-        public string Get()
+        public GeneralReportDto Get()
         {
             var currentUser = HttpContext.User;
 
-            var result = _reportService.TimePerSkillsGraph();
+            var result = _reportService.GetAllGeneralGraphs();
             return result;
         }
     }
