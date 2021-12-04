@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Backend.Models
 {
@@ -33,10 +34,10 @@ namespace Backend.Models
         {
             get
             {
-                string res = $"{{\"QuestionID\":{QuestionID},\"Difficulty\":{Difficulty},\"Content\":\"{Content}\",\"QuestionType\":{((int)QuestionType)},\"BooleanAnswer\":{(BooleanAnswer==null ? "null" : BooleanAnswer.ToString().ToLower())},\"CorrectAnswer\":";
+                string res = $"{{\"QuestionID\":{QuestionID},\"Difficulty\":{Difficulty},\"Content\":\"{Content.Replace("'", "\'").Replace("\"", "\\\"")}\",\"QuestionType\":{((int)QuestionType)},\"BooleanAnswer\":{(BooleanAnswer==null ? "null" : BooleanAnswer.ToString().ToLower())},\"CorrectAnswer\":";
                 if (QuestionType == TypeEnum.BOOLEAN) return res + "\"\"}";
                 foreach (var a in ABCDAnswers)
-                    if (a.Correct) return res + $"\"{a.Content}\"}}";
+                    if (a.Correct) return res + $"\"{a.Content.Replace("'", "\'").Replace("\"", "\\\"")}\"}}";
                 return res + "\"\"}";
             }
         }
