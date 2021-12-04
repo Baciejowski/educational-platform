@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Backend.Services.Report
 {
@@ -14,7 +15,7 @@ namespace Backend.Services.Report
 
         public ReportService(DataContext context)
         {
-            _context = context;
+            _context = context; 
             _groupSettings = new[]
             {
                 new GroupSettings("No adaptivity", true, false),
@@ -34,7 +35,7 @@ namespace Backend.Services.Report
                 AvgTimePerScenario = AvgTimePerScenarioGraph(),
                 AvgAnsweredQuestionsPerScenario = AvgAnsweredQuestionsPerScenarioGraph(),
                 SuccessPerScenario = SuccessPerScenarioGraph(),
-                ScenarioResultsPerGroup = ScenarioResultsPerGroupGraph(),
+                ScenarioResultsPerGroup = SuccessPerGroupGraph(),
                 DifficultyScaling = DifficultyScalingGraph()
             };
         }
@@ -174,17 +175,17 @@ namespace Backend.Services.Report
             return json;
         }
 
-        public string ScenarioResultsPerGroupGraph()
+        public string SuccessPerGroupGraph()
         {
             var groupedSessions = _context.Sessions.Include(x => x.Student)
                 .Where(x => x.Attempts > 0)
                 .AsParallel()
-                .ToLookup(CheckGroup);
+                .ToLookup(CheckGroup)
+                .OrderByDescending(x=>x.Key);
 
             var result = new List<object>();
             foreach (var group in groupedSessions)
             {
-                ;
                 var endedSessions = 0;
                 var succesedSessions = 0;
                 foreach (var session in @group)
@@ -194,14 +195,13 @@ namespace Backend.Services.Report
                         succesedSessions++;
                 }
 
-                result.Add(new
+                result.Add(new []
                 {
-                    name = group.Key,
-                    fail = endedSessions - succesedSessions,
-                    success = succesedSessions
+                    new { name = "Fail", data = endedSessions - succesedSessions },
+                    new { name = "Success", data = succesedSessions }
                 });
-            }
 
+            } 
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
             return json;
         }

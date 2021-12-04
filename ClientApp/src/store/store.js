@@ -167,7 +167,8 @@ const actions = {
             })
             .catch((err) => (state.classesMessage = err))
     },
-    getGeneralData({ state, dispatch }) {
+    getGeneralData({ state, dispatch }) { 
+        state.loadingData = true
         dispatch("authorizedGET_PromiseWithHeaders", "/api/report")
             .then((res) => res.data)
             .then((data) => {
@@ -177,6 +178,7 @@ const actions = {
                     state.generalReport[key] = JSON.parse(value)
                 })
                 console.log("request 2", state.generalReport)
+                state.loadingData = false
             })
             .catch(console.log)
     }

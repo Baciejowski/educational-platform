@@ -1,41 +1,84 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col-6">
-                <PieChart2Var :config="pie_config" title="Participation" :data="participation" />
-            </div>
-            <div class="col-6">
-                <PieChart2Var :config="pie_config" title="Scenarios Results" :data="scenarioResults" />
+    <div>
+        <div v-if="this.$store.state.loadingData" class="text-center">
+            <b-spinner label="Spinning"></b-spinner>
+        </div>
+        <div v-else>
+            <div class="container">
+                <div class="row">
+                    <div class="col-6">
+                        <PieChart2Var :config="pie_config" title="Participation" :data="participation" />
+                    </div>
+                    <div class="col-6">
+                        <PieChart2Var :config="pie_config" title="Scenarios Results" :data="scenarioResults" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <PieChart2Var :config="pie_config" title="No adaptivity" :data="groupResults[0]" />
+                    </div>
+                    <div class="col-4">
+                        <PieChart2Var :config="pie_config" title="Basic adaptivity" :data="groupResults[1]" />
+                    </div>
+                    <div class="col-4">
+                        <PieChart2Var :config="pie_config" title="Advanced adaptivity" :data="groupResults[2]" />
+                    </div>
+                </div>
+
+                <!-- <D3BarChart :config="scenarioResultsPerGroup_config" :datum="getFromStore('scenarioResultsPerGroup')" title="Succesed sessions Per Group "></D3BarChart> -->
+                <D3BarChart
+                    :config="bar_multiple_config"
+                    :datum="getFromStore('successPerScenario')"
+                    title="Succesed sessions Per Scenario %"
+                ></D3BarChart>
+                <D3BarChart
+                    :config="bar_multiple_config"
+                    :datum="getFromStore('avgAnsweredQuestionsPerScenario')"
+                    title="Avg Answered Questions %"
+                ></D3BarChart>
+
+                <D3BarChart :config="avgTime_config" :datum="getFromStore('avgTimePerScenario')" title=" Avg Time per scenario"></D3BarChart>
+
+                <!-- <D3LineChart :config="line_config" :datum="difficultyDevelopment_data" title="Difficulty scaling factor"></D3LineChart> -->
+
+                <line-chart
+                    height="500px"
+                    :data="getFromStore('difficultyScaling')"
+                    title="Difficulty scaling factor"
+                    xtitle="Attempt"
+                    ytitle="Level"
+                ></line-chart>
+
+                <!-- <D3BarChart :config="bar_multiple_config" :datum="correctness_data" title="Question correctness"></D3BarChart> -->
+
+                <!-- <scatter-chart  :data="avgPerAttempt" title="time per attempt" xtitle="Attempt" ytitle="Time"></scatter-chart> -->
+
+                <scatter-chart
+                    height="500px"
+                    :data="getFromStore('timePerAttempt')"
+                    title="Avg Time per Attempt"
+                    xtitle="Attempt"
+                    ytitle="Time"
+                ></scatter-chart>
+                <scatter-chart
+                    height="500px"
+                    :data="getFromStore('timePerSkills')"
+                    title="time per skills set"
+                    xtitle="Scenario"
+                    ytitle="Scaled Time"
+                ></scatter-chart>
             </div>
         </div>
-
-        <D3BarChart :config="scenarioResultsPerGroup_config" :datum="getFromStore('scenarioResultsPerGroup')" title="Succesed sessions Per Group "></D3BarChart>
-        <D3BarChart :config="bar_multiple_config" :datum="getFromStore('avgAnsweredQuestionsPerScenario')" title="Avg Answered Questions %"></D3BarChart>
-        <D3BarChart :config="bar_multiple_config" :datum="getFromStore('successPerScenario')" title="Succesed sessions Per Scenario %"></D3BarChart>
-
-
-        <D3BarChart :config="avgTime_config" :datum="getFromStore('avgTimePerScenario')" title=" Avg Time per scenario"></D3BarChart>
-
-        <D3LineChart :config="line_config" :datum="difficultyDevelopment_data" title="Difficulty scaling factor"></D3LineChart>
-        
-        <scatter-chart :data="getFromStore('difficultyScaling')" title="Difficulty scaling factor" xtitle="Attempt" ytitle="Level"></scatter-chart>
-
-        <D3BarChart :config="bar_multiple_config" :datum="correctness_data" title="Question correctness"></D3BarChart>
-
-        <!-- <scatter-chart  :data="avgPerAttempt" title="time per attempt" xtitle="Attempt" ytitle="Time"></scatter-chart> -->
-
-        <scatter-chart :data="getFromStore('timePerAttempt')" title="Avg Time per Attempt" xtitle="Attempt" ytitle="Time"></scatter-chart>
-        <scatter-chart :data="getFromStore('timePerSkills')" title="time per skills set" xtitle="Scenario" ytitle="Scaled Time"></scatter-chart>
     </div>
 </template>
 
 <script>
-import { D3BarChart, D3LineChart } from "vue-d3-charts"
+import { D3BarChart } from "vue-d3-charts"
 import PieChart2Var from "@/components/Report/PieChart2Var"
 export default {
     components: {
         D3BarChart,
-        D3LineChart,
+        // D3LineChart,
         PieChart2Var
     },
     created() {
@@ -59,6 +102,15 @@ export default {
                 var2: { name: "Fail", value: this.$store.state.generalReport.scenarioResults.find((x) => x.name === "Fail")?.data }
             }
         },
+        groupResults() {
+            return this.$store.state.generalReport.scenarioResultsPerGroup.map((element) => {
+                return {
+                    data: element,
+                    var1: { name: "Success", value: element.find((x) => x.name === "Success")?.data },
+                    var2: { name: "Fail", value: element.find((x) => x.name === "Fail")?.data }
+                }
+            })
+        }
         // timePerSkills() {
         //     return this.$store.state.generalReport.timePerSkills
         // },
@@ -78,6 +130,13 @@ export default {
     methods: {
         getFromStore(property) {
             return this.$store.state.generalReport[property]
+        },
+        successGraph(data) {
+            return {
+                data: this.$store.state.generalReport[data],
+                var1: { name: "Success", value: this.$store.state.generalReport[data].find((x) => x.name === "Success")?.data },
+                var2: { name: "Fail", value: this.$store.state.generalReport[data].find((x) => x.name === "Fail")?.data }
+            }
         }
     },
     data() {
@@ -86,8 +145,10 @@ export default {
                 key: "name",
                 value: "data",
                 color: {
-                    scheme: ["#55D6BE", "#ACFCD9", "#7D5BA6", "#DDDDDD", "#FC6471"]
-                }
+                    // scheme: ["#55D6BE", "#ACFCD9", "#7D5BA6", "#DDDDDD", "#FC6471"]
+                    scheme: ["#7D5BA6", "#55D6BE"]
+                },
+                radius: { inner: 80 }
             },
             bar_config: {
                 key: "name",
