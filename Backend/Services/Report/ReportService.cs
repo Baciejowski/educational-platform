@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using Backend.Analysis_module.Models;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Backend.Services.Report
 {
@@ -35,10 +34,11 @@ namespace Backend.Services.Report
                 SuccessPerScenario = SuccessPerScenarioGraph(),
                 AvgAnsweredQuestionsPerScenario = AvgAnsweredQuestionsPerScenarioGraph(),
                 MedianAnsweredQuestionsPerScenario = MedianAnsweredQuestionsPerScenarioGraph(),
+                AvgTimePerQuestion = AvgTimePerQuestionGraph(),
+                MedianTimePerQuestion = MedianTimePerQuestionGraph(),
                 //---to refactor
                 TimePerAttempt = TimePerAttemptGraph(),
                 TimePerSkills = TimePerSkillsGraph(),
-                AvgTimePerScenario = AvgTimePerScenarioGraph(),
                 DifficultyScaling = DifficultyScalingGraph()
             };
         }
@@ -49,7 +49,7 @@ namespace Backend.Services.Report
                 session.AiCategorization == x.AiDifficulty && session.RandomTest == x.RandomTest)?.Label;
         }
 
-        private int QuestionsAmountPerScenarioByGroup(Session session)
+        private static int QuestionsAmountPerScenarioByGroup(Session session)
         {
             var amount = new List<ScenarioData>
             {
@@ -96,7 +96,7 @@ namespace Backend.Services.Report
             return result ?? 0;
         }
 
-        private string ReduceScenarioName(string name)
+        private static string ReduceScenarioName(string name)
         {
             var sArray = name.Split("-");
             var reducedName = sArray[0];
@@ -289,7 +289,8 @@ namespace Backend.Services.Report
                             session.AiCategorization == groupSettings.AiDifficulty)
                         {
                             count += QuestionsAmountPerScenarioByGroup(session);
-                            sum += session.AnsweredQuestions.GroupBy(x => x.QuestionIdRef).Select(x => x.First()).ToList().Count;
+                            sum += session.AnsweredQuestions.GroupBy(x => x.QuestionIdRef).Select(x => x.First())
+                                .ToList().Count;
                         }
                     }
 
@@ -309,11 +310,8 @@ namespace Backend.Services.Report
         public string MedianAnsweredQuestionsPerScenarioGraph()
         {
             var result = new List<object>();
-            var sessionsError = new List<Session>();
             var groupedSessions = _context.Sessions
-                .Include(x=>x.Student)
                 .Include(x => x.Scenario)
-                .ThenInclude(x => x.Questions)
                 .Include(x => x.AnsweredQuestions)
                 .Where(x => x.ScenarioEnded)
                 .AsParallel()
@@ -328,18 +326,15 @@ namespace Backend.Services.Report
                     var groupSettings = _groupSettings[index];
                     var list = new List<double>();
 
-                    var count = 0;
-                    var sum = 0;
 
                     foreach (var session in group)
                     {
                         if (session.RandomTest == groupSettings.RandomTest &&
                             session.AiCategorization == groupSettings.AiDifficulty)
                         {
-                            count = QuestionsAmountPerScenarioByGroup(session);
-                            sum = session.AnsweredQuestions.GroupBy(x => x.QuestionIdRef).Select(x => x.First()).ToList().Count;
-                            if(sum> count)
-                                sessionsError.Add(session);
+                            var count = QuestionsAmountPerScenarioByGroup(session);
+                            var sum = session.AnsweredQuestions.GroupBy(x => x.QuestionIdRef).Select(x => x.First())
+                                .ToList().Count;
                             list.Add(Math.Round((sum / (double)count) * 100));
                         }
                     }
@@ -353,18 +348,166 @@ namespace Backend.Services.Report
                     else if (list.Count % 2 == 0)
                     {
                         var ix = (int)Math.Floor((list.Count / (double)2)) - 1;
-                        median = Math.Round((list[ix] + list[ix + 1])/2);
+                        median = Math.Round((list[ix] + list[ix + 1]) / 2);
                     }
                     else
                     {
                         var ix = (int)Math.Ceiling((list.Count / (double)2)) - 1;
                         median = list[ix];
                     }
-                    if(median>100)
-                        m[index] = median;
 
                     m[index] = median;
                 }
+
+                result.Add(new
+                {
+                    name = ReduceScenarioName(group.Key),
+                    noAdaptivity = m[0],
+                    basic = m[1],
+                    advanced = m[2]
+                });
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            return json;
+        }
+
+        public string AvgTimePerQuestionGraph()
+        {
+            var result = new List<object>();
+            var groupedSessions = _context.Sessions
+                .Include(x => x.Scenario)
+                .ThenInclude(x => x.Questions)
+                .ThenInclude(x => x.ABCDAnswers)
+                .Include(x => x.AnsweredQuestions)
+                .Where(x => x.ScenarioEnded)
+                .AsParallel()
+                .ToLookup(x => x.Scenario.Name)
+                .OrderBy(x => x.Key).ToList();
+            foreach (var group in groupedSessions)
+            {
+                var avg = new double[3];
+                for (var index = 0; index < _groupSettings.Length; index++)
+                {
+                    var groupSettings = _groupSettings[index];
+                    var count = 0;
+                    double sum = 0;
+
+                    foreach (var session in group)
+                    {
+                        if (session.RandomTest == groupSettings.RandomTest &&
+                            session.AiCategorization == groupSettings.AiDifficulty)
+                        {
+                            var answeredQuestions = session
+                                .AnsweredQuestions
+                                .GroupBy(x => x.QuestionIdRef)
+                                .Select(x => x.First())
+                                .ToList();
+                            answeredQuestions.ForEach(question =>
+                            {
+                                var questionToAnalyze = session.Scenario.Questions
+                                    .FirstOrDefault(x => x.QuestionID == question.QuestionIdRef);
+                                if (questionToAnalyze != null &&
+                                    questionToAnalyze.QuestionType == Question.TypeEnum.ABCD)
+                                {
+                                    var questionLength = questionToAnalyze.Content.Split(" ").Length;
+                                    questionToAnalyze.ABCDAnswers.ToList().ForEach(answer =>
+                                        questionLength += answer.Content.Split(" ").Length);
+                                    sum += question.TimeToAnswer * 1000 / (double)questionLength;
+                                    count++;
+                                }
+                            });
+                        }
+                    }
+
+                    avg[index] = count > 0 ? Math.Round(sum / count) : count;
+                }
+
+                result.Add(new
+                {
+                    name = ReduceScenarioName(group.Key),
+                    noAdaptivity = avg[0],
+                    basic = avg[1],
+                    advanced = avg[2]
+                });
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            return json;
+        }
+
+        public string MedianTimePerQuestionGraph()
+        {
+            var result = new List<object>();
+            var groupedSessions = _context.Sessions
+                .Include(x => x.Scenario)
+                .ThenInclude(x => x.Questions)
+                .ThenInclude(x => x.ABCDAnswers)
+                .Include(x => x.AnsweredQuestions)
+                .Where(x => x.ScenarioEnded)
+                .AsParallel()
+                .ToLookup(x => x.Scenario.Name)
+                .OrderBy(x => x.Key).ToList();
+            foreach (var group in groupedSessions)
+            {
+                var m = new double[3];
+                for (var index = 0; index < _groupSettings.Length; index++)
+                {
+                    var list = new List<double>();
+                    var groupSettings = _groupSettings[index];
+
+                    foreach (var session in group)
+                    {
+                        if (session.RandomTest == groupSettings.RandomTest &&
+                            session.AiCategorization == groupSettings.AiDifficulty)
+                        {
+                            var count = 0;
+                            double sum = 0;
+                            var answeredQuestions = session
+                                .AnsweredQuestions
+                                .GroupBy(x => x.QuestionIdRef)
+                                .Select(x => x.First())
+                                .ToList();
+                            answeredQuestions.ForEach(question =>
+                            {
+                                var questionToAnalyze = session.Scenario.Questions
+                                    .FirstOrDefault(x => x.QuestionID == question.QuestionIdRef);
+                                if (questionToAnalyze != null &&
+                                    questionToAnalyze.QuestionType == Question.TypeEnum.ABCD)
+                                {
+                                    var questionLength = questionToAnalyze.Content.Split(" ").Length;
+                                    questionToAnalyze.ABCDAnswers.ToList().ForEach(answer =>
+                                        questionLength += answer.Content.Split(" ").Length);
+                                    sum += question.TimeToAnswer * 1000 / (double)questionLength;
+                                    count++;
+                                }
+                            });
+
+                            if (count > 0)
+                                list.Add(Math.Round(sum / count));
+                        }
+                    }
+
+                    list = list.OrderBy(x => x).ToList();
+                    double median;
+                    if (list.Count == 0)
+                    {
+                        median = 0;
+                    }
+                    else if (list.Count % 2 == 0)
+                    {
+                        var ix = (int)Math.Floor((list.Count / (double)2)) - 1;
+                        median = Math.Round((list[ix] + list[ix + 1]) / 2);
+                    }
+                    else
+                    {
+                        var ix = (int)Math.Ceiling((list.Count / (double)2)) - 1;
+                        median = list[ix];
+                    }
+
+                    m[index] = median;
+                }
+
 
                 result.Add(new
                 {
@@ -462,79 +605,31 @@ namespace Backend.Services.Report
             return json;
         }
 
-        public string AvgTimePerScenarioGraph()
+        public class GroupSettings
         {
-            var result = new List<object>();
-            var groupedSessions = _context.Sessions.Include(x => x.Scenario).Where(x => x.ScenarioEnded)
-                .AsParallel()
-                .ToLookup(x => x.Scenario.Name).ToList();
-            foreach (var group in groupedSessions)
+            public GroupSettings(string label, bool randomTest, bool aiDifficulty)
             {
-                var count = 0;
-                var sum = 0;
-                foreach (var session in group)
-                {
-                    count++;
-                    sum += session.GameplayTime;
-                }
-
-                var total = Math.Round((double)(sum / count));
-                var avg = new double[3];
-                for (var index = 0; index < _groupSettings.Length; index++)
-                {
-                    var groupSettings = _groupSettings[index];
-                    count = 0;
-                    sum = 0;
-
-                    foreach (var session in group)
-                    {
-                        if (session.RandomTest == groupSettings.RandomTest &&
-                            session.AiCategorization == groupSettings.AiDifficulty)
-                        {
-                            count++;
-                            sum += session.GameplayTime;
-                        }
-                    }
-
-                    avg[index] = count > 0 ? Math.Round((double)(sum / count)) : count;
-                }
-
-                result.Add(new
-                {
-                    name = ReduceScenarioName(group.Key), total = total, noAdaptivity = avg[0], basic = avg[1],
-                    advanced = avg[2]
-                });
+                Label = label;
+                RandomTest = randomTest;
+                AiDifficulty = aiDifficulty;
             }
 
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
-            return json;
+            public string Label { get; set; }
+            public bool RandomTest { get; set; }
+            public bool AiDifficulty { get; set; }
         }
-    }
 
-    public class GroupSettings
-    {
-        public GroupSettings(string label, bool randomTest, bool aiDifficulty)
+        public class ScenarioData
         {
-            Label = label;
-            RandomTest = randomTest;
-            AiDifficulty = aiDifficulty;
+            public int Id { get; set; }
+            public List<SessionData> Data { get; set; }
         }
 
-        public string Label { get; set; }
-        public bool RandomTest { get; set; }
-        public bool AiDifficulty { get; set; }
-    }
-
-    public class ScenarioData
-    {
-        public int Id { get; set; }
-        public List<SessionData> Data { get; set; }
-    }
-
-    public class SessionData
-    {
-        public bool RandomTest { get; set; }
-        public bool AiCategorization { get; set; }
-        public int Value { get; set; }
+        public class SessionData
+        {
+            public bool RandomTest { get; set; }
+            public bool AiCategorization { get; set; }
+            public int Value { get; set; }
+        }
     }
 }

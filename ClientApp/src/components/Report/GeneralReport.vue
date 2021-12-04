@@ -51,7 +51,8 @@
                     title="Median Answered Questions %"
                 ></D3BarChart>
 
-                <D3BarChart :config="avgTime_config" :datum="getFromStore('avgTimePerScenario')" title=" Avg Time per scenario"></D3BarChart>
+                <D3BarChart :config="bar_multiple_config" :datum="getFromStore('avgTimePerQuestion')" title=" Avg Time per question (ms/ words in question)"></D3BarChart>
+                <D3BarChart :config="bar_multiple_config" :datum="getFromStore('medianTimePerQuestion')" title=" Median Time per question (ms/ words in question)"></D3BarChart>
 
                 <!-- <D3LineChart :config="line_config" :datum="difficultyDevelopment_data" title="Difficulty scaling factor"></D3LineChart> -->
 

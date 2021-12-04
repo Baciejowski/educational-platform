@@ -25,17 +25,6 @@ const state = {
     urlPrefix: { local: "http://localhost:5000", dev: "https://zpi2021.westeurope.cloudapp.azure.com:5001" },
     local: true,
     generalReport: {
-        timePerSkills: [],
-        avgPerAttempt: [],
-        participation: [],
-        scenarioResults: [],
-        avgTimePerScenario: [],
-        avgAnsweredQuestionsPerScenario: [],
-        successPerScenario:[],
-        scenarioResultsPerGroup:[],
-        difficultyScaling:[],
-        attemptsPerScenario:[],
-        medianAnsweredQuestionsPerScenario:[]
     }
 }
 
