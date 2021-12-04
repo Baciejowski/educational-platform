@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Backend.Services.Report
 {
@@ -30,6 +31,7 @@ namespace Backend.Services.Report
                 Participation = ParticipationGraph(),
                 ScenarioResults = ScenarioResultsGraph(),
                 ScenarioResultsPerGroup = SuccessPerGroupGraph(),
+                AttemptsPerScenario = AttemptsPerScenarioGraph(),
                 SuccessPerScenario = SuccessPerScenarioGraph(),
                 AvgAnsweredQuestionsPerScenario = AvgAnsweredQuestionsPerScenarioGraph(),
                 //---to refactor
@@ -149,6 +151,52 @@ namespace Backend.Services.Report
             return json;
         }
 
+        public string AttemptsPerScenarioGraph()
+        {
+            var result = new List<object>();
+            var groupedSessions = _context.Sessions
+                .Include(x => x.Scenario)
+                .AsParallel()
+                .ToLookup(x => x.Scenario.Name)
+                .OrderBy(x => x.Key);
+
+            foreach (var group in groupedSessions)
+            {
+                var avg = new double[3];
+                for (var index = 0; index < _groupSettings.Length; index++)
+                {
+                    var groupSettings = _groupSettings[index];
+                    var count = 0;
+
+                    foreach (var session in group)
+                    {
+                        if (session.RandomTest == groupSettings.RandomTest &&
+                            session.AiCategorization == groupSettings.AiDifficulty)
+                        {
+                            if (session.Attempts > 0)
+                            {
+                                count++;
+                            }
+                        }
+                    }
+
+                    avg[index] =  count;
+                }
+
+
+                result.Add(new
+                {
+                    name = ReduceScenarioName(group.Key),
+                    noAdaptivity = avg[0],
+                    basic = avg[1],
+                    advanced = avg[2]
+                });
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            return json;
+        }
+
         public string SuccessPerScenarioGraph()
         {
             var result = new List<object>();
@@ -187,7 +235,10 @@ namespace Backend.Services.Report
 
                 result.Add(new
                 {
-                    name = ReduceScenarioName(group.Key), noAdaptivity = avg[0], basic = avg[1], advanced = avg[2]
+                    name = ReduceScenarioName(group.Key),
+                    noAdaptivity = avg[0],
+                    basic = avg[1],
+                    advanced = avg[2]
                 });
             }
 
@@ -204,7 +255,8 @@ namespace Backend.Services.Report
                 .Include(x => x.AnsweredQuestions)
                 .Where(x => x.ScenarioEnded)
                 .AsParallel()
-                .ToLookup(x => x.Scenario.Name).ToList();
+                .ToLookup(x => x.Scenario.Name)
+                .OrderBy(x => x.Key);
 
             foreach (var group in groupedSessions)
             {
@@ -214,6 +266,7 @@ namespace Backend.Services.Report
                     var groupSettings = _groupSettings[index];
                     var count = 0;
                     var sum = 0;
+                    var users = 0;
 
                     foreach (var session in group)
                     {
@@ -222,10 +275,11 @@ namespace Backend.Services.Report
                         {
                             count += QuestionsAmountPerScenarioByGroup(session);
                             sum += session.AnsweredQuestions.Count;
+                            users++;
                         }
                     }
 
-                    avg[index] = count > 0 ? Math.Round((sum / (double)count) * 100) : count;
+                    avg[index] = count > 0 ? Math.Round((sum / (double)(count* users)) * 100) : count;
                 }
 
                 result.Add(new

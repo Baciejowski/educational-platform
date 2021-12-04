@@ -11,5 +11,6 @@
         public string SuccessPerScenario { get; set; }
         public string ScenarioResultsPerGroup { get; set; }
         public string DifficultyScaling { get; set; }
+        public string AttemptsPerScenario { get; set; }
     }
 }

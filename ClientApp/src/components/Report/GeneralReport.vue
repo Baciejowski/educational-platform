@@ -13,6 +13,9 @@
                         <PieChart2Var :config="pie_config" title="Sessions Results" :data="scenarioResults" />
                     </div>
                 </div>
+                
+ 
+                <h3>For finished sessions</h3>
                 <div class="row">
                     <div class="col-4">
                         <PieChart2Var :config="pie_config" title="No adaptivity" :data="groupResults[0]" />
@@ -24,8 +27,11 @@
                         <PieChart2Var :config="pie_config" title="Advanced adaptivity" :data="groupResults[2]" />
                     </div>
                 </div>
-
-                <h3>For finished sessions</h3>
+                <D3BarChart
+                    :config="bar_multiple_config"
+                    :datum="getFromStore('attemptsPerScenario')"
+                    title="Attempts per scenario  "
+                ></D3BarChart>
                 <D3BarChart
                     :config="bar_multiple_config"
                     :datum="getFromStore('successPerScenario')"
