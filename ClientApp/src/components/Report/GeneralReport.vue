@@ -3,14 +3,14 @@
         <div v-if="this.$store.state.loadingData" class="text-center">
             <b-spinner label="Spinning"></b-spinner>
         </div>
-        <div v-else>
+        <div v-else class="text-center">
             <div class="container">
                 <div class="row">
                     <div class="col-6">
                         <PieChart2Var :config="pie_config" title="Participation" :data="participation" />
                     </div>
                     <div class="col-6">
-                        <PieChart2Var :config="pie_config" title="Scenarios Results" :data="scenarioResults" />
+                        <PieChart2Var :config="pie_config" title="Sessions Results" :data="scenarioResults" />
                     </div>
                 </div>
                 <div class="row">
@@ -25,12 +25,14 @@
                     </div>
                 </div>
 
-                <!-- <D3BarChart :config="scenarioResultsPerGroup_config" :datum="getFromStore('scenarioResultsPerGroup')" title="Succesed sessions Per Group "></D3BarChart> -->
+                <h3>For finished sessions</h3>
                 <D3BarChart
                     :config="bar_multiple_config"
                     :datum="getFromStore('successPerScenario')"
-                    title="Succesed sessions Per Scenario %"
+                    title="Success per scenario %"
                 ></D3BarChart>
+                <h3>For succeeded sessions</h3>
+
                 <D3BarChart
                     :config="bar_multiple_config"
                     :datum="getFromStore('avgAnsweredQuestionsPerScenario')"
@@ -111,32 +113,10 @@ export default {
                 }
             })
         }
-        // timePerSkills() {
-        //     return this.$store.state.generalReport.timePerSkills
-        // },
-        // avgTimePerScenario() {
-        //     return this.$store.state.generalReport.avgTimePerScenario
-        // },
-        // timePerAttempt() {
-        //     return this.$store.state.generalReport.timePerAttempt
-        // },
-        // avgAnsweredQuestionsPerScenario() {
-        //     return this.$store.state.generalReport.avgAnsweredQuestionsPerScenario
-        // },
-        // successPerScenario() {
-        //     return this.$store.state.generalReport.successPerScenario
-        // }
     },
     methods: {
         getFromStore(property) {
             return this.$store.state.generalReport[property]
-        },
-        successGraph(data) {
-            return {
-                data: this.$store.state.generalReport[data],
-                var1: { name: "Success", value: this.$store.state.generalReport[data].find((x) => x.name === "Success")?.data },
-                var2: { name: "Fail", value: this.$store.state.generalReport[data].find((x) => x.name === "Fail")?.data }
-            }
         }
     },
     data() {
@@ -153,26 +133,34 @@ export default {
             bar_config: {
                 key: "name",
                 values: ["data"],
-
                 color: {
                     scheme: ["#55D6BE", "#ACFCD9", "#7D5BA6", "#DDDDDD", "#FC6471"]
                 }
             },
             bar_multiple_config: {
                 key: "name",
-                values: ["random", "basic", "ai"],
+                values: ["noAdaptivity", "basic", "advanced"],
                 color: {
-                    scheme: ["#55D6BE", "#ACFCD9", "#7D5BA6", "#DDDDDD", "#FC6471"]
+                    keys: {
+                        noAdaptivity: "#3366cc",
+                        basic: "#dc3912",
+                        advanced: "#ff9900"
+                    }
                 }
             },
             avgTime_config: {
                 key: "name",
-                values: ["random", "basic", "ai", "total"],
+                values: ["noAdaptivity", "basic", "advanced", "total"],
                 axis: {
                     yTicks: 4
                 },
                 color: {
-                    scheme: ["#55D6BE", "#ACFCD9", "#7D5BA6", "#DDDDDD", "#FC6471"]
+                    keys: {
+                        noAdaptivity: "#3366cc",
+                        basic: "#dc3912",
+                        advanced: "#ff9900",
+                        total: "#3e3e3e"
+                    }
                 }
             },
             scenarioResultsPerGroup_config: {
@@ -235,10 +223,10 @@ export default {
                 { aiDifficulty: 2.9, teacherDifficulty: 1.9, date: 4 }
             ],
             correctness_data: [
-                { random: 30, basic: 40, ai: 60, name: "Scenario 1" },
-                { random: 40, basic: 17, ai: 92, name: "Scenario 2" },
-                { random: 60, basic: 50, ai: 66, name: "Scenario 3" },
-                { random: 15, basic: 24, ai: 59, name: "Scenario 4" }
+                { noAdaptivity: 30, basic: 40, advanced: 60, name: "Scenario 1" },
+                { noAdaptivity: 40, basic: 17, advanced: 92, name: "Scenario 2" },
+                { noAdaptivity: 60, basic: 50, advanced: 66, name: "Scenario 3" },
+                { noAdaptivity: 15, basic: 24, advanced: 59, name: "Scenario 4" }
             ],
             data_test: [
                 {
