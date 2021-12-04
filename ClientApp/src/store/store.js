@@ -33,7 +33,9 @@ const state = {
         avgAnsweredQuestionsPerScenario: [],
         successPerScenario:[],
         scenarioResultsPerGroup:[],
-        difficultyScaling:[]
+        difficultyScaling:[],
+        attemptsPerScenario:[],
+        medianAnsweredQuestionsPerScenario:[]
     }
 }
 

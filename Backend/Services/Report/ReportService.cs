@@ -34,6 +34,7 @@ namespace Backend.Services.Report
                 AttemptsPerScenario = AttemptsPerScenarioGraph(),
                 SuccessPerScenario = SuccessPerScenarioGraph(),
                 AvgAnsweredQuestionsPerScenario = AvgAnsweredQuestionsPerScenarioGraph(),
+                MedianAnsweredQuestionsPerScenario = MedianAnsweredQuestionsPerScenarioGraph(),
                 //---to refactor
                 TimePerAttempt = TimePerAttemptGraph(),
                 TimePerSkills = TimePerSkillsGraph(),
@@ -50,34 +51,49 @@ namespace Backend.Services.Report
 
         private int QuestionsAmountPerScenarioByGroup(Session session)
         {
-            var questionAmount = 0;
-            var questions = session.Scenario.Questions;
-            for (var i = 0; i < 3; i++)
+            var amount = new List<ScenarioData>
             {
-                var type = i switch
+                new ScenarioData
                 {
-                    0 => questions.Where(x => x.IsObligatory && x.QuestionType == Question.TypeEnum.ABCD).ToList(),
-                    1 => questions.Where(x => x.IsImportant && x.QuestionType == Question.TypeEnum.ABCD).ToList(),
-                    2 => questions.Where(x =>
-                            !x.IsObligatory && !x.IsImportant && x.QuestionType == Question.TypeEnum.ABCD)
-                        .ToList()
-                };
-                if (session.RandomTest || i == 0)
-                    questionAmount += type.Count;
-
-                else if (session.AiCategorization)
-                    questionAmount += type
-                        .GroupBy(x => Math.Abs(x.AiDifficulty ?? 1))
-                        .OrderBy(x => x.Count())
-                        .First().Count();
-                else
-                    questionAmount += type
-                        .GroupBy(x => x.Difficulty)
-                        .OrderBy(x => x.Count())
-                        .First().Count();
-            }
-
-            return questionAmount;
+                    Id = 54, Data = new List<SessionData>
+                    {
+                        new SessionData { RandomTest = true, AiCategorization = false, Value = 33 },
+                        new SessionData { RandomTest = false, AiCategorization = false, Value = 15 },
+                        new SessionData { RandomTest = false, AiCategorization = true, Value = 15 }
+                    }
+                },
+                new ScenarioData
+                {
+                    Id = 55, Data = new List<SessionData>
+                    {
+                        new SessionData { RandomTest = true, AiCategorization = false, Value = 27 },
+                        new SessionData { RandomTest = false, AiCategorization = false, Value = 13 },
+                        new SessionData { RandomTest = false, AiCategorization = true, Value = 13 }
+                    }
+                },
+                new ScenarioData
+                {
+                    Id = 56, Data = new List<SessionData>
+                    {
+                        new SessionData { RandomTest = true, AiCategorization = false, Value = 28 },
+                        new SessionData { RandomTest = false, AiCategorization = false, Value = 14 },
+                        new SessionData { RandomTest = false, AiCategorization = true, Value = 14 }
+                    }
+                },
+                new ScenarioData
+                {
+                    Id = 57, Data = new List<SessionData>
+                    {
+                        new SessionData { RandomTest = true, AiCategorization = false, Value = 30 },
+                        new SessionData { RandomTest = false, AiCategorization = false, Value = 14 },
+                        new SessionData { RandomTest = false, AiCategorization = true, Value = 14 }
+                    }
+                }
+            };
+            var result = amount.FirstOrDefault(x => x.Id == session.Scenario.ScenarioID)?.Data
+                .FirstOrDefault(x =>
+                    x.RandomTest == session.RandomTest && x.AiCategorization == session.AiCategorization)?.Value;
+            return result ?? 0;
         }
 
         private string ReduceScenarioName(string name)
@@ -180,7 +196,7 @@ namespace Backend.Services.Report
                         }
                     }
 
-                    avg[index] =  count;
+                    avg[index] = count;
                 }
 
 
@@ -251,7 +267,7 @@ namespace Backend.Services.Report
             var result = new List<object>();
             var groupedSessions = _context.Sessions
                 .Include(x => x.Scenario)
-                .ThenInclude(x=>x.Questions)
+                .ThenInclude(x => x.Questions)
                 .Include(x => x.AnsweredQuestions)
                 .Where(x => x.ScenarioEnded)
                 .AsParallel()
@@ -266,7 +282,6 @@ namespace Backend.Services.Report
                     var groupSettings = _groupSettings[index];
                     var count = 0;
                     var sum = 0;
-                    var users = 0;
 
                     foreach (var session in group)
                     {
@@ -274,17 +289,89 @@ namespace Backend.Services.Report
                             session.AiCategorization == groupSettings.AiDifficulty)
                         {
                             count += QuestionsAmountPerScenarioByGroup(session);
-                            sum += session.AnsweredQuestions.Count;
-                            users++;
+                            sum += session.AnsweredQuestions.GroupBy(x => x.QuestionIdRef).Select(x => x.First()).ToList().Count;
                         }
                     }
 
-                    avg[index] = count > 0 ? Math.Round((sum / (double)(count* users)) * 100) : count;
+                    avg[index] = count > 0 ? Math.Round((sum / (double)count) * 100) : count;
                 }
 
                 result.Add(new
                 {
                     name = ReduceScenarioName(group.Key), noAdaptivity = avg[0], basic = avg[1], advanced = avg[2]
+                });
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            return json;
+        }
+
+        public string MedianAnsweredQuestionsPerScenarioGraph()
+        {
+            var result = new List<object>();
+            var sessionsError = new List<Session>();
+            var groupedSessions = _context.Sessions
+                .Include(x=>x.Student)
+                .Include(x => x.Scenario)
+                .ThenInclude(x => x.Questions)
+                .Include(x => x.AnsweredQuestions)
+                .Where(x => x.ScenarioEnded)
+                .AsParallel()
+                .ToLookup(x => x.Scenario.Name)
+                .OrderBy(x => x.Key);
+
+            foreach (var group in groupedSessions)
+            {
+                var m = new double[3];
+                for (var index = 0; index < _groupSettings.Length; index++)
+                {
+                    var groupSettings = _groupSettings[index];
+                    var list = new List<double>();
+
+                    var count = 0;
+                    var sum = 0;
+
+                    foreach (var session in group)
+                    {
+                        if (session.RandomTest == groupSettings.RandomTest &&
+                            session.AiCategorization == groupSettings.AiDifficulty)
+                        {
+                            count = QuestionsAmountPerScenarioByGroup(session);
+                            sum = session.AnsweredQuestions.GroupBy(x => x.QuestionIdRef).Select(x => x.First()).ToList().Count;
+                            if(sum> count)
+                                sessionsError.Add(session);
+                            list.Add(Math.Round((sum / (double)count) * 100));
+                        }
+                    }
+
+                    list = list.OrderBy(x => x).ToList();
+                    double median;
+                    if (list.Count == 0)
+                    {
+                        median = 0;
+                    }
+                    else if (list.Count % 2 == 0)
+                    {
+                        var ix = (int)Math.Floor((list.Count / (double)2)) - 1;
+                        median = Math.Round((list[ix] + list[ix + 1])/2);
+                    }
+                    else
+                    {
+                        var ix = (int)Math.Ceiling((list.Count / (double)2)) - 1;
+                        median = list[ix];
+                    }
+                    if(median>100)
+                        m[index] = median;
+
+                    m[index] = median;
+                }
+
+                result.Add(new
+                {
+                    name = ReduceScenarioName(group.Key),
+                    noAdaptivity = m[0],
+                    basic = m[1],
+                    advanced = m[2]
                 });
             }
 
@@ -436,5 +523,18 @@ namespace Backend.Services.Report
         public string Label { get; set; }
         public bool RandomTest { get; set; }
         public bool AiDifficulty { get; set; }
+    }
+
+    public class ScenarioData
+    {
+        public int Id { get; set; }
+        public List<SessionData> Data { get; set; }
+    }
+
+    public class SessionData
+    {
+        public bool RandomTest { get; set; }
+        public bool AiCategorization { get; set; }
+        public int Value { get; set; }
     }
 }

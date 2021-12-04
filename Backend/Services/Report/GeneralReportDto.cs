@@ -12,5 +12,6 @@
         public string ScenarioResultsPerGroup { get; set; }
         public string DifficultyScaling { get; set; }
         public string AttemptsPerScenario { get; set; }
+        public string MedianAnsweredQuestionsPerScenario { get; set; }
     }
 }
