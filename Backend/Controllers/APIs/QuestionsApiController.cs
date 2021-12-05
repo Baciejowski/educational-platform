@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 
@@ -22,6 +23,38 @@ namespace Backend.Controllers.Api
             _logger = logger;
 
         }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Post([FromBody] Question question, [Required] int scenarioID)
+        {
+            Teacher teacher = _dataContext.ResolveOrCreateUser(HttpContext.User);
+            if (teacher == null) return Unauthorized();
+
+            Scenario scenario = _dataContext.Scenarios.FirstOrDefault(s => s.ScenarioID == scenarioID);
+            if (scenario == null) return NotFound();
+
+            _dataContext.Entry(scenario).Reference(s => s.Topic).Load();
+            _dataContext.Entry(scenario.Topic).Reference(topic => topic.Teacher).Load();
+            if (!teacher.Equals(scenario.Topic.Teacher)) return Unauthorized();
+
+            _dataContext.Add(question);
+            question.Scenarios = new List<Scenario> { scenario };
+
+
+            try
+            {
+                _dataContext.SaveChanges();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(400, e.Message + " -> " + e.InnerException.Message);
+            }
+
+            return StatusCode(201, question.QuestionID);
+
+        }
+
 
         [HttpPut]
         [Authorize]
@@ -78,6 +111,8 @@ namespace Backend.Controllers.Api
 
                 if (original.Difficulty != question.Difficulty)
                     original.Difficulty = question.Difficulty;
+                if (original.AiDifficulty != question.AiDifficulty)
+                    original.AiDifficulty = question.AiDifficulty;
                 if (!string.Equals(original.Content, question.Content))
                     original.Content = question.Content;
                 if (!string.Equals(original.Hint, question.Hint))

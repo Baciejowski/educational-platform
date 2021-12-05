@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Backend.Models
 {
@@ -25,19 +26,19 @@ namespace Backend.Models
         [JsonIgnore]
         public virtual ICollection<Scenario> Scenarios { get; set; }
 
-        [JsonIgnore]
-        public virtual ICollection<AnsweredQuestion> AnsweredQuestion { get; set; }
+        // [JsonIgnore]
+        // public virtual ICollection<AnsweredQuestion> AnsweredQuestion { get; set; }
 
         [JsonIgnore]
         public string AIRespresentation
         {
             get
             {
-                string res = $"{{\"QuestionID\":{QuestionID},\"Difficulty\":{Difficulty},\"Content\":\"{Content}\",\"QuestionType\":{((int)QuestionType)},\"BooleanAnswer\":{BooleanAnswer},\"CorrectAnswer\":";
-                if (QuestionType == TypeEnum.BOOLEAN) return res + "null}";
+                string res = $"{{\"QuestionID\":{QuestionID},\"Difficulty\":{Difficulty},\"Content\":\"{Content.Replace("'", "\'").Replace("\"", "\\\"")}\",\"QuestionType\":{((int)QuestionType)},\"BooleanAnswer\":{(BooleanAnswer==null ? "null" : BooleanAnswer.ToString().ToLower())},\"CorrectAnswer\":";
+                if (QuestionType == TypeEnum.BOOLEAN) return res + "\"\"}";
                 foreach (var a in ABCDAnswers)
-                    if (a.Correct) return res + $"\"{a.Content}\"}}";
-                return res + "null}";
+                    if (a.Correct) return res + $"\"{a.Content.Replace("'", "\'").Replace("\"", "\\\"")}\"}}";
+                return res + "\"\"}";
             }
         }
     }

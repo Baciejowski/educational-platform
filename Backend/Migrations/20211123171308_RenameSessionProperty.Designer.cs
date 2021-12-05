@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Backend;
@@ -10,15 +11,40 @@ using Backend;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20211123171308_RenameSessionProperty")]
+    partial class RenameSessionProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+            modelBuilder.Entity("Backend.Models.AnalysisResult", b =>
+                {
+                    b.Property<int>("AnalysisResultID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<double>("DifficultyLevel")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("ScenarioEnded")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SessionRecordID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AnalysisResultID");
+
+                    b.ToTable("AnalysisResults");
+                });
 
             modelBuilder.Entity("Backend.Models.Answer", b =>
                 {
@@ -53,22 +79,19 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<int?>("AnalysisResultID")
+                        .HasColumnType("integer");
+
                     b.Property<List<int>>("AnsweredAnswers")
                         .HasColumnType("integer[]");
 
                     b.Property<float>("Correctness")
                         .HasColumnType("real");
 
-                    b.Property<byte>("Difficulty")
-                        .HasColumnType("smallint");
-
-                    b.Property<int>("QuestionIdRef")
+                    b.Property<int?>("QuestionID")
                         .HasColumnType("integer");
 
                     b.Property<int>("QuestionImportanceType")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SessionID")
                         .HasColumnType("integer");
 
                     b.Property<int>("TimeToAnswer")
@@ -76,7 +99,9 @@ namespace Backend.Migrations
 
                     b.HasKey("AnsweredQuestionID");
 
-                    b.HasIndex("SessionID");
+                    b.HasIndex("AnalysisResultID");
+
+                    b.HasIndex("QuestionID");
 
                     b.ToTable("AnsweredQuestions");
                 });
@@ -121,6 +146,39 @@ namespace Backend.Migrations
                     b.HasIndex("StudentID");
 
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("Backend.Models.GameplayData", b =>
+                {
+                    b.Property<int>("GameplayDataID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Experience")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GameplayTime")
+                        .HasColumnType("integer");
+
+                    b.Property<float>("Light")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Money")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SessionRecordID")
+                        .HasColumnType("integer");
+
+                    b.Property<float>("Speed")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Vision")
+                        .HasColumnType("real");
+
+                    b.HasKey("GameplayDataID");
+
+                    b.ToTable("GameplayData");
                 });
 
             modelBuilder.Entity("Backend.Models.Question", b =>
@@ -198,47 +256,23 @@ namespace Backend.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("text");
 
-                    b.Property<double>("DifficultyLevel")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<DateTime>("EndGame")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("Experience")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GameplayTime")
-                        .HasColumnType("integer");
-
-                    b.Property<float>("Light")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Money")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("RandomTest")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("ScenarioEnded")
                         .HasColumnType("boolean");
 
                     b.Property<int?>("ScenarioID")
                         .HasColumnType("integer");
 
-                    b.Property<float>("Speed")
-                        .HasColumnType("real");
+                    b.Property<int>("SessionRecordID")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartGame")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("StudentID")
                         .HasColumnType("integer");
-
-                    b.Property<float>("Vision")
-                        .HasColumnType("real");
 
                     b.HasKey("SessionID");
 
@@ -247,6 +281,16 @@ namespace Backend.Migrations
                     b.HasIndex("StudentID");
 
                     b.ToTable("Sessions");
+                });
+
+            modelBuilder.Entity("Backend.Models.SessionRecord", b =>
+                {
+                    b.Property<int>("SessionRecordID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("SessionRecordID");
+
+                    b.ToTable("SessionRecords");
                 });
 
             modelBuilder.Entity("Backend.Models.Student", b =>
@@ -336,11 +380,17 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.AnsweredQuestion", b =>
                 {
-                    b.HasOne("Backend.Models.Session", "Session")
+                    b.HasOne("Backend.Models.AnalysisResult", "AnalysisResult")
                         .WithMany("AnsweredQuestions")
-                        .HasForeignKey("SessionID");
+                        .HasForeignKey("AnalysisResultID");
 
-                    b.Navigation("Session");
+                    b.HasOne("Backend.Models.Question", "Question")
+                        .WithMany("AnsweredQuestion")
+                        .HasForeignKey("QuestionID");
+
+                    b.Navigation("AnalysisResult");
+
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("Backend.Models.Class", b =>
@@ -391,6 +441,33 @@ namespace Backend.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("Backend.Models.SessionRecord", b =>
+                {
+                    b.HasOne("Backend.Models.AnalysisResult", "AnalysisResult")
+                        .WithOne("SessionRecord")
+                        .HasForeignKey("Backend.Models.SessionRecord", "SessionRecordID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.GameplayData", "GameplayData")
+                        .WithOne("SessionRecord")
+                        .HasForeignKey("Backend.Models.SessionRecord", "SessionRecordID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Session", "Session")
+                        .WithOne("SessionRecord")
+                        .HasForeignKey("Backend.Models.SessionRecord", "SessionRecordID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AnalysisResult");
+
+                    b.Navigation("GameplayData");
+
+                    b.Navigation("Session");
+                });
+
             modelBuilder.Entity("Backend.Models.Student", b =>
                 {
                     b.HasOne("Backend.Models.Class", "Class")
@@ -424,14 +501,28 @@ namespace Backend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Backend.Models.AnalysisResult", b =>
+                {
+                    b.Navigation("AnsweredQuestions");
+
+                    b.Navigation("SessionRecord");
+                });
+
             modelBuilder.Entity("Backend.Models.Class", b =>
                 {
                     b.Navigation("Students");
                 });
 
+            modelBuilder.Entity("Backend.Models.GameplayData", b =>
+                {
+                    b.Navigation("SessionRecord");
+                });
+
             modelBuilder.Entity("Backend.Models.Question", b =>
                 {
                     b.Navigation("ABCDAnswers");
+
+                    b.Navigation("AnsweredQuestion");
                 });
 
             modelBuilder.Entity("Backend.Models.Scenario", b =>
@@ -443,7 +534,7 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Session", b =>
                 {
-                    b.Navigation("AnsweredQuestions");
+                    b.Navigation("SessionRecord");
                 });
 
             modelBuilder.Entity("Backend.Models.Student", b =>

@@ -1,10 +1,5 @@
 <template>
   <div>
-    <!--
-        <div class="hello">
-            <h1>{{ msg }}</h1>
-            -->
-
     <main>
       <div class="container">
         <div class="carousel carousel-slider">
@@ -12,7 +7,7 @@
             <div class="imageContainer">
               <img
                 alt="Screenshot from game displaying maze"
-                src="../assets/test.png"
+                src="../assets/1panel.png"
                 style="height: 100%; width: 100%; object-fit: contain"
               />
               <div class="overImage">
@@ -20,7 +15,7 @@
               </div>
             </div>
           </a>
-          <a class="carousel-item" href="#">
+          <!--<a class="carousel-item" href="#">
             <div class="imageContainer">
               <img
                 alt="Student's panel view"
@@ -29,12 +24,12 @@
               />
               <div class="overImage">Students can choose from many topics</div>
             </div>
-          </a>
+          </a>-->
           <a class="carousel-item" href="#">
             <div class="imageContainer">
               <img
                 alt="Teacher's panel view"
-                src="../assets/test.png"
+                src="../assets/3panel.png"
                 style="height: 100%; width: 100%; object-fit: contain"
               />
               <div class="overImage">
@@ -42,7 +37,7 @@
               </div>
             </div>
           </a>
-          <a class="carousel-item" href="#">
+          <!--<a class="carousel-item" href="#">
             <div class="imageContainer">
               <img
                 alt="Statistics"
@@ -53,11 +48,11 @@
                 Teachers can analyze students' progress
               </div>
             </div>
-          </a>
+          </a>-->
         </div>
       </div>
 
-      <div class="container">
+      <div class="container" style="margin-top:20px">
         <h3>Benefits for students</h3>
         <div class="row">
           <div class="col s12 m6 l4">
@@ -68,9 +63,7 @@
                   ><br />Involving learning</span
                 >
                 <p>
-                  I am a very simple card. I am good at containing small bits of
-                  information. I am convenient because I require little markup
-                  to use effectively.
+                  No more boring homeworks! <br />Here you can have fun while still learning and revising your knowledge before lesson or test. Your grades can improve!
                 </p>
               </div>
             </div>
@@ -83,9 +76,7 @@
                   testing</span
                 >
                 <p>
-                  I am a very simple card. I am good at containing small bits of
-                  information. I am convenient because I require little markup
-                  to use effectively.
+                  Your knowledge can be tested in more interesting way. Not everything is important so why not to skip some questions? AI will decide if a question makes sense to be asked.
                 </p>
               </div>
             </div>
@@ -93,14 +84,11 @@
           <div class="col s12 m6 l4">
             <div class="card">
               <div class="card-content">
-                <span class="card-title"
-                  ><i class="large material-icons">format_list_numbered_rtl</i
-                  ><br />Competing</span
-                >
+                <span class="card-title">
+                  <i class="large material-icons">format_list_numbered_rtl</i>
+                  <br />Competing</span>
                 <p>
-                  I am a very simple card. I am good at containing small bits of
-                  information. I am convenient because I require little markup
-                  to use effectively.
+                  Students can compare their statistics like money or experience points obtained during game or who finished the maze as the first one.
                 </p>
               </div>
             </div>
@@ -119,9 +107,7 @@
                   evaluation
                 </span>
                 <p>
-                  I am a very simple card. I am good at containing small bits of
-                  information. I am convenient because I require little markup
-                  to use effectively.
+                  Students results can be taken into account as activity or bonus points during grading process.
                 </p>
               </div>
             </div>
@@ -134,9 +120,7 @@
                   scenarios</span
                 >
                 <p>
-                  I am a very simple card. I am good at containing small bits of
-                  information. I am convenient because I require little markup
-                  to use effectively.
+                  You can copy scenarios, modify wuestions and use them again with different group of studnets.
                 </p>
               </div>
             </div>
@@ -146,12 +130,10 @@
               <div class="card-content">
                 <span class="card-title"
                   ><i class="large material-icons">attractions</i
-                  ><br />Student-attractive form</span
+                  ><br />Student-attractive</span
                 >
                 <p>
-                  I am a very simple card. I am good at containing small bits of
-                  information. I am convenient because I require little markup
-                  to use effectively.
+                    Make the lessons more attractive! Students learn more when they are active and like what they do.
                 </p>
               </div>
             </div>
@@ -164,18 +146,17 @@
                   tests
                 </span>
                 <p>
-                  I am a very simple card. I am good at containing small bits of
-                  information. I am convenient because I require little markup
-                  to use effectively.
+                  You don't have to check paper quizes anymore! Students will revise knowledge by plaing game.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="container">
-        <div class="auto-resizable-iframe">
+        <br/>
+      <!--<div class="container">
+        <img src="../assets/Gif.gif" style="height: 100%; width: 100%; object-fit: contain"/>-->
+        <!--<div class="auto-resizable-iframe">
           <div>
             <iframe
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -185,12 +166,12 @@
               title="YouTube video player"
             ></iframe>
           </div>
-        </div>
-      </div>
+        </div>-->
+      <!--</div>-->
     </main>
 
     <footer>
-      <div class="footer-copyright grey darken-4 white-text">� 2021</div>
+      <div class="footer-copyright grey darken-4 white-text">2021</div>
     </footer>
   </div>
 </template>
@@ -217,7 +198,7 @@ export default {
     );
     setInterval(function () {
       carousel.next();
-    }, 7000);
+    }, 3000);
   },
 };
 </script>
@@ -225,6 +206,9 @@ export default {
 <style scoped>
 @import "../css/custom/carousel_additions.css";
 @import "../css/custom/video_resizable_container.css";
+p {
+    text-align: center;
+}
 </style>
 <!--<script>
 export default {

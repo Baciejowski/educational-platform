@@ -6,31 +6,48 @@ using Backend.Analysis_module.SessionModule;
 using Backend.Models;
 using Gameplay;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Backend.Analysis_module
 {
     public class AnalysisModuleService : IAnalysisModuleService
     {
-        protected readonly DataContext Context;
         private readonly ISessionFactory _sessionFactory;
         private List<SessionModuleService> _sessionModules = new List<SessionModuleService>();
+        private System.Threading.Timer timer;
+        string connectionString;
+        DbContextOptionsBuilder<DataContext> optionsBuilder;
 
-        public AnalysisModuleService(DataContext context, ISessionFactory sessionFactory)
+        public AnalysisModuleService(ISessionFactory sessionFactory)
         {
-            Context = context;
             _sessionFactory = sessionFactory;
+            connectionString =
+                new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("DbContextSettings")[
+                    "ConnectionString"];
 
-            var startTimeSpan = TimeSpan.Zero;
-            var periodTimeSpan = TimeSpan.FromMinutes(15);
-
-            var timer = new System.Threading.Timer((e) => FindAbandonedScenarios(), null, startTimeSpan,
-                periodTimeSpan);
+            optionsBuilder = new DbContextOptionsBuilder<DataContext>();
+            optionsBuilder.UseNpgsql(connectionString);
         }
 
         public StartGameResponse StartNewSession(StartGameRequest request)
         {
+            if (timer == null)
+            {
+                var startTimeSpan = TimeSpan.Zero;
+                var periodTimeSpan = TimeSpan.FromMinutes(15);
+                timer = new System.Threading.Timer((e) => FindAbandonedScenarios(), null, startTimeSpan,
+                    periodTimeSpan);
+            }
+
+            using var db = new DataContext(optionsBuilder.Options);
+
             var id = GenerateGameId();
             SessionModuleService sessionModule;
+            var studentData = new StartGameResponse.Types.StudentData
+            {
+                Experience = 0,
+                Money = 0
+            };
             if (request.Email.ToLower() == "test" && request.Code.ToLower() == "test")
             {
                 RemoveUser("test", "test");
@@ -42,7 +59,7 @@ namespace Backend.Analysis_module
                 Session userSession;
                 try
                 {
-                    var sessions = Context.Sessions
+                    var sessions = db.Sessions
                         .Include(s => s.Student)
                         .Include(s => s.Scenario)
                         // .Include(s => s.Scenario)
@@ -50,9 +67,10 @@ namespace Backend.Analysis_module
                         .ThenInclude(scenario => scenario.Questions)
                         .ThenInclude(questions => questions.ABCDAnswers).ToList();
 
-                    userSession = sessions.First(x => x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
-                                                      x.Student.Email.Equals(request.Email,
-                                                          StringComparison.OrdinalIgnoreCase));
+                    userSession = sessions.First(x =>
+                        x.Code.Equals(request.Code, StringComparison.OrdinalIgnoreCase) &&
+                        x.Student.Email.Equals(request.Email,
+                            StringComparison.OrdinalIgnoreCase));
                 }
                 catch
                 {
@@ -63,17 +81,40 @@ namespace Backend.Analysis_module
                     };
                 }
 
+                double? prevDifficulty = null;
+                try
+                {
+                    var gameplay = db.Sessions
+                        .Include(s => s.Student).Where(x =>
+                            x.Student.StudentID == userSession.Student.StudentID && x.Attempts > 0).ToList();
+                    if (gameplay != null)
+                    {
+                        var lastGameplay = gameplay.Last();
+                        studentData.Experience = lastGameplay.Experience;
+                        prevDifficulty = lastGameplay.DifficultyLevel;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
                 var error = CheckUserConditions(userSession);
                 if (error != null)
                     return error;
 
                 //TO DO odkomentować przed testami na uzytkownikach
-                // userSession.Attempts++;
-                // Context.SaveChanges();
+                userSession.Attempts++;
+                db.SaveChanges();
+
 
                 sessionModule =
                     _sessionFactory.Create(request.Email, userSession.Student.StudentID, request.Code, id,
                         userSession);
+                if (prevDifficulty != null)
+                {
+                    sessionModule.SetPrevDifficulty(prevDifficulty);
+                }
             }
 
             _sessionModules.Add(sessionModule);
@@ -83,11 +124,7 @@ namespace Backend.Analysis_module
                 QuestionsNumber = { sessionModule.GetQuestionsAmount() },
                 Error = false,
                 MazeSetting = new StartGameResponse.Types.MazeSetting(),
-                StudentData = new StartGameResponse.Types.StudentData
-                {
-                    Experience = 0,
-                    Money = 0
-                } // TO DO  - pobieranie statow ucznia
+                StudentData = studentData
             };
         }
 

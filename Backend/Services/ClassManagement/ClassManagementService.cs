@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Backend.Controllers.APIs;
 using Backend.Controllers.APIs.Models;
 using Backend.Models;
 using Backend.Services.EmailProvider;
@@ -23,7 +22,7 @@ namespace Backend.Services.ClassManagement
         }
 
 
-        public async void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel, string authName)
+        public void SendGameInvitationToStudents(ClassesGameInvitationViewModel classesGameInvitationViewModel, string authName)
         {
             var teacher = _teacherManagementService.GetTeacher(authName);
             var classItem = teacher.Classes
@@ -47,11 +46,11 @@ namespace Backend.Services.ClassManagement
                     Code = code,
                     Topic = topicItem.TopicName,
                     Scenario = scenarioItem.Name,
+                    Url = scenarioItem.Url,
                     StartDate = classesGameInvitationViewModel.StartGame.ToString("yyyy-MM-dd HH:mm"),
                     EndDate = classesGameInvitationViewModel.EndGame.ToString("yyyy-MM-dd HH:mm")
                 };
 
-                await _mailService.SendGameInvitationRequestAsync(request);
 
                 Context.Sessions.Add(new Session
                 {
@@ -60,11 +59,12 @@ namespace Backend.Services.ClassManagement
                     StartGame = classesGameInvitationViewModel.StartGame,
                     EndGame = classesGameInvitationViewModel.EndGame,
                     RandomTest = classesGameInvitationViewModel.RandomTest,
+                    AiCategorization = classesGameInvitationViewModel.AiCategorization,
                     Code = code
-                }); 
+                });
+                _ = _mailService.SendGameInvitationRequestAsync(request);
             }
-
-            await Context.SaveChangesAsync();
+            Context.SaveChanges();
         }
     }
 }

@@ -4,6 +4,7 @@ using Backend.Services.EmailProvider.Models;
 using Backend.Services.EmailProvider.Settings;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
@@ -12,10 +13,13 @@ namespace Backend.Services.EmailProvider
     public class MailService : IMailService
     {
         private readonly MailSettings _mailSettings;
-
+        private readonly IConfigurationRoot _config;
         public MailService(IOptions<MailSettings> mailSettings)
         {
             _mailSettings = mailSettings.Value;
+            _config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
         }
 
         public async Task SendEmailAsync(MailRequest mailRequest)
@@ -54,7 +58,7 @@ namespace Backend.Services.EmailProvider
 
         public async Task SendGameInvitationRequestAsync(GameInvitationRequest request)
         {
-            string FilePath = Directory.GetCurrentDirectory() + "\\src\\MailTemplates\\GameInvitationTemplate.html";
+            string FilePath = _config.GetSection("Variables")["MailTemplateLocation"];
             StreamReader str = new StreamReader(FilePath);
             string MailText = str.ReadToEnd();
             str.Close();
@@ -63,6 +67,7 @@ namespace Backend.Services.EmailProvider
                 .Replace("[code]", request.Code)
                 .Replace("[topic]", request.Topic)
                 .Replace("[scenario]", request.Scenario)
+                .Replace("[url]", request.Url)
                 .Replace("[start]", request.StartDate)
                 .Replace("[end]", request.EndDate);
             var email = new MimeMessage();

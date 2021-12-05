@@ -27,13 +27,15 @@ namespace Backend.Services
 {
     public class GameConnector : GameplayMessages.GameplayMessagesBase
     {
+        private readonly DataContext _context;
         private readonly ILogger _logger;
         private Random _random = new Random();
         private readonly IAnalysisModuleService _analysisModuleService;
 
-        public GameConnector(ILoggerFactory loggerFactory, IAnalysisModuleService analysisModuleService)
+        public GameConnector(ILoggerFactory loggerFactory, IAnalysisModuleService analysisModuleService, DataContext context)
         {
             _analysisModuleService = analysisModuleService;
+            _context = context;
             _logger = loggerFactory.CreateLogger<GameConnector>();
         }
 

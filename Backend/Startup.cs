@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using System.Security.Claims;
 using Backend.Analysis_module;
 using Backend.Analysis_module.SessionModule;
@@ -28,8 +27,8 @@ namespace Backend
         private static class Flags
         {
             public static bool RunVue = false;
-            public static bool RunAI = false;
         }
+
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -37,7 +36,6 @@ namespace Backend
             void LoadFlags()
             {
                 Flags.RunVue = Configuration.GetSection("Flags")["RunVue"].Equals("True");
-                Flags.RunAI = Configuration.GetSection("Flags")["RunAI"].Equals("True");
             }
 
             Configuration = configuration;
@@ -49,8 +47,7 @@ namespace Backend
             void AddDatabase()
             {
                 var connectionString = Configuration["DbContextSettings:ConnectionString"];
-                services.AddDbContext<DataContext>(opts => opts.EnableSensitiveDataLogging().EnableDetailedErrors().UseNpgsql(connectionString),
-                    ServiceLifetime.Singleton);
+                services.AddDbContext<DataContext>(opts => opts.UseNpgsql(connectionString));
             }
 
             void AddHttpServices()
@@ -58,11 +55,11 @@ namespace Backend
                 services.AddCors(options =>
                 {
                     options.AddPolicy(name: "default",
-                                      //builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
-                                      builder => builder.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        //.AllowCredentials()
-                        .AllowAnyMethod());
+                        //builder => builder.WithOrigins(Configuration.GetSection("Cors").Get<string[]>())
+                        builder => builder.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            //.AllowCredentials()
+                            .AllowAnyMethod());
                 });
                 services.AddControllers();
                 if (Flags.RunVue)
@@ -82,15 +79,16 @@ namespace Backend
                 {
                     NameClaimType = ClaimTypes.NameIdentifier
                 };
-            }); 
+            });
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("read:messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain)));
+                options.AddPolicy("read:messages",
+                    policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain)));
             });
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
-            
-            
+
+
             AddDatabase();
             services.AddGrpc();
             AddHttpServices();
@@ -114,8 +112,8 @@ namespace Backend
                     app.UseDeveloperExceptionPage();
 
                 app.UseRouting();
-                
-        app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
+
+                app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 
                 if (Flags.RunVue)
                     app.UseSpaStaticFiles();
@@ -132,19 +130,6 @@ namespace Backend
                     endpoints.MapGrpcService<GameConnector>();
                     endpoints.MapGrpcService<GreeterService>();
                 });
-            }
-
-            void RunAI()
-            {
-                Process p = new Process();
-                p.StartInfo = new ProcessStartInfo(Configuration.GetSection("Variables")["AIScriptLocation"])
-                {
-                    RedirectStandardOutput = false,
-                    UseShellExecute = true,
-                    CreateNoWindow = false
-                };
-                p.Start();
-                logger.LogInformation("AI script started");
             }
 
             void RunVue()
@@ -167,7 +152,6 @@ namespace Backend
             app.UseAuthentication();
             AddHttpServices();
             AddEndpoints();
-            if (Flags.RunAI) RunAI();
             if (Flags.RunVue) RunVue();
         }
     }

@@ -9,6 +9,9 @@ import Counter from "@/views/Counter.vue";
 import TopicsManagement from "@/views/TopicsManagement.vue"
 import ViewScenario from "@/views/ViewScenario.vue"
 import PageNotFound from "@/views/PageNotFound.vue"
+import StudentsManagement from "@/views/StudentsManagement.vue"
+import AiView from "@/views/AiView.vue"
+import TeacherView from "@/views/TeacherView.vue"
 
 Vue.use(VueRouter)
 
@@ -25,6 +28,18 @@ const routes = [
         beforeEnter: authGuard
     },
     {
+        path: "/teacher",
+        name: "teacher panel",
+        component: TeacherView,
+        beforeEnter: authGuard
+    },
+    {
+        path: "/AiProposals",
+        name: "AiProposals",
+        component: AiView,
+        beforeEnter: authGuard
+    },
+    {
         path: "/topics",
         name: "topics",
         component: TopicsManagement,
@@ -34,6 +49,12 @@ const routes = [
         path: "/scenario",
         name: "scenario",
         component: ViewScenario,
+        beforeEnter: authGuard
+    },
+    {
+        path: "/students",
+        name: "students",
+        component: StudentsManagement,
         beforeEnter: authGuard
     },
     {
