@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="this.$store.state.loadingData" class="text-center">
-            <b-spinner label="Spinning"></b-spinner>
+            <b-spinner label="Spinning" class="spinner"></b-spinner>
         </div>
         <div v-else class="text-center">
             <div class="container">
@@ -13,8 +13,7 @@
                         <PieChart2Var :config="pie_config" title="Sessions Results" :data="scenarioResults" />
                     </div>
                 </div>
-                
- 
+
                 <h3>For finished sessions</h3>
                 <div class="row">
                     <div class="col-4">
@@ -27,16 +26,8 @@
                         <PieChart2Var :config="pie_config" title="Advanced adaptivity" :data="groupResults[2]" />
                     </div>
                 </div>
-                <D3BarChart
-                    :config="bar_multiple_config"
-                    :datum="getFromStore('attemptsPerScenario')"
-                    title="Attempts per scenario  "
-                ></D3BarChart>
-                <D3BarChart
-                    :config="bar_multiple_config"
-                    :datum="getFromStore('successPerScenario')"
-                    title="Success per scenario %"
-                ></D3BarChart>
+                <D3BarChart :config="bar_multiple_config" :datum="getFromStore('attemptsPerScenario')" title="Attempts per scenario  "></D3BarChart>
+                <D3BarChart :config="bar_multiple_config" :datum="getFromStore('successPerScenario')" title="Success per scenario %"></D3BarChart>
                 <h3>For succeeded sessions</h3>
 
                 <D3BarChart
@@ -51,8 +42,16 @@
                     title="Median Answered Questions %"
                 ></D3BarChart>
 
-                <D3BarChart :config="bar_multiple_config" :datum="getFromStore('avgTimePerQuestion')" title=" Avg Time per question (ms/ words in question)"></D3BarChart>
-                <D3BarChart :config="bar_multiple_config" :datum="getFromStore('medianTimePerQuestion')" title=" Median Time per question (ms/ words in question)"></D3BarChart>
+                <D3BarChart
+                    :config="bar_multiple_config"
+                    :datum="getFromStore('avgTimePerQuestion')"
+                    title=" Avg Time per question (ms/ words in question)"
+                ></D3BarChart>
+                <D3BarChart
+                    :config="bar_multiple_config"
+                    :datum="getFromStore('medianTimePerQuestion')"
+                    title=" Median Time per question (ms/ words in question)"
+                ></D3BarChart>
 
                 <!-- <D3LineChart :config="line_config" :datum="difficultyDevelopment_data" title="Difficulty scaling factor"></D3LineChart> -->
 
@@ -71,7 +70,7 @@
                 <scatter-chart
                     height="500px"
                     :data="getFromStore('timePerAttempt')"
-                    title="Avg Time per Attempt"
+                    title="Time per Attempt"
                     xtitle="Attempt"
                     ytitle="Time"
                 ></scatter-chart>
@@ -290,4 +289,7 @@ export default {
 </script>
 
 <style>
+.spinner{
+    margin-top: 200px;
+}
 </style>
