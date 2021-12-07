@@ -1,4 +1,5 @@
 ﻿using Backend.Models;
+using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -125,22 +126,23 @@ namespace Backend.Controllers.APIs
         }
 
         [HttpPost]
-        [Route("/api/scenarios/media")]
-        public async Task<IActionResult> UploadFile(IFormCollection upload)
+        [Route("/api/scenarios/{id}/media")]
+        public IActionResult UploadFile(IFormCollection upload, [FromRoute][Required] int id)
         {
-            long size = upload.Files.Sum(f => f.Length);
+            List<string> filesContents = new List<string>();
             foreach (var formFile in upload.Files)
             {
                 if (formFile.Length > 0)
                 {
-                    var filePath = Path.Combine("Media", Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(formFile.FileName)));
-                    _logger.LogCritical(filePath.ToString());
-                    using (var stream = System.IO.File.Create(filePath))
+                    using (var reader = new StreamReader(formFile.OpenReadStream()))
                     {
-                        await formFile.CopyToAsync(stream);
+                        filesContents.Add(reader.ReadToEnd());
                     }
                 }
             }
+            CommunicationWithAI.TokenizeAndAddToRequestsQueue(filesContents, id);
+            Task.Run(() => CommunicationWithAI.SendRequests());
+
             return Ok();
         }
 
