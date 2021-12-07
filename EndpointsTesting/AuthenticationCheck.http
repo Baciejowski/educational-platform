@@ -1,0 +1,174 @@
+### Classes_GET_NoHeader
+GET http://localhost:5000/api/classes
+
+> {%
+    client.test("Request without authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Classes_GET_IncorrectHeader
+GET http://localhost:5000/api/classes
+Authorization: aaa
+
+> {%
+    client.test("Request with incorrect authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Classes_GET_CorrectHeader
+GET http://localhost:5000/api/classes
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Scenarios_GET_NoHeader
+GET http://localhost:5000/api/scenarios/0
+
+> {%
+    client.test("Request without authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Scenarios_HEAD_NoHeader
+HEAD http://localhost:5000/api/scenarios/0
+
+> {%
+    client.test("Request without authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Scenarios_GET_IncorrectHeader
+GET http://localhost:5000/api/scenarios/0
+Authorization: aaa
+
+> {%
+    client.test("Request with incorrect authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Scenarios_HEAD_IncorrectHeader
+HEAD http://localhost:5000/api/scenarios/0
+Authorization: aaa
+
+> {%
+    client.test("Request with incorrect authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Scenarios_GET_CorrectHeader
+GET http://localhost:5000/api/scenarios/0
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+    });
+%}
+
+### Scenarios_HEAD_CorrectHeader
+HEAD http://localhost:5000/api/scenarios/0
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+    });
+%}
+
+### Teachers_GET_NoHeader
+GET http://localhost:5000/api/teachers
+
+> {%
+    client.test("Request without authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Teachers_GET_IncorrectHeader
+GET http://localhost:5000/api/teachers
+Authorization: aaa
+
+> {%
+    client.test("Request with incorrect authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Teachers_GET_CorrectHeader
+GET http://localhost:5000/api/teachers
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Topics_GET_NoHeader
+GET http://localhost:5000/api/topics
+
+> {%
+    client.test("Request without authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Topics_GET_IncorrectHeader
+GET http://localhost:5000/api/topics
+Authorization: aaa
+
+> {%
+    client.test("Request with incorrect authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Topics_GET_CorrectHeader
+GET http://localhost:5000/api/topics
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### OldScenario_GET_NoHeader
+GET http://localhost:5000/api/create-scenario
+
+> {%
+    client.test("Request without authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### OldScenario_GET_IncorrectHeader
+GET http://localhost:5000/api/create-scenario
+Authorization: aaa
+
+> {%
+    client.test("Request with incorrect authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### OldScenario_GET_CorrectHeader
+GET http://localhost:5000/api/create-scenario
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
