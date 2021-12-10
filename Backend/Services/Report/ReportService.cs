@@ -36,10 +36,11 @@ namespace Backend.Services.Report
                 MedianAnsweredQuestionsPerScenario = MedianAnsweredQuestionsPerScenarioGraph(),
                 AvgTimePerQuestion = AvgTimePerQuestionGraph(),
                 MedianTimePerQuestion = MedianTimePerQuestionGraph(),
+                DifficultyScaling = DifficultyScalingGraph(),
+                AvgDifficultyScaling = AvgDifficultyScalingGraph(),
                 //---to refactor
                 TimePerAttempt = TimePerAttemptGraph(),
                 TimePerSkills = TimePerSkillsGraph(),
-                DifficultyScaling = DifficultyScalingGraph()
             };
         }
 
@@ -522,6 +523,98 @@ namespace Backend.Services.Report
             return json;
         }
 
+
+        public string DifficultyScalingGraph()
+        {
+            var result = new List<object>
+            {
+                new { name = "Basic adaptivity", data = new List<Array>() },
+                new { name = "Advance adaptivity", data = new List<Array>() }
+            };
+            var sessionData = _context.Sessions
+                .Include(x => x.Student)
+                .Where(x => x.ScenarioEnded)
+                .OrderBy(x => x.EndDate)
+                .AsParallel()
+                .ToLookup(x => x.Student.StudentID).ToList();
+            foreach (var grouping in sessionData)
+            {
+                var name = CheckGroup(grouping.First());
+                var i = 1;
+                foreach (var session in grouping)
+                {
+                    if (name == "No adaptivity") continue;
+                    result.Cast<dynamic>().FirstOrDefault(x => x.name == name)?.data
+                        .Add(new[] { i, session.DifficultyLevel });
+                    i++;
+                }
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(result.ToArray());
+            return json;
+        }
+
+
+        public string AvgDifficultyScalingGraph()
+        {
+            var allData = new List<NameDataObject>
+            {
+                new NameDataObject { Name = "Basic adaptivity", Data = new List<double[]>() },
+                new NameDataObject { Name = "Advance adaptivity", Data = new List<double[]>() }
+            };
+            var result = new List<object>
+            {
+                new { name = "Basic adaptivity", data = new List<Array>() },
+                new { name = "Advance adaptivity", data = new List<Array>() }
+            };
+            var sessionData = _context.Sessions
+                .Include(x => x.Student)
+                .Where(x => x.ScenarioEnded)
+                .OrderBy(x => x.EndDate)
+                .AsParallel()
+                .ToLookup(x => x.Student.StudentID).ToList();
+            foreach (var grouping in sessionData)
+            {
+                var name = CheckGroup(grouping.First());
+                var i = 1;
+                foreach (var session in grouping)
+                {
+                    if (name == "No adaptivity") continue;
+                    allData.FirstOrDefault(x => x.Name == name)?.Data
+                        .Add(new[] { i, session.DifficultyLevel });
+                    i++;
+                }
+            }
+
+            //
+            // var avgData = allData.Select(adaptivity =>
+            //     new 
+            //     {
+            //         name = adaptivity.Name,
+            //         data = adaptivity.Data.GroupBy(x => x[0]).Select(group => new[] { group.Key, group.Average(g => g[1]) }).ToList() 
+            //     });
+            allData.ForEach(adaptivity =>
+            {
+                for (var i = 1; i < 5; i++)
+                {
+                    var values = adaptivity.Data.Where(x => x[0] == i).ToList();
+                    var median = values.OrderBy(x => x[1]).Skip(values.Count() / 2).First();
+                    // if (values.Count > 0 && values.Count % 2 == 0)
+                    // {
+                    //     median[1] += values.OrderBy(x => x[0]).Skip(values.Count() / 2 + 1).First()[1];
+                    //     median[1] /= 2;
+                    // }
+
+
+                    result.Cast<dynamic>().FirstOrDefault(x => x.name == adaptivity.Name)?.data
+                        .Add(median);
+                }
+            });
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(result.ToArray());
+            return json;
+        }
+
         public string TimePerAttemptGraph()
         {
             var result = new List<object>
@@ -576,35 +669,6 @@ namespace Backend.Services.Report
             return json;
         }
 
-
-        public string DifficultyScalingGraph()
-        {
-            var result = new List<object>
-            {
-                new { name = "Basic adaptivity", data = new List<Array>() },
-                new { name = "Advance adaptivity", data = new List<Array>() }
-            };
-            var sessionData = _context.Sessions.Include(x => x.Student)
-                .Where(x => x.ScenarioEnded)
-                .AsParallel()
-                .ToLookup(x => x.Student.StudentID).ToList();
-            foreach (var grouping in sessionData)
-            {
-                var name = CheckGroup(grouping.First());
-                var i = 1;
-                foreach (var session in grouping)
-                {
-                    if (name == "No adaptivity") continue;
-                    result.Cast<dynamic>().FirstOrDefault(x => x.name == name)?.data
-                        .Add(new[] { i, session.DifficultyLevel });
-                    i++;
-                }
-            }
-
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(result.ToArray());
-            return json;
-        }
-
         public class GroupSettings
         {
             public GroupSettings(string label, bool randomTest, bool aiDifficulty)
@@ -630,6 +694,12 @@ namespace Backend.Services.Report
             public bool RandomTest { get; set; }
             public bool AiCategorization { get; set; }
             public int Value { get; set; }
+        }
+
+        public class NameDataObject
+        {
+            public string Name { get; set; }
+            public List<double[]> Data { get; set; }
         }
     }
 }

@@ -28,6 +28,7 @@
                 </div>
                 <D3BarChart :config="bar_multiple_config" :datum="getFromStore('attemptsPerScenario')" title="Attempts per scenario  "></D3BarChart>
                 <D3BarChart :config="bar_multiple_config" :datum="getFromStore('successPerScenario')" title="Success per scenario %"></D3BarChart>
+
                 <h3>For succeeded sessions</h3>
 
                 <D3BarChart
@@ -35,7 +36,6 @@
                     :datum="getFromStore('avgAnsweredQuestionsPerScenario')"
                     title="Avg Answered Questions %"
                 ></D3BarChart>
-
                 <D3BarChart
                     :config="bar_multiple_config"
                     :datum="getFromStore('medianAnsweredQuestionsPerScenario')"
@@ -53,19 +53,24 @@
                     title=" Median Time per question (ms/ words in question)"
                 ></D3BarChart>
 
-                <!-- <D3LineChart :config="line_config" :datum="difficultyDevelopment_data" title="Difficulty scaling factor"></D3LineChart> -->
-
-                <line-chart
+                <scatter-chart
                     height="500px"
                     :data="getFromStore('difficultyScaling')"
                     title="Difficulty scaling factor"
                     xtitle="Attempt"
                     ytitle="Level"
+                    :colors="['#dc3912', '#ff9900']"
+                ></scatter-chart>
+                <line-chart
+                    height="500px"
+                    :data="getFromStore('avgDifficultyScaling')"
+                    title="Difficulty scaling factor"
+                    xtitle="Attempt"
+                    ytitle="Level"
+                    :colors="['#dc3912', '#ff9900']"
+                    :max="3"
+                    :points="false"
                 ></line-chart>
-
-                <!-- <D3BarChart :config="bar_multiple_config" :datum="correctness_data" title="Question correctness"></D3BarChart> -->
-
-                <!-- <scatter-chart  :data="avgPerAttempt" title="time per attempt" xtitle="Attempt" ytitle="Time"></scatter-chart> -->
 
                 <scatter-chart
                     height="500px"
@@ -289,7 +294,7 @@ export default {
 </script>
 
 <style>
-.spinner{
+.spinner {
     margin-top: 200px;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <h1>MOCK</h1>
         <div class="row">
             <div class="col-6">
                 <D3PieChart :config="pie_config" :datum="participation_data" title="Participation"></D3PieChart>
@@ -7,8 +8,7 @@
             <div class="col-6">
                 <D3PieChart :config="pie_config" :datum="passed_data" title="Scenario passed"></D3PieChart>
             </div>
-            Długość gry x correctness /group
-            Długość gry x ilośc pytań /group
+            
         </div>
     </div>
 </template>

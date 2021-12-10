@@ -14,5 +14,6 @@
         public string AttemptsPerScenario { get; set; }
         public string MedianAnsweredQuestionsPerScenario { get; set; }
         public string MedianTimePerQuestion { get; set; }
+        public string AvgDifficultyScaling { get; set; }
     }
 }
