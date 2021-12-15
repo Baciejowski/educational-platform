@@ -128,7 +128,7 @@ def assign_difficulty_level(all_qa):
     therefore the batch size is increased by one, if the number of questions is not a multiple of 5.
     The batch with the maximum level of difficulty is always equal to or smaller than the size of the other batches.
     The level of difficulty is calculated as follows: index / batch + 1
-    :param all_qa: list of both generated and predefined questions
+    :param all_qa: list of either generated or predefined questions
     :return: list of questions with a difficulty level assigned
     """
     # iterate over enumerate / zip

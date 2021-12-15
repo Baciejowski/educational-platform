@@ -1,4 +1,3 @@
-import re
 import statistics
 
 import spacy
@@ -50,25 +49,41 @@ class QuestionGenerator:
         self.max_sequence_length = 512
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    def generate(self, context):
-        inputs, answers = self.encode_inputs(context)
+    def generate(self, context, predef_answers=None):
+        if predef_answers:
+            inputs, answers = self.encode_inputs(context, predef_answers)
+        else:
+            inputs, answers = self.encode_inputs(context)
         generated_questions = self.generate_questions_from_inputs(inputs)
         message = f"{len(generated_questions)} questions do not match {len(answers)} answers"
         assert len(generated_questions) == len(answers), message
         qa_list = self._get_all_qa_pairs(generated_questions, answers)
         return qa_list
 
-    def encode_inputs(self, text):
+    def encode_inputs(self, text, predef_answers=None):
+        """Main method preparing a list of answers and contexts in a required format
+        In case the answers are preliminary extracted from context, we assume that
+        the whole context would be tokenized into one segment (checked at front-end level)
+        When no answers are provided, the answer candidates are extracted as noun chunks from a given segment
+        :param text: context from a textbook
+        :param predef_answers: optional, a list of strings extracted manually from context
+        :return: processed inputs for the model and answers to be used later in API
+        """
         inputs = []
         answers = []
         segments = self._split_into_segments(text)
-        candidates = [get_noun_phrases(par) for par in segments]
-        for candidate in candidates:
-            answer_candidates = list(candidate.keys())
-            context = candidate[answer_candidates[0]]
-            processed_contexts, processed_answers = self._prepare_model_inputs(answer_candidates, context)
+        if predef_answers is not None:
+            processed_contexts, processed_answers = self._prepare_model_inputs(predef_answers, segments)
             inputs.extend(processed_contexts)
             answers.extend(processed_answers)
+        else:
+            candidates = [get_noun_phrases(par) for par in segments]
+            for candidate in candidates:
+                answer_candidates = list(candidate.keys())
+                context = candidate[answer_candidates[0]]
+                processed_contexts, processed_answers = self._prepare_model_inputs(answer_candidates, context)
+                inputs.extend(processed_contexts)
+                answers.extend(processed_answers)
         return inputs, answers
 
     def generate_questions_from_inputs(self, model_inputs):
@@ -116,10 +131,12 @@ class QuestionGenerator:
         ).to(self.device)
 
     def _get_all_qa_pairs(self, generated_questions, answers):
+        """Method converting the generated questions into the desired output format for API
+        :param generated_questions: a list of strings of length n
+        :param answers: a list of strings of length n
+        :return: a list of tuples of kind (qa_id: int from 1, q: str, a: str, type: int, 2 by default)
+        """
         qa_list = []
         for i in range(len(generated_questions)):
-            qa = _make_dict(
-                generated_questions[i].split("?")[0] + "?", answers[i]
-            )
-            qa_list.append(qa)
+            qa_list.append((i+1, generated_questions[i].split("?")[0] + "?", answers[i], 2))
         return qa_list
