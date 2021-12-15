@@ -90,7 +90,7 @@ class QuestionGenerator:
         return [self._generate_question(model_input) for model_input in model_inputs]
 
     def _split_into_segments(self, context):
-        max_segment_length = 490  # a bit shorter than possible max sequence length
+        max_segment_length = 400  # a bit shorter than possible max sequence length
         paragraphs = context.split("\n")
         tokenized = [self.tokenizer(p)["input_ids"] for p in paragraphs if len(p) > 0]
         segments = []

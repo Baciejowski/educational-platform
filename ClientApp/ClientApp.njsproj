@@ -36,6 +36,28 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="public\" />
+    <Folder Include="src\" />
+    <Folder Include="src\assets\" />
+    <Folder Include="src\auth\" />
+    <Folder Include="src\components\" />
+    <Folder Include="src\components\formModals\" />
+    <Folder Include="src\components\questionsFormModals\" />
+    <Folder Include="src\components\Report\" />
+    <Folder Include="src\css\" />
+    <Folder Include="src\css\components\" />
+    <Folder Include="src\css\components\forms\" />
+    <Folder Include="src\css\custom\" />
+    <Folder Include="src\js\" />
+    <Folder Include="src\js\custom\" />
+    <Folder Include="src\js\materialize\" />
+    <Folder Include="src\js\materialize\bin\" />
+    <Folder Include="src\plugins\" />
+    <Folder Include="src\router\" />
+    <Folder Include="src\store\" />
+    <Folder Include="src\views\" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
       npm run build

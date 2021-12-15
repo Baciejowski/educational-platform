@@ -5,9 +5,6 @@
                 <a class="brand-logo" href="./"><i class="material-icons">home</i></a>
                 <ul id="nav-mobile">
                     <li>
-                        <a href="#">About<i class="material-icons">info</i></a>
-                    </li>
-                    <li>
                         <a href="https://yarde.github.io/"> Join the game<i class="material-icons">sports_esports</i> </a>
                     </li>
                     <li>
