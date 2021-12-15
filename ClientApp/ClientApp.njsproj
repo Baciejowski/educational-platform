@@ -44,6 +44,7 @@
     <Folder Include="src\components\" />
     <Folder Include="src\components\formModals\" />
     <Folder Include="src\components\questionsFormModals\" />
+    <Folder Include="src\components\Report\" />
     <Folder Include="src\css\" />
     <Folder Include="src\css\components\" />
     <Folder Include="src\css\components\forms\" />

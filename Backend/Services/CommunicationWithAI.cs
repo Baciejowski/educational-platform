@@ -57,7 +57,7 @@ namespace Backend.Services
             }
             context.SaveChanges();
         }
-        public static void TokenizeAndAddToRequestsQueue(List<string> texts, int scenarioId, int maxLength = 400)
+        public static void TokenizeAndAddToRequestsQueue(List<string> texts, int scenarioId, int maxLength = 300)
         {
             foreach(string file in texts)
             {
@@ -94,7 +94,6 @@ namespace Backend.Services
         }
         public static void SendRequests()
         {
-            int counter = 0;
             if (sendingRequests) return;
             sendingRequests = true;
             while (!requestsToBeSend.IsEmpty)
@@ -110,7 +109,7 @@ namespace Backend.Services
 
                 try
                 {
-                    /*AiGanerateQuestionsResponse result = JsonConvert.DeserializeObject<AiGanerateQuestionsResponse>(
+                    AiGanerateQuestionsResponse result = JsonConvert.DeserializeObject<AiGanerateQuestionsResponse>(
                         client.PostAsync(
                             endpointsLocation + "generateQuestions",
                             new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json"))
@@ -126,16 +125,12 @@ namespace Backend.Services
                         {
                             ABCDAnswers = new List<Answer> { new Answer { Content = q.CorrectAnswer, Correct = true } },
                             AiDifficulty = q.DifficultyLevel * (-1),
-                            Content = q.Content
+                            Content = q.Content,
+                            Scenarios = new List<Scenario> { scenario },
+                            QuestionType = Question.TypeEnum.ABCD
                         });
                         dataContext.SaveChanges();
-                    }*/
-                    using (FileStream fs = File.Create(@"D:\Req"+counter+".json"))
-                    {
-                        byte[] info = new UTF8Encoding(true).GetBytes(JsonConvert.SerializeObject(req));
-                        fs.Write(info, 0, info.Length);
                     }
-                    counter++;
                 }
                 catch
                 {

@@ -9,8 +9,6 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ClientApp", "ClientApp\Clie
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AI", "AI\AI.pyproj", "{5A4BE301-BF98-485F-896A-3AB0EB22B704}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackendTests", "BackendTests\BackendTests.csproj", "{DEC42F57-8941-4C2C-94B8-D7EA4ECA668E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,10 +25,6 @@ Global
 		{2DF13869-C45A-4E1F-9289-0244157888EC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A4BE301-BF98-485F-896A-3AB0EB22B704}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5A4BE301-BF98-485F-896A-3AB0EB22B704}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DEC42F57-8941-4C2C-94B8-D7EA4ECA668E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DEC42F57-8941-4C2C-94B8-D7EA4ECA668E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DEC42F57-8941-4C2C-94B8-D7EA4ECA668E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DEC42F57-8941-4C2C-94B8-D7EA4ECA668E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

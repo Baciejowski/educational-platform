@@ -21,7 +21,7 @@
                     <div v-for="question in proposedQ" :key="question.QuestionID" class="card white z-depth-0" style="border:1px solid; border-color:darkorange;" :id="'questionCard'+question.QuestionID">
                         <div class="card-content">
                             <div class="card-title" style="text-align: left">
-                                <span class="right orange-text" style="display: inline; margin-left:10px;">{{difficultyRepresentation(question.Difficulty)}}</span>
+                                <span class="right orange-text" style="display: inline; margin-left:10px;">{{difficultyRepresentation(question.AiDifficulty)}}</span>
                                 <span class="black-text" style="display: inline;">{{question.Content}}</span>
                             </div>
                             <div v-for="answer in question.ABCDAnswers" :key="answer.AnswerID">
@@ -133,7 +133,7 @@
                 return this.scenario.Questions.filter(q => q.QuestionID && !q.Difficulty)
             },
             modifiedDifficultyQ() {
-                return this.scenario.Questions.filter(q => q.QuestionID && q.AiDifficulty && q.AiDifficulty < 0 && Math.abs(q.AiDifficulty) != q.Difficulty)
+                return this.scenario.Questions.filter(q => q.QuestionID && q.Difficulty && q.AiDifficulty && q.AiDifficulty < 0 && Math.abs(q.AiDifficulty) != q.Difficulty)
             }
         },
         created() {
@@ -297,6 +297,7 @@
 
                 this.$store.state.loadingData = true
                 editedQuestion.Difficulty = this.difficulty
+                editedQuestion.AiDifficulty = this.difficulty
                 editedQuestion.Content = document.getElementById("editedQuestionContent").value
                 editedQuestion.Hint = document.getElementById("editedQuestionHint").value
                 editedQuestion.QuestionType = document.getElementById("questionType").selectedIndex
@@ -352,7 +353,7 @@
                 const questionForm = document.getElementById("questionForm")
                 const instance = M.Modal.getInstance(document.getElementById("modal1"))
                 let question = this.scenario.Questions.find(q => q.QuestionID === id)
-                this.difficulty = question.Difficulty
+                this.difficulty = Math.abs(question.AiDifficulty)
                 document.getElementById("questionImportance").checked = false
                 document.getElementById("questionObligatory").checked = false
                 document.getElementById("questionType").selectedIndex = question.QuestionType
