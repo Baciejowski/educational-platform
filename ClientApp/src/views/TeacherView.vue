@@ -22,7 +22,7 @@
                 </a>
             </div>
             <div class="col s12 l4">
-                <a class="card">
+                <a class="card" href="\report">
                     <div class="card-content white-text">
                         <span class="card-title">
                             <i class="large material-icons">trending_up</i><br />
