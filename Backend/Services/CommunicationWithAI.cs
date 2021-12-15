@@ -31,6 +31,7 @@ namespace Backend.Services
 
             optionsBuilder = new DbContextOptionsBuilder<DataContext>();
             optionsBuilder.UseNpgsql(config.GetSection("DbContextSettings")["ConnectionString"]);
+            client.Timeout = TimeSpan.FromMinutes(25);
         }
         public static void UpdateProposedDifficulty(DataContext context, Scenario scenario)
         {

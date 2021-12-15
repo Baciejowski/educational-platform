@@ -98,7 +98,7 @@ namespace Backend.Controllers.APIs
                 .AsNoTracking()
                 .FirstOrDefault(s => s.ScenarioID == id);
             if (scenario == null) return NotFound();
-            if (!scenario.Topic.Teacher.Equals(teacher)) return Unauthorized();
+            if (scenario.Topic.Teacher.TeacherID!=(teacher.TeacherID)) return Unauthorized();
 
             scenario.ScenarioID = 0;
             scenario.Name += " (Copy)";
@@ -111,8 +111,8 @@ namespace Backend.Controllers.APIs
                 }
             }
 
-            _dataContext.Add(scenario);
             scenario.Topic = _dataContext.Scenarios.Include(s => s.Topic).FirstOrDefault(s => s.ScenarioID == id).Topic;
+            _dataContext.Add(scenario);
 
             try
             {

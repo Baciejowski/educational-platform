@@ -1,0 +1,151 @@
+### Classes_GET_NoHeader
+GET http://localhost:5000/api/classes
+
+> {%
+    client.test("Request without authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Classes_GET_IncorrectHeader
+GET http://localhost:5000/api/classes
+Authorization: aaa
+
+> {%
+    client.test("Request with incorrect authorization header", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+%}
+
+### Classes_GET_WithoutStudents
+GET http://localhost:5000/api/classes?skipStudents=true&skipSessions=true
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+
+    function isInstanceOfClassWithoutStudents(obj, index, array){
+        return obj.hasOwnProperty("classID") && obj.hasOwnProperty("friendlyName") && obj.hasOwnProperty("students") && obj.students === null
+    }
+
+    client.test("Proper object returned", function() {
+        client.assert(Array.isArray(response.body) && Array.from(response.body).every(isInstanceOfClassWithoutStudents), "Improper object received");
+    });
+
+%}
+### Classes_GET_WithoutSessions
+GET http://localhost:5000/api/classes?skipSessions=true
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+
+    function isInstanceOfClassWithoutSessions(obj, index, array){
+        return obj.hasOwnProperty("classID")
+        && obj.hasOwnProperty("friendlyName")
+        && obj.hasOwnProperty("students")
+        && Array.isArray(obj.students)
+        && Array.from(obj.students).every(isInstanceOfStudentWithoutSessions)
+    }
+
+    function isInstanceOfStudentWithoutSessions(obj, index, array){
+        return obj.hasOwnProperty("studentID")
+        && obj.hasOwnProperty("lastName")
+        && obj.hasOwnProperty("firstName")
+        && obj.hasOwnProperty("email")
+        && obj.hasOwnProperty("sessions")
+        && obj.sessions === null
+    }
+
+    client.test("Proper object returned", function() {
+        client.assert(Array.isArray(response.body) && Array.from(response.body).every(isInstanceOfClassWithoutSessions), "Improper object received");
+    });
+
+%}
+
+### Classes_GET
+GET http://localhost:5000/api/classes
+Authorization: {{authHeader}}
+
+> {%
+    client.test("Request with correct authorization header", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+
+    function isInstanceOfClass(obj, index, array){
+        return obj.hasOwnProperty("classID")
+        && obj.hasOwnProperty("friendlyName")
+        && obj.hasOwnProperty("students")
+        && Array.isArray(obj.students)
+        && Array.from(obj.students).every(isInstanceOfStudent)
+    }
+
+    function isInstanceOfStudent(obj, index, array){
+        return obj.hasOwnProperty("studentID")
+        && obj.hasOwnProperty("lastName")
+        && obj.hasOwnProperty("firstName")
+        && obj.hasOwnProperty("email")
+        && obj.hasOwnProperty("sessions")
+        && Array.isArray(obj.sessions)
+        && Array.from(obj.sessions).every(isInstanceOfSession)
+    }
+
+    function isInstanceOfSession(obj, index, array){
+        return obj.hasOwnProperty("sessionID")
+        && obj.hasOwnProperty("startGame")
+        && obj.hasOwnProperty("endGame")
+        && obj.hasOwnProperty("code")
+        && obj.hasOwnProperty("randomTest")
+        && obj.hasOwnProperty("aiCategorization")
+        && obj.hasOwnProperty("attempts")
+        && obj.hasOwnProperty("randomTest")
+        && obj.hasOwnProperty("difficultyLevel")
+        && obj.hasOwnProperty("answeredQuestions")
+        && (obj.answeredQuestions === null
+            || (Array.isArray(obj.answeredQuestions)
+                && Array.from(obj.answeredQuestions).every(isInstanceOfAnsweredQuestion)))
+        && obj.hasOwnProperty("scenarioEnded")
+        && obj.hasOwnProperty("endDate")
+        && obj.hasOwnProperty("experience")
+        && obj.hasOwnProperty("money")
+        && obj.hasOwnProperty("gameplayTime")
+        && obj.hasOwnProperty("light")
+        && obj.hasOwnProperty("vision")
+        && obj.hasOwnProperty("speed")
+    }
+
+    function  isInstanceOfAnsweredQuestion(obj, index, array){
+        return obj.hasOwnProperty("answeredQuestionID")
+        && obj.hasOwnProperty("questionImportanceType")
+        && obj.hasOwnProperty("answeredAnswers")
+        && Array.isArray(obj.answeredAnswers)
+        && obj.hasOwnProperty("difficulty")
+        && obj.hasOwnProperty("timeToAnswer")
+        && obj.hasOwnProperty("correctness")
+        && obj.hasOwnProperty("questionIdRef")
+    }
+
+    client.test("Proper object returned", function() {
+        client.assert(Array.isArray(response.body) && Array.from(response.body).every(isInstanceOfClass), "Improper object received");
+    });
+
+%}
