@@ -55,7 +55,6 @@
                     <span v-if="countPending(student)" class="badge yellow lighten-3 left grey-text text-darken-3">{{countPending(student)}} pending</span>
                     <span v-if="countFinished(student)" class="badge orange lighten-3 left grey-text text-darken-3">{{countFinished(student)}} finished</span>
                     <a @click="editStudent(student.studentID)" class="grey-link hovered-orange" style="margin-left:7px;"><i class="material-icons">edit</i></a>
-                    <a class="grey-link hovered-salmon"><i class="material-icons">trending_up</i></a>
                     <a @click="deleteStudent(student.studentID)" class="grey-link hovered-red"><i class="material-icons">delete</i></a>
                 </div>
             </li>

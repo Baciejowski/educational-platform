@@ -185,22 +185,31 @@
                         .dispatch("authorizedPOST_PromiseWithHeaders", { url: "/api/create-scenario", data: this.sendData })
                         .then((resp) => {
                             if (resp.status == 200) {
-                                axios.post("/api/scenarios/media", this.files, {
+                                axios.post(`/api/scenarios/${resp.data}/media`, this.files, {
                                     headers: {
                                         'Content-Type': 'multipart/form-data'
                                     }
                                 }).then((resp2) => {
                                     if (resp2.status == 200) {
                                         var url = new URL(`${this.$store.getters.getPrefix()}/scenario?id=${resp.data}`)
-                                        url.port=""
+                                        if(!this.$store.state.local) url.port=""
                                         window.location.href = url.toString()
                                     }
                                 }).catch((err) => {
                                     M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" })
+                                    this.$store
+                                        .dispatch("authorizedDELETE_PromiseWithHeaders", { url: `/api/scenarios?id=${resp.data}` })
+                                        .then((data) => {
+                                            if (data.status == 200) {
+                                                M.toast({ html: "<div class='black-text'>Changes were revoked!</div>", classes: "orange lighten-3" })
+                                                this.$store.dispatch("getTopicsWithScenarios")
+                                            }
+                                        })
+                                        .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
                                 });
                             }
                         })
-                        .catch(() => console.log)
+                        .catch((err) => M.toast({ html: `<div class='black-text'>Something went wrong!<br/>${err.message}</div>`, classes: "red lighten-3" }))
                 }
             },
             resetData() {
