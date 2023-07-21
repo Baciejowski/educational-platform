@@ -38,13 +38,12 @@ Diagrams and technical details are located in [the bachelor thesis](https://driv
 > ℹ️ As unity game was not created by me, but by [Dawid Kaluża](https://github.com/Yarde) it is not shown here. This and other games created by him
 > are available [here](https://yarde.itch.io/).
 
-![image](https://github.com/Baciejowski/educational-platform/assets/64860051/a10be7e5-d4eb-4c8d-98aa-33db34859e61)
-![image](https://github.com/Baciejowski/educational-platform/assets/64860051/258257fa-c8e2-4ddd-a9f9-86e28260b472)
-![image](https://github.com/Baciejowski/educational-platform/assets/64860051/21b216de-4f38-4a1e-8c0a-df7b972b18f3)
-![image](https://github.com/Baciejowski/educational-platform/assets/64860051/6d3d1722-5c54-4325-a16b-e763353b6c74)
-![image](https://github.com/Baciejowski/educational-platform/assets/64860051/1f80c6a4-ff03-41a4-882a-d97b841a6ef1)
-![image](https://github.com/Baciejowski/educational-platform/assets/64860051/829fb575-6d75-494c-82b7-47d10c1ab675)
-
+![image](https://github.com/Baciejowski/educational-platform/assets/64860051/0021d595-c039-4db5-a87d-68524f31758d)
+![image](https://github.com/Baciejowski/educational-platform/assets/64860051/8923b0a5-613d-4ad0-90a4-86d09d067c82)
+![image](https://github.com/Baciejowski/educational-platform/assets/64860051/84fde7bd-6bf1-47b3-8c1f-14e290687282)
+![image](https://github.com/Baciejowski/educational-platform/assets/64860051/5e06710b-2d41-47ec-8e6c-bc1e75bd66e3)
+![image](https://github.com/Baciejowski/educational-platform/assets/64860051/56359bd6-ca0d-4a49-b3c1-8b3f24863de1)
+![image](https://github.com/Baciejowski/educational-platform/assets/64860051/689ea676-db4c-471e-bd17-76c36ed381c9)
 
 [BtnThesis]: https://img.shields.io/badge/Read%20thesis-50b59d?style=for-the-badge&logoColor=white&logo=googledrive
 [BtnDemo]: https://img.shields.io/badge/Play%20demo-8AA0BE?style=for-the-badge&logoColor=white&logo=unity
